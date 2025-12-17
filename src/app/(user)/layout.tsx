@@ -8,16 +8,22 @@ export default function UserLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div>
-      <div className="grid grid-cols-1 lg:grid-cols-4 ">
-        <div>
-          <LeftSidebar />
-        </div>
-        <div className="lg:col-span-2">{children}</div>
-        <div>
-          <RightSidebar />
-        </div>
+    <div className="h-screen flex">
+      <div className="hidden lg:block w-64 shrink-0">
+        <LeftSidebar />
       </div>
+
+      <div
+        className="flex-1 lg:flex-none lg:w-[calc(100%-32rem)] overflow-y-auto pb-20 lg:pb-0"
+        style={{ flexGrow: 1 }}
+      >
+        {children}
+      </div>
+
+      <div className="hidden lg:block w-64 shrink-0">
+        <RightSidebar />
+      </div>
+
       <MobileNavbar />
     </div>
   );

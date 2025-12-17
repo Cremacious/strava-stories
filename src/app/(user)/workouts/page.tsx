@@ -20,8 +20,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  BarChart,
-  Bar,
   PieChart,
   Pie,
   Cell,
@@ -182,8 +180,8 @@ const WorkoutsPage = () => {
             className="border-red-500 text-red-400 hover:bg-red-500 hover:text-white w-full sm:w-auto"
           >
             <RefreshCw className="w-4 h-4 mr-2" />
-            <span className="hidden xs:inline">Sync with Strava</span>
-            <span className="xs:hidden">Sync</span>
+
+            <span className="">Sync With Strava</span>
           </Button>
           <Dialog open={isAddWorkoutOpen} onOpenChange={setIsAddWorkoutOpen}>
             <DialogTrigger asChild>
@@ -476,7 +474,7 @@ const WorkoutsPage = () => {
                   className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 bg-gray-700 rounded-lg gap-3"
                 >
                   <div className="flex items-center space-x-4">
-                    <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center shrink-0">
                       <Activity className="w-5 h-5 text-white" />
                     </div>
                     <div className="min-w-0 flex-1">

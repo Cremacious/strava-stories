@@ -20,6 +20,12 @@ export default function Home() {
         >
           Sign In
         </button>
+        <button
+          onClick={() => router.push('/home')}
+          className="border border-white text-white font-medium px-6 py-2 rounded-md hover:bg-neutral-800"
+        >
+          home
+        </button>
       </div>
     </main>
   );
