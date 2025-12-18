@@ -77,7 +77,7 @@ const StatusUpdateInput = () => {
   );
 
   return (
-    <div className="mb-8">
+    <div className="mb-8 max-w-3xl mx-auto">
       <div className="bg-gray-800 border border-gray-700 rounded-lg p-4">
         <div className="flex items-center mb-3">
           <img
