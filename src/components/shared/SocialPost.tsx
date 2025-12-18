@@ -1,29 +1,32 @@
 import { Post } from '@/lib/types/posts.type';
+import defaultAvatar from '@/app/assets/defaults/default_avatar.jpg';
+import Image from 'next/image';
 
 const SocialPost = ({ post }: { post: Post }) => {
   return (
     <div
       key={post.id}
-      className="bg-gray-800 w-full border border-gray-700 rounded-lg overflow-hidden"
+      className="bg-[#3F3F3F] w-full  rounded-lg overflow-hidden"
     >
       <div className="p-4 flex items-center relative">
-        <img
-          src={post.avatar}
+        <Image
+          src={post.avatar || defaultAvatar}
           alt={`${post.userName} avatar`}
           className="w-10 h-10 rounded-full mr-3"
+          width={40}
+          height={40}
         />
         <div className="flex-1">
           <p className="font-semibold text-white">{post.userName}</p>
           <p className="text-sm text-gray-400">{post.time}</p>
         </div>
         {post.feeling && (
-          <div className="absolute top-4 right-4 text-sm text-red-400 font-medium">
+          <div className="absolute top-4 right-4 text-sm text-red-500 font-medium">
             Feeling {post.feeling}
           </div>
         )}
       </div>
 
-      {/* Post Content */}
       <div className="px-4 pb-2">
         <p className="text-white mb-2">{post.content}</p>
         <div className="flex flex-row gap-1">
@@ -40,26 +43,26 @@ const SocialPost = ({ post }: { post: Post }) => {
         </div>
       </div>
 
-      {/* Post Image */}
       {post.image && (
-        <div className="px-4 pb-4">
-          <img
+        <div className="px-4 pb-4 relative">
+          <Image
             src={post.image}
             alt="Post image"
-            className="w-full rounded-lg"
+            fill
+            className="rounded-lg object-cover"
           />
         </div>
       )}
 
       {/* Post Actions */}
-      <div className="px-4 py-2 border-t border-gray-700 flex justify-between">
-        <button className="text-gray-400 hover:text-red-400 px-4 py-2 rounded">
+      <div className="px-4 py-2 border-t-2 flex justify-between">
+        <button className="text-white hover:text-red-500 px-4 py-2 rounded">
           Like
         </button>
-        <button className="text-gray-400 hover:text-red-400 px-4 py-2 rounded">
+        <button className="text-white hover:text-red-500 px-4 py-2 rounded">
           Comment
         </button>
-        <button className="text-gray-400 hover:text-red-400 px-4 py-2 rounded">
+        <button className="text-white hover:text-red-500 px-4 py-2 rounded">
           Share
         </button>
       </div>

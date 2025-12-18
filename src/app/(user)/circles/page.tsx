@@ -34,7 +34,7 @@ const CirclesPage = () => {
       </div>
 
       {/* My Circles */}
-      <div className="space-y-4">
+      <div className="space-y-4 max-w-5xl mx-auto p-4 rounded-lg">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-semibold text-white">My Circles</h2>
           <Button
@@ -46,14 +46,17 @@ const CirclesPage = () => {
         </div>
         <ActiveCirclesGrid myCircles={myCircles} />
       </div>
+      {/* <div className="border-t-2 border-red-900/40 max-w-3xl mx-auto"></div> */}
 
-      {/* Featured Challenges */}
-      <ChallengesHighlights featuredChallenges={featuredChallenges} />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+        <div className="space-y-6 ">
+          <ChallengesHighlights featuredChallenges={featuredChallenges} />
 
-      {/* Recent Highlights */}
-      <RecentCirclesHighlights recentHighlights={recentHighlights} />
+          <RecentCirclesHighlights recentHighlights={recentHighlights} />
+        </div>
 
-      <TimelineFeed />
+        <TimelineFeed />
+      </div>
     </div>
   );
 };

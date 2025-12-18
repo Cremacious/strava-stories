@@ -8,7 +8,7 @@ const RecentCirclesHighlights = ({
   recentHighlights: RecentHighlights;
 }) => {
   return (
-    <Card className="bg-gray-800 border-gray-700">
+    <Card className="border-0">
       <CardHeader>
         <CardTitle className="text-white flex items-center">
           <Star className="w-5 h-5 mr-2 text-red-400" />
@@ -20,7 +20,7 @@ const RecentCirclesHighlights = ({
           {recentHighlights.map((highlight) => (
             <div
               key={highlight.id}
-              className="flex items-start space-x-3 p-3 bg-gray-700 rounded-lg"
+              className="flex items-start space-x-3 p-3 darkBackground rounded-lg"
             >
               <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center shrink-0">
                 <Award className="w-5 h-5 text-white" />

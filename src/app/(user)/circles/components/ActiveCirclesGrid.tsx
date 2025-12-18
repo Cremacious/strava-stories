@@ -12,7 +12,7 @@ const ActiveCirclesGrid = ({ myCircles }: { myCircles: Circle[] }) => {
         {myCircles.slice(0, 4).map((circle) => (
           <Card
             key={circle.id}
-            className="bg-gray-800 border-gray-700 hover:border-red-500 transition-colors cursor-pointer"
+            className="cardBackground border-0 hover:border-red-500 cursor-pointer"
           >
             <CardHeader className="pb-3">
               <div className="flex items-center space-x-3">
@@ -36,7 +36,7 @@ const ActiveCirclesGrid = ({ myCircles }: { myCircles: Circle[] }) => {
                 <span className="text-gray-400">{circle.lastActivity}</span>
               </div>
               {circle.upcomingChallenge && (
-                <div className="bg-gray-700 rounded p-2">
+                <div className="darkBackground rounded p-2">
                   <p className="text-red-400 text-sm font-medium">
                     Upcoming: {circle.upcomingChallenge}
                   </p>

@@ -24,9 +24,8 @@ const FeatureSelector = () => {
   ];
 
   return (
-    <div className="border-red-900 border-2 p-2 md:p-4 rounded-2xl">
-      {/* Tab Navigation */}
-      <div className="flex flex-wrap gap-2 mb-6 bg-gray-800 p-3 rounded-lg border border-gray-700">
+    <div className="cardBackground md:p-4 rounded-2xl">
+      <div className="flex flex-wrap gap-2 mb-6 darkBackground p-3 rounded-lg border border-gray-700">
         {tabs.map((tab) => (
           <button
             key={tab.id}
@@ -34,7 +33,7 @@ const FeatureSelector = () => {
             className={`px-4 py-2 rounded-lg transition-colors text-sm font-medium ${
               activeTab === tab.id
                 ? 'bg-red-500 text-white'
-                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                : 'darkBackground2 border-red-500 text-gray-300 hover:bg-gray-600'
             }`}
           >
             <span className="mr-1">{tab.icon}</span>
@@ -43,7 +42,6 @@ const FeatureSelector = () => {
         ))}
       </div>
 
-      {/* Feed Content */}
       {activeTab === 'feed' && (
         <div className="space-y-4">
           <div className="flex justify-between items-center mb-4">
@@ -61,7 +59,7 @@ const FeatureSelector = () => {
             </Button>
           </div>
           {circle.recentWorkouts.map((workout) => (
-            <Card key={workout.id} className="bg-gray-800 border-gray-700">
+            <Card key={workout.id} className="bg-[#2e2e2e] border-0">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
@@ -87,16 +85,16 @@ const FeatureSelector = () => {
                   <p className="text-gray-300 mb-2">{workout.description}</p>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  <div className="bg-gray-700 p-2 rounded">
-                    <p className="text-gray-400 text-xs">Type</p>
+                  <div className="bg-[#272727] p-2 rounded">
+                    <p className="text-gray-100 text-xs">Type</p>
                     <p className="text-white font-bold">{workout.type}</p>
                   </div>
-                  <div className="bg-gray-700 p-2 rounded">
+                  <div className="bg-[#272727] p-2 rounded">
                     <p className="text-gray-400 text-xs">Duration</p>
                     <p className="text-white font-bold">{workout.duration}m</p>
                   </div>
                   {workout.distance && (
-                    <div className="bg-gray-700 p-2 rounded">
+                    <div className="bg-[#272727] p-2 rounded">
                       <p className="text-gray-400 text-xs">Distance</p>
                       <p className="text-white font-bold">
                         {workout.distance}km
@@ -104,7 +102,7 @@ const FeatureSelector = () => {
                     </div>
                   )}
                   {workout.calories && (
-                    <div className="bg-gray-700 p-2 rounded">
+                    <div className="bg-[#272727] p-2 rounded">
                       <p className="text-gray-400 text-xs">Calories</p>
                       <p className="text-white font-bold">{workout.calories}</p>
                     </div>
@@ -145,7 +143,7 @@ const FeatureSelector = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {circle.routines.map((routine) => (
-              <Card key={routine.id} className="bg-gray-800 border-gray-700">
+              <Card key={routine.id} className="bg-[#292929] border-gray-700">
                 <CardHeader>
                   <CardTitle className="text-white">{routine.name}</CardTitle>
                   <p className="text-gray-400 text-sm">
@@ -166,7 +164,7 @@ const FeatureSelector = () => {
                     <Button className="flex-1 bg-red-500 hover:bg-red-600 h-8">
                       Download
                     </Button>
-                    <button className="flex-1 bg-gray-700 hover:bg-gray-600 h-8 flex items-center justify-center rounded">
+                    <button className="flex-1 hover:bg-gray-600 h-8 flex items-center justify-center rounded">
                       <Heart className="w-4 h-4" /> {routine.likes}
                     </button>
                   </div>
@@ -195,7 +193,7 @@ const FeatureSelector = () => {
           {circle.stories.map((story) => (
             <Card
               key={story.id}
-              className="bg-gray-800 border-gray-700 overflow-hidden"
+              className="bg-[#292929] border-0 overflow-hidden"
             >
               <div className="bg-gray-700 h-48 flex items-center justify-center">
                 <span className="text-gray-500 text-sm">Story Image</span>
@@ -237,7 +235,7 @@ const FeatureSelector = () => {
         <div className="space-y-4">
           <h2 className="text-2xl font-bold text-white">Challenges</h2>
           {circle.challenges.map((challenge) => (
-            <Card key={challenge.id} className="bg-gray-800 border-gray-700">
+            <Card key={challenge.id} className="bg-[#292929] border-0">
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div>
@@ -316,7 +314,7 @@ const FeatureSelector = () => {
             </Button>
           </div>
           {circle.upcomingEvents.map((event) => (
-            <Card key={event.id} className="bg-gray-800 border-gray-700">
+            <Card key={event.id} className="bg-[#292929] border-0">
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div>
@@ -383,7 +381,7 @@ const FeatureSelector = () => {
             </Button>
           </div>
           {circle.recentPolls.map((poll) => (
-            <Card key={poll.id} className="bg-gray-800 border-gray-700">
+            <Card key={poll.id} className="bg-[#292929] border-0">
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div>

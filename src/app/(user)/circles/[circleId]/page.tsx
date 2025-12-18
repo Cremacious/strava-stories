@@ -9,7 +9,7 @@ import CircleTimelineFeed from './components/CircleTimelineFeed';
 const CirclePage = () => {
   const circle = circleDetailSample;
   return (
-    <div className="bg-gray-900 text-white min-h-full p-4">
+    <div className=" text-white min-h-full p-4">
       <div className="bg-linear-to-r from-red-600 to-red-700 rounded-lg p-6 mb-6 text-white">
         <div className="flex flex-col sm:flex-row items-center gap-4">
           <div className="w-24 h-24 sm:w-32 sm:h-32 bg-gray-800 rounded-lg flex items-center justify-center shrink-0">
@@ -43,7 +43,7 @@ const CirclePage = () => {
         </div>
       </div>
 
-      <CircleStats circle={circle} />
+      {/* <CircleStats circle={circle} /> */}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-8">

@@ -2,6 +2,8 @@
 
 import { Building } from 'lucide-react';
 import { useState } from 'react';
+import defaultAvatar from '@/app/assets/defaults/default_avatar.jpg';
+import Image from 'next/image';
 
 const friends = [
   'Alice Johnson',
@@ -77,19 +79,19 @@ const StatusUpdateInput = () => {
   );
 
   return (
-    <div className="mb-8 max-w-3xl mx-auto">
-      <div className="bg-gray-800 border border-gray-700 rounded-lg p-4">
+    <div className="max-w-2xl mx-auto w-full">
+      <div className=" p-4">
         <div className="flex items-center mb-3">
-          <img
-            src="/placeholder-avatar.jpg"
+          <Image
+            src={defaultAvatar}
             alt="Your avatar"
             className="w-10 h-10 rounded-full mr-3"
           />
           <div
-            className="flex-1 bg-gray-700 border border-gray-600 rounded-full px-4 py-2 cursor-pointer hover:bg-gray-600 transition-colors"
+            className="flex-1 darkBackground border border-red-700 rounded-full px-4 py-2 cursor-pointer hover:bg-[#4d3030] transition-colors"
             onClick={() => setIsDialogOpen(true)}
           >
-            <p className="text-gray-400">What&apos;s on your mind?</p>
+            <p className="text-red-400">What&apos;s on your mind???</p>
           </div>
         </div>
       </div>

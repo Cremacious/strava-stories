@@ -47,7 +47,7 @@
 
 :root {
   --radius: 0.625rem;
-  --card: oklch(1 0 0);
+  --card: oklch(36.484% 0.00136 15.538);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
@@ -60,7 +60,7 @@
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
+  --border: oklch(59.73% 0.24322 29.05);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
   --chart-1: oklch(0.646 0.222 41.116);
@@ -76,7 +76,7 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  --background: oklch(0.145 0 0);
+  --background: oklch(30.118% 0.00003 271.152);
   --foreground: oklch(33.289% 0.00004 271.152);
 }
 
@@ -87,4 +87,45 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@layer components {
+  .darkBackground {
+    @apply bg-[#2e2e2e];
+  }
+  .darkBackground2 {
+    @apply bg-[#272727];
+  }
+  .darkBackground3 {
+    @apply bg-[#202020];
+  }
+  .cardBackground {
+    @apply bg-[#3F3F3F];
+  }
+  .redHighlight {
+    @apply bg-[#4d3030];
+  }
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #dc2626 #292929;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #252525;
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #dc2626;
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #b91c1c; /* red-700 */
 }

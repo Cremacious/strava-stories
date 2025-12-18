@@ -4,8 +4,8 @@ import { CircleMember } from '@/lib/types/circle-detail.type';
 
 const TopMembers = ({ circle }: { circle: { members: CircleMember[] } }) => {
   return (
-    <div className="border-red-900 border-2 p-2 md:p-4 rounded-2xl">
-      <Card className="bg-gray-800 border-gray-700 mb-6">
+    <div className="">
+      <Card className="border-0 cardBackground mb-6">
         <CardHeader>
           <CardTitle className="text-white flex items-center">
             <Trophy className="w-5 h-5 mr-2 text-red-400" />
@@ -17,7 +17,7 @@ const TopMembers = ({ circle }: { circle: { members: CircleMember[] } }) => {
             {circle.members.slice(0, 4).map((member, index) => (
               <div
                 key={member.id}
-                className="flex items-center justify-between p-3 bg-gray-700 rounded-lg"
+                className="flex items-center justify-between p-3 darkBackground3 rounded-lg"
               >
                 <div className="flex items-center space-x-3">
                   <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-xs font-bold">

@@ -14,7 +14,7 @@ export default function UserLayout({
       </div>
 
       <div
-        className="flex-1 lg:flex-none lg:w-[calc(100%-32rem)] overflow-y-auto pb-20 lg:pb-0"
+        className="flex-1 lg:flex-none lg:w-[calc(100%-32rem)] overflow-y-auto pb-20 lg:pb-0 custom-scrollbar darkBackground2 "
         style={{ flexGrow: 1 }}
       >
         {children}
