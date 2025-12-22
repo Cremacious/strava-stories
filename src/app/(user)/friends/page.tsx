@@ -1,13 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import {
-  Search,
-  Filter,
-  SortAsc,
-  Users,
-  Circle,
-} from 'lucide-react';
+import { Search, Filter, SortAsc, Users, Circle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -82,18 +76,18 @@ const FriendsPage = () => {
       </div>
 
       {/* Search and Filters */}
-      <Card className="bg-gray-800 border-gray-700">
+      <Card className="bg-[#202020] border-0 max-w-4xl mx-auto">
         <CardContent className="p-4">
           <div className="flex flex-col lg:flex-row gap-4">
             {/* Search */}
             <div className="flex-1">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <Input
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white w-4 h-4 " />
+                <input
                   placeholder="Search friends by name or bio..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                  className="darkBackground hover:bg-[#4d3030] border border-red-700 rounded-full px-10 py-2 text-white placeholder-red-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent w-full"
                 />
               </div>
             </div>
@@ -106,11 +100,11 @@ const FriendsPage = () => {
                   setFilterBy(value)
                 }
               >
-                <SelectTrigger className="w-full sm:w-32 bg-gray-700 border-gray-600">
-                  <Filter className="w-4 h-4 mr-2" />
+                <SelectTrigger className="w-full sm:w-32 bg-[#2e2e2e] text-white border-red-900/40">
+                  <Filter className="w-4 h-4 mr-2 text-white" />
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-gray-700 border-gray-600">
+                <SelectContent className="bg-[#2e2e2e] text-white border-0">
                   <SelectItem value="all">All</SelectItem>
                   <SelectItem value="online">Online</SelectItem>
                   <SelectItem value="circle">By Circle</SelectItem>
@@ -122,10 +116,10 @@ const FriendsPage = () => {
                   value={selectedCircle}
                   onValueChange={setSelectedCircle}
                 >
-                  <SelectTrigger className="w-full sm:w-40 bg-gray-700 border-gray-600">
+                  <SelectTrigger className="w-full sm:w-40 bg-[#2e2e2e] text-white border-red-900/40">
                     <SelectValue placeholder="Select circle" />
                   </SelectTrigger>
-                  <SelectContent className="bg-gray-700 border-gray-600">
+                  <SelectContent className="bg-[#2e2e2e] text-white border-0">
                     <SelectItem value="all">All Circles</SelectItem>
                     {allCircles.map((circle) => (
                       <SelectItem key={circle} value={circle}>
@@ -140,11 +134,11 @@ const FriendsPage = () => {
                 value={sortBy}
                 onValueChange={(value: FriendSortOption) => setSortBy(value)}
               >
-                <SelectTrigger className="w-full sm:w-32 bg-gray-700 border-gray-600">
-                  <SortAsc className="w-4 h-4 mr-2" />
+                <SelectTrigger className="w-full sm:w-32 bg-[#2e2e2e] text-white border-red-900/40">
+                  <SortAsc className="w-4 h-4 mr-2 text-white" />
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-gray-700 border-gray-600">
+                <SelectContent className="bg-[#2e2e2e] text-white border-0">
                   <SelectItem value="name">Name</SelectItem>
                   <SelectItem value="activity">Activity</SelectItem>
                   <SelectItem value="circles">Circles</SelectItem>
@@ -160,7 +154,7 @@ const FriendsPage = () => {
         {filteredAndSortedFriends.map((friend) => (
           <Card
             key={friend.id}
-            className="bg-gray-800 border-gray-700 hover:border-red-500 transition-colors"
+            className="darkBackground border-0 hover:border-red-500 transition-colors"
           >
             <CardHeader className="pb-3">
               <div className="flex items-center space-x-3">
@@ -170,24 +164,23 @@ const FriendsPage = () => {
                     alt={`${friend.name} avatar`}
                     width={48}
                     height={48}
-                    className="w-12 h-12 rounded-full border-2 border-gray-600"
+                    className="w-12 h-12 rounded-full border-2 border-red-600"
                   />
-              
                 </div>
                 <div className="flex-1 min-w-0">
                   <CardTitle className="text-white text-lg truncate">
                     {friend.name}
                   </CardTitle>
-                  <p className="text-gray-400 text-sm">{friend.lastActivity}</p>
+                  <p className="text-gray-100 text-sm">{friend.lastActivity}</p>
                 </div>
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              <p className="text-gray-300 text-sm line-clamp-2">{friend.bio}</p>
+              <p className="text-gray-100 text-sm line-clamp-2">{friend.bio}</p>
 
               {/* Circles */}
               <div className="space-y-2">
-                <div className="flex items-center text-gray-400 text-sm">
+                <div className="flex items-center text-gray-100 text-sm">
                   <Circle className="w-4 h-4 mr-1" />
                   <span>{friend.circles.length} circles</span>
                 </div>
@@ -210,7 +203,7 @@ const FriendsPage = () => {
 
               {/* Mutual Friends */}
               <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-400">
+                <span className="text-red-400">
                   {friend.mutualFriends} mutual friends
                 </span>
                 <Button
@@ -228,7 +221,7 @@ const FriendsPage = () => {
 
       {/* Empty State */}
       {filteredAndSortedFriends.length === 0 && (
-        <Card className="bg-gray-800 border-gray-700">
+        <Card className="darkBackground3 border-gray-700">
           <CardContent className="p-8 text-center">
             <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-white mb-2">

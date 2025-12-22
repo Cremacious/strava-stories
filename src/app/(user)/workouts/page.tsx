@@ -330,9 +330,9 @@ const WorkoutsPage = () => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="bg-gray-800 border-gray-700">
+        <Card className="backgroundDark border-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-400">
+            <CardTitle className="text-sm font-medium text-red-400">
               Total Workouts
             </CardTitle>
             <Activity className="h-4 w-4 text-red-400" />
@@ -341,9 +341,9 @@ const WorkoutsPage = () => {
             <div className="text-2xl font-bold text-white">{totalWorkouts}</div>
           </CardContent>
         </Card>
-        <Card className="bg-gray-800 border-gray-700">
+        <Card className="backgroundDark border-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-400">
+            <CardTitle className="text-sm font-medium text-red-400">
               Total Duration
             </CardTitle>
             <Clock className="h-4 w-4 text-red-400" />
@@ -354,9 +354,9 @@ const WorkoutsPage = () => {
             </div>
           </CardContent>
         </Card>
-        <Card className="bg-gray-800 border-gray-700">
+        <Card className="backgroundDark border-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-400">
+            <CardTitle className="text-sm font-medium text-red-400">
               Total Distance
             </CardTitle>
             <MapPin className="h-4 w-4 text-red-400" />
@@ -367,9 +367,9 @@ const WorkoutsPage = () => {
             </div>
           </CardContent>
         </Card>
-        <Card className="bg-gray-800 border-gray-700">
+        <Card className="backgroundDark border-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-400">
+            <CardTitle className="text-sm font-medium text-red-400">
               Total Calories
             </CardTitle>
             <Zap className="h-4 w-4 text-red-400" />
@@ -381,7 +381,7 @@ const WorkoutsPage = () => {
       </div>
 
       <div className="flex flex-col gap-6">
-        <Card className="bg-gray-800 border-gray-700">
+        <Card className="darkBackground border-0">
           <CardHeader>
             <CardTitle className="text-white flex items-center">
               <TrendingUp className="w-5 h-5 mr-2 text-red-400" />
@@ -394,13 +394,13 @@ const WorkoutsPage = () => {
                 <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                 <XAxis
                   dataKey="date"
-                  stroke="#9ca3af"
+                  stroke="#ffffff"
                   tick={{ fontSize: 12 }}
                 />
-                <YAxis stroke="#9ca3af" tick={{ fontSize: 12 }} />
+                <YAxis stroke="#ffffff" tick={{ fontSize: 12 }} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#1f2937',
+                    backgroundColor: '#272727',
                     border: '1px solid #374151',
                     borderRadius: '6px',
                     color: '#fff',
@@ -418,7 +418,7 @@ const WorkoutsPage = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-gray-800 border-gray-700">
+        <Card className="darkBackground border-0">
           <CardHeader>
             <CardTitle className="text-white flex items-center">
               <Target className="w-5 h-5 mr-2 text-red-400" />
@@ -444,11 +444,13 @@ const WorkoutsPage = () => {
                 </Pie>
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#1f2937',
+                    backgroundColor: '#272727',
                     border: '1px solid #374151',
                     borderRadius: '6px',
-                    color: '#fff',
+                    color: '#ffffff',
                   }}
+                  labelStyle={{ color: '#ffffff' }}
+                  itemStyle={{ color: '#ffffff' }}
                 />
               </PieChart>
             </ResponsiveContainer>
@@ -456,7 +458,7 @@ const WorkoutsPage = () => {
         </Card>
       </div>
 
-      <Card className="bg-gray-800 border-gray-700">
+      <Card className="darkBackground border-0">
         <CardHeader>
           <CardTitle className="text-white flex items-center">
             <Calendar className="w-5 h-5 mr-2 text-red-400" />
@@ -471,7 +473,7 @@ const WorkoutsPage = () => {
               .map((workout, index) => (
                 <div
                   key={index}
-                  className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 bg-gray-700 rounded-lg gap-3"
+                  className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 darkBackground3 rounded-lg gap-3"
                 >
                   <div className="flex items-center space-x-4">
                     <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center shrink-0">
@@ -481,14 +483,14 @@ const WorkoutsPage = () => {
                       <p className="font-semibold text-white truncate">
                         {workout.type}
                       </p>
-                      <p className="text-sm text-gray-400">{workout.date}</p>
+                      <p className="text-sm text-gray-100">{workout.date}</p>
                     </div>
                   </div>
                   <div className="flex sm:flex-col sm:items-end gap-2 sm:gap-0">
                     <p className="text-white font-medium">
                       {workout.duration} min
                     </p>
-                    <p className="text-sm text-gray-400">
+                    <p className="text-sm text-gray-100">
                       {workout.distance > 0 ? `${workout.distance} km • ` : ''}
                       {workout.calories} cal
                     </p>

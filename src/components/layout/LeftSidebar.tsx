@@ -1,18 +1,27 @@
+'use client';
 import { menuItems } from '@/lib/constants';
+import { usePathname } from 'next/navigation';
 
 const LeftSidebar = () => {
+  const pathname = usePathname();
+
   return (
     <div className="hidden md:block border-red-900/40  border-r-2 p-4 h-screen w-full">
       <nav className="space-y-2 text-right">
-        {menuItems.map((item) => (
-          <a
-            key={item.name}
-            href={item.href}
-            className="block px-4 py-3 text-gray-300 hover:text-red-400 hover:bg-gray-800 rounded-lg transition-colors duration-200 font-medium text-right"
-          >
-            {item.name}
-          </a>
-        ))}
+        {menuItems.map((item) => {
+          const isActive = pathname === item.href;
+          return (
+            <a
+              key={item.name}
+              href={item.href}
+              className={`block px-4 py-3 rounded-lg transition-colors duration-200 font-medium text-right ${
+                isActive ? 'text-red-400 ' : 'text-gray-300 '
+              }`}
+            >
+              {item.name}
+            </a>
+          );
+        })}
       </nav>
     </div>
   );

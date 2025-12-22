@@ -3,7 +3,6 @@
 import { Calendar, MapPin, Users, Activity } from 'lucide-react';
 import SocialPost from '@/components/shared/SocialPost';
 
-
 const userProfile = {
   name: 'Alex Johnson',
   avatar: '/placeholder-avatar.jpg',
@@ -15,7 +14,6 @@ const userProfile = {
     workouts: 156,
   },
 };
-
 
 const userPosts = [
   {
@@ -91,7 +89,7 @@ const ProfilePage = () => {
   return (
     <div className="max-w-4xl mx-auto p-4 sm:p-6 space-y-6">
       {/* Profile Header */}
-      <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
+      <div className="border-0 rounded-lg p-6">
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
           {/* Profile Image */}
           <div className="relative">

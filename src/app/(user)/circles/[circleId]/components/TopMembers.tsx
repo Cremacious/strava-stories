@@ -17,7 +17,7 @@ const TopMembers = ({ circle }: { circle: { members: CircleMember[] } }) => {
             {circle.members.slice(0, 4).map((member, index) => (
               <div
                 key={member.id}
-                className="flex items-center justify-between p-3 darkBackground3 rounded-lg"
+                className="flex items-center justify-between p-3 darkBackground2 rounded-lg"
               >
                 <div className="flex items-center space-x-3">
                   <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-xs font-bold">
