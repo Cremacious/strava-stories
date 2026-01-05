@@ -1,5 +1,6 @@
 import { create } from 'zustand';
-import { addWorkout, WorkoutData } from '@/actions/workout.actions';
+import { addWorkout } from '@/actions/workout.actions';
+import { WorkoutData } from '@/lib/types/workouts.type';
 
 export interface Workout {
   id: string;

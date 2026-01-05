@@ -13,68 +13,32 @@ import {
 } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, Target } from 'lucide-react';
+import { WorkoutDisplayData } from '@/lib/types/workouts.type';
 
-const activityTypes = [
-  { name: 'Running', value: 35, color: '#ef4444' },
-  { name: 'Cycling', value: 30, color: '#f97316' },
-  { name: 'Strength Training', value: 20, color: '#eab308' },
-  { name: 'Yoga', value: 10, color: '#22c55e' },
-  { name: 'Swimming', value: 5, color: '#3b82f6' },
-];
+const typeColors: Record<string, string> = {
+  Running: '#ef4444',
+  Cycling: '#f97316',
+  'Strength Training': '#eab308',
+  Yoga: '#22c55e',
+  Swimming: '#3b82f6',
+};
 
-const workoutData = [
-  {
-    date: '2024-12-01',
-    duration: 45,
-    distance: 8.5,
-    calories: 320,
-    type: 'Running',
-  },
-  {
-    date: '2024-12-02',
-    duration: 60,
-    distance: 0,
-    calories: 280,
-    type: 'Cycling',
-  },
-  {
-    date: '2024-12-03',
-    duration: 30,
-    distance: 0,
-    calories: 180,
-    type: 'Strength Training',
-  },
-  {
-    date: '2024-12-04',
-    duration: 50,
-    distance: 10.2,
-    calories: 380,
-    type: 'Running',
-  },
-  {
-    date: '2024-12-05',
-    duration: 45,
-    distance: 0,
-    calories: 250,
-    type: 'Yoga',
-  },
-  {
-    date: '2024-12-06',
-    duration: 75,
-    distance: 15.8,
-    calories: 450,
-    type: 'Cycling',
-  },
-  {
-    date: '2024-12-07',
-    duration: 40,
-    distance: 6.2,
-    calories: 290,
-    type: 'Running',
-  },
-];
+const WorkoutGraph = ({
+  workoutData,
+}: {
+  workoutData: WorkoutDisplayData[];
+}) => {
+  const activityCounts = workoutData.reduce((acc, workout) => {
+    acc[workout.type] = (acc[workout.type] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
 
-const WorkoutGraph = () => {
+  const activityTypes = Object.entries(activityCounts).map(([name, value]) => ({
+    name,
+    value,
+    color: typeColors[name] || '#8884d8',
+  }));
+
   return (
     <div className="flex flex-col gap-6">
       <Card className="darkBackground border-0">

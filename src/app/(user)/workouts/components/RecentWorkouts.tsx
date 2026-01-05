@@ -1,60 +1,13 @@
 'use client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar, Activity } from 'lucide-react';
+import { WorkoutDisplayData } from '@/lib/types/workouts.type';
 
-const workoutData = [
-  {
-    date: '2024-12-01',
-    duration: 45,
-    distance: 8.5,
-    calories: 320,
-    type: 'Running',
-  },
-  {
-    date: '2024-12-02',
-    duration: 60,
-    distance: 0,
-    calories: 280,
-    type: 'Cycling',
-  },
-  {
-    date: '2024-12-03',
-    duration: 30,
-    distance: 0,
-    calories: 180,
-    type: 'Strength Training',
-  },
-  {
-    date: '2024-12-04',
-    duration: 50,
-    distance: 10.2,
-    calories: 380,
-    type: 'Running',
-  },
-  {
-    date: '2024-12-05',
-    duration: 45,
-    distance: 0,
-    calories: 250,
-    type: 'Yoga',
-  },
-  {
-    date: '2024-12-06',
-    duration: 75,
-    distance: 15.8,
-    calories: 450,
-    type: 'Cycling',
-  },
-  {
-    date: '2024-12-07',
-    duration: 40,
-    distance: 6.2,
-    calories: 290,
-    type: 'Running',
-  },
-];
-
-const RecentWorkouts = () => {
+const RecentWorkouts = ({
+  workoutData,
+}: {
+  workoutData: WorkoutDisplayData[];
+}) => {
   return (
     <Card className="darkBackground border-0">
       <CardHeader>
@@ -67,7 +20,6 @@ const RecentWorkouts = () => {
         <div className="space-y-4">
           {workoutData
             .slice(-5)
-            .reverse()
             .map((workout, index) => (
               <div
                 key={index}

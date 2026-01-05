@@ -19,7 +19,7 @@ import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useWorkoutStore } from '@/stores/useWorkoutStore';
-import { WorkoutData } from '@/actions/workout.actions';
+import { WorkoutData } from '@/lib/types/workouts.type';
 
 const AddWorkoutButton = () => {
   const workoutTypes = [
@@ -60,10 +60,10 @@ const AddWorkoutButton = () => {
       type: newWorkout.type,
       duration: newWorkout.duration
         ? parseInt(newWorkout.duration) * 60
-        : undefined, // convert minutes to seconds
+        : undefined,
       distance: newWorkout.distance
         ? parseFloat(newWorkout.distance) * 1000
-        : undefined, // convert km to meters
+        : undefined,
       calories: newWorkout.calories ? parseInt(newWorkout.calories) : undefined,
       date: new Date(newWorkout.date),
     };
@@ -103,24 +103,24 @@ const AddWorkoutButton = () => {
             Add Workout
           </Button>
         </DialogTrigger>
-        <DialogContent className="bg-gray-800 border-gray-700 text-white max-w-md w-[95vw] max-h-[90vh] overflow-y-auto">
+        <DialogContent className="darkBackground2 border-0 text-white max-w-md w-[95vw] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Add New Workout</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Title *</label>
+              <label className="block text-sm font-medium mb-1 text-red-500">Title *</label>
               <Input
                 placeholder="Morning Run"
                 value={newWorkout.title}
                 onChange={(e) =>
                   setNewWorkout({ ...newWorkout, title: e.target.value })
                 }
-                className="bg-gray-700 border-gray-600"
+                
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">
+              <label className="block text-sm font-medium mb-1 text-red-500">
                 Workout Type *
               </label>
               <Select
@@ -129,10 +129,10 @@ const AddWorkoutButton = () => {
                   setNewWorkout({ ...newWorkout, type: value })
                 }
               >
-                <SelectTrigger className="bg-gray-700 border-gray-600">
+                <SelectTrigger>
                   <SelectValue placeholder="Select workout type" />
                 </SelectTrigger>
-                <SelectContent className="bg-gray-700 border-gray-600">
+                <SelectContent className="bg-[#272727] border-0 text-white">
                   {workoutTypes.map((type) => (
                     <SelectItem key={type} value={type}>
                       {type}
@@ -143,7 +143,7 @@ const AddWorkoutButton = () => {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm font-medium mb-1">
+                <label className="block text-sm font-medium mb-1 text-red-500">
                   Duration (min)
                 </label>
                 <Input
@@ -156,11 +156,10 @@ const AddWorkoutButton = () => {
                       duration: e.target.value,
                     })
                   }
-                  className="bg-gray-700 border-gray-600"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">
+                <label className="block text-sm font-medium mb-1 text-red-500">
                   Distance (km)
                 </label>
                 <Input
@@ -174,13 +173,12 @@ const AddWorkoutButton = () => {
                       distance: e.target.value,
                     })
                   }
-                  className="bg-gray-700 border-gray-600"
                 />
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm font-medium mb-1">
+                <label className="block text-sm font-medium mb-1 text-red-500">
                   Calories
                 </label>
                 <Input
@@ -193,23 +191,21 @@ const AddWorkoutButton = () => {
                       calories: e.target.value,
                     })
                   }
-                  className="bg-gray-700 border-gray-600"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Date *</label>
+                <label className="block text-sm font-medium mb-1 text-red-500">Date *</label>
                 <Input
                   type="date"
                   value={newWorkout.date}
                   onChange={(e) =>
                     setNewWorkout({ ...newWorkout, date: e.target.value })
                   }
-                  className="bg-gray-700 border-gray-600"
                 />
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">
+              <label className="block text-sm font-medium mb-1 text-red-500">
                 Description (optional)
               </label>
               <Textarea
@@ -218,18 +214,25 @@ const AddWorkoutButton = () => {
                 onChange={(e) =>
                   setNewWorkout({ ...newWorkout, description: e.target.value })
                 }
-                className="bg-gray-700 border-gray-600"
                 rows={3}
               />
             </div>
             {error && <p className="text-sm text-red-500">{error}</p>}
-            <Button
-              onClick={handleAddWorkout}
-              className="w-full bg-red-500 hover:bg-red-600"
-              disabled={isLoading}
-            >
-              {isLoading ? 'Adding...' : 'Add Workout'}
-            </Button>
+            <div className="flex flex-row space-x-2 mt-4 justify-center">
+              <Button
+                variant="secondary"
+                onClick={() => setIsAddWorkoutOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleAddWorkout}
+                className="w-3/4"
+                disabled={isLoading}
+              >
+                {isLoading ? 'Adding...' : 'Add Workout'}
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>

@@ -2,16 +2,8 @@
 
 import { prisma } from '@/lib/prisma';
 import { createClient } from '@/lib/supabase/server';
+import { WorkoutData } from '@/lib/types/workouts.type';
 
-export interface WorkoutData {
-  title: string;
-  description?: string;
-  type: string;
-  duration?: number; // in seconds
-  distance?: number; // in meters
-  calories?: number;
-  date: Date;
-}
 
 export async function addWorkout(data: WorkoutData) {
   try {
@@ -41,6 +33,33 @@ export async function addWorkout(data: WorkoutData) {
     return { success: true, workout };
   } catch (error) {
     console.error('Error adding workout:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}
+
+export async function getWorkouts() {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      throw new Error('User not authenticated');
+    }
+
+    const workouts = await prisma.workout.findMany({
+      where: { userId: user.id },
+      orderBy: { date: 'desc' },
+    });
+
+    return { success: true, workouts };
+  } catch (error) {
+    console.error('Error fetching workouts:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error',
