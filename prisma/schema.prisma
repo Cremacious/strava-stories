@@ -13,18 +13,29 @@ datasource db {
   provider = "postgresql"
 }
 
-model Post {
-  id        Int     @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean @default(false)
-  author    User?   @relation(fields: [authorId], references: [id])
-  authorId  Int?
+model User {
+  id        String    @id @db.Uuid // Matches Supabase auth.users.id
+  email     String    @unique
+  name      String?
+  avatarUrl String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  workouts  Workout[]
 }
 
-model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-  posts Post[]
+model Workout {
+  id          String   @id @default(cuid())
+  userId      String   @db.Uuid
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  type        String   
+  duration    Int?     // in seconds
+  distance    Float?   // in meters
+  calories    Int?
+  date        DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
 }

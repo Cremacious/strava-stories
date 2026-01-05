@@ -1,4 +1,5 @@
 import { Bell, User } from 'lucide-react';
+import { LogoutButton } from '../logout-button';
 
 const Navbar = () => {
   return (
@@ -20,6 +21,7 @@ const Navbar = () => {
         </div> */}
 
         <div className="flex items-center space-x-4">
+          <LogoutButton />
           {/* <Search className="md:hidden text-gray-400 w-5 h-5" /> */}
           <button className="text-red-400 hover:text-red-400 transition-colors">
             <Bell className="w-5 h-5" />

@@ -18,6 +18,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
+import { useWorkoutStore } from '@/stores/useWorkoutStore';
+import { WorkoutData } from '@/actions/workout.actions';
 
 const AddWorkoutButton = () => {
   const workoutTypes = [
@@ -35,32 +37,63 @@ const AddWorkoutButton = () => {
 
   const [isAddWorkoutOpen, setIsAddWorkoutOpen] = useState(false);
   const [newWorkout, setNewWorkout] = useState({
+    title: '',
+    description: '',
     type: '',
     duration: '',
     distance: '',
     calories: '',
     date: '',
-    notes: '',
-    location: '',
   });
 
-  const handleAddWorkout = () => {
-    console.log('Adding workout:', newWorkout);
-    setIsAddWorkoutOpen(false);
-    setNewWorkout({
-      type: '',
-      duration: '',
-      distance: '',
-      calories: '',
-      date: '',
-      notes: '',
-      location: '',
-    });
+  const { addWorkout, isLoading, error, clearError } = useWorkoutStore();
+
+  const handleAddWorkout = async () => {
+    if (!newWorkout.title || !newWorkout.type || !newWorkout.date) {
+      alert('Please fill in title, type, and date');
+      return;
+    }
+
+    const workoutData: WorkoutData = {
+      title: newWorkout.title,
+      description: newWorkout.description || undefined,
+      type: newWorkout.type,
+      duration: newWorkout.duration
+        ? parseInt(newWorkout.duration) * 60
+        : undefined, // convert minutes to seconds
+      distance: newWorkout.distance
+        ? parseFloat(newWorkout.distance) * 1000
+        : undefined, // convert km to meters
+      calories: newWorkout.calories ? parseInt(newWorkout.calories) : undefined,
+      date: new Date(newWorkout.date),
+    };
+
+    await addWorkout(workoutData);
+
+    if (!error) {
+      setIsAddWorkoutOpen(false);
+      setNewWorkout({
+        title: '',
+        description: '',
+        type: '',
+        duration: '',
+        distance: '',
+        calories: '',
+        date: '',
+      });
+    }
+  };
+
+  const handleOpenChange = (open: boolean) => {
+    setIsAddWorkoutOpen(open);
+    if (!open) {
+      clearError();
+    }
   };
 
   return (
     <>
-      <Dialog open={isAddWorkoutOpen} onOpenChange={setIsAddWorkoutOpen}>
+      <Dialog open={isAddWorkoutOpen} onOpenChange={handleOpenChange}>
         <DialogTrigger asChild>
           <Button
             className="bg-red-500 hover:bg-red-600 text-white w-full sm:w-auto"
@@ -76,8 +109,19 @@ const AddWorkoutButton = () => {
           </DialogHeader>
           <div className="space-y-4">
             <div>
+              <label className="block text-sm font-medium mb-1">Title *</label>
+              <Input
+                placeholder="Morning Run"
+                value={newWorkout.title}
+                onChange={(e) =>
+                  setNewWorkout({ ...newWorkout, title: e.target.value })
+                }
+                className="bg-gray-700 border-gray-600"
+              />
+            </div>
+            <div>
               <label className="block text-sm font-medium mb-1">
-                Workout Type
+                Workout Type *
               </label>
               <Select
                 value={newWorkout.type}
@@ -153,7 +197,7 @@ const AddWorkoutButton = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Date</label>
+                <label className="block text-sm font-medium mb-1">Date *</label>
                 <Input
                   type="date"
                   value={newWorkout.date}
@@ -166,36 +210,25 @@ const AddWorkoutButton = () => {
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">
-                Location (optional)
-              </label>
-              <Input
-                placeholder="Gym, Park, Home..."
-                value={newWorkout.location}
-                onChange={(e) =>
-                  setNewWorkout({ ...newWorkout, location: e.target.value })
-                }
-                className="bg-gray-700 border-gray-600"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                Notes (optional)
+                Description (optional)
               </label>
               <Textarea
                 placeholder="How did the workout feel?"
-                value={newWorkout.notes}
+                value={newWorkout.description}
                 onChange={(e) =>
-                  setNewWorkout({ ...newWorkout, notes: e.target.value })
+                  setNewWorkout({ ...newWorkout, description: e.target.value })
                 }
                 className="bg-gray-700 border-gray-600"
                 rows={3}
               />
             </div>
+            {error && <p className="text-sm text-red-500">{error}</p>}
             <Button
               onClick={handleAddWorkout}
               className="w-full bg-red-500 hover:bg-red-600"
+              disabled={isLoading}
             >
-              Add Workout
+              {isLoading ? 'Adding...' : 'Add Workout'}
             </Button>
           </div>
         </DialogContent>
