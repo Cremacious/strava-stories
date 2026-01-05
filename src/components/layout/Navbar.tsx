@@ -1,4 +1,4 @@
-import { Search, Bell, User } from 'lucide-react';
+import { Bell, User } from 'lucide-react';
 
 const Navbar = () => {
   return (
@@ -8,7 +8,7 @@ const Navbar = () => {
           <h1 className="text-xl font-bold text-red-400">Strava Stories</h1>
         </div>
 
-        <div className="hidden md:block flex-1 max-w-md mx-8">
+        {/* <div className="hidden md:block flex-1 max-w-md mx-8">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-red-400 w-4 h-4" />
             <input
@@ -17,10 +17,10 @@ const Navbar = () => {
               className="w-full darkBackground hover:bg-[#4d3030] border border-red-700 rounded-full px-10 py-2 text-red-400 placeholder-red-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
             />
           </div>
-        </div>
+        </div> */}
 
         <div className="flex items-center space-x-4">
-          <Search className="md:hidden text-gray-400 w-5 h-5" />
+          {/* <Search className="md:hidden text-gray-400 w-5 h-5" /> */}
           <button className="text-red-400 hover:text-red-400 transition-colors">
             <Bell className="w-5 h-5" />
           </button>

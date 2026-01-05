@@ -1,47 +1,16 @@
-'use client';
-
-import { useState } from 'react';
 import {
-  Plus,
   Activity,
-  TrendingUp,
-  Calendar,
   MapPin,
   Clock,
   Zap,
-  Target,
   RefreshCw,
 } from 'lucide-react';
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-} from 'recharts';
+import WorkoutGraph from './components/WorkoutGraph';
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import AddWorkoutButton from './components/AddWorkoutButton';
+import RecentWorkouts from './components/RecentWorkouts';
 
 const workoutData = [
   {
@@ -95,57 +64,7 @@ const workoutData = [
   },
 ];
 
-const activityTypes = [
-  { name: 'Running', value: 35, color: '#ef4444' },
-  { name: 'Cycling', value: 30, color: '#f97316' },
-  { name: 'Strength Training', value: 20, color: '#eab308' },
-  { name: 'Yoga', value: 10, color: '#22c55e' },
-  { name: 'Swimming', value: 5, color: '#3b82f6' },
-];
-
-const workoutTypes = [
-  'Running',
-  'Cycling',
-  'Strength Training',
-  'Yoga',
-  'Swimming',
-  'Hiking',
-  'CrossFit',
-  'Pilates',
-  'Boxing',
-  'Other',
-];
-
 const WorkoutsPage = () => {
-  const [isAddWorkoutOpen, setIsAddWorkoutOpen] = useState(false);
-  const [newWorkout, setNewWorkout] = useState({
-    type: '',
-    duration: '',
-    distance: '',
-    calories: '',
-    date: '',
-    notes: '',
-    location: '',
-  });
-
-  const handleAddWorkout = () => {
-    console.log('Adding workout:', newWorkout);
-    setIsAddWorkoutOpen(false);
-    setNewWorkout({
-      type: '',
-      duration: '',
-      distance: '',
-      calories: '',
-      date: '',
-      notes: '',
-      location: '',
-    });
-  };
-
-  const handleStravaSync = () => {
-    console.log('Syncing with Strava...');
-  };
-
   const totalWorkouts = workoutData.length;
   const totalDuration = workoutData.reduce(
     (sum, workout) => sum + workout.duration,
@@ -174,7 +93,6 @@ const WorkoutsPage = () => {
         </div>
         <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
           <Button
-            onClick={handleStravaSync}
             variant="outline"
             size="sm"
             className="border-red-500 text-red-400 hover:bg-red-500 hover:text-white w-full sm:w-auto"
@@ -183,148 +101,7 @@ const WorkoutsPage = () => {
 
             <span className="">Sync With Strava</span>
           </Button>
-          <Dialog open={isAddWorkoutOpen} onOpenChange={setIsAddWorkoutOpen}>
-            <DialogTrigger asChild>
-              <Button
-                className="bg-red-500 hover:bg-red-600 text-white w-full sm:w-auto"
-                size="sm"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Add Workout
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="bg-gray-800 border-gray-700 text-white max-w-md w-[95vw] max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>Add New Workout</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">
-                    Workout Type
-                  </label>
-                  <Select
-                    value={newWorkout.type}
-                    onValueChange={(value) =>
-                      setNewWorkout({ ...newWorkout, type: value })
-                    }
-                  >
-                    <SelectTrigger className="bg-gray-700 border-gray-600">
-                      <SelectValue placeholder="Select workout type" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-gray-700 border-gray-600">
-                      {workoutTypes.map((type) => (
-                        <SelectItem key={type} value={type}>
-                          {type}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-sm font-medium mb-1">
-                      Duration (min)
-                    </label>
-                    <Input
-                      type="number"
-                      placeholder="45"
-                      value={newWorkout.duration}
-                      onChange={(e) =>
-                        setNewWorkout({
-                          ...newWorkout,
-                          duration: e.target.value,
-                        })
-                      }
-                      className="bg-gray-700 border-gray-600"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">
-                      Distance (km)
-                    </label>
-                    <Input
-                      type="number"
-                      step="0.1"
-                      placeholder="8.5"
-                      value={newWorkout.distance}
-                      onChange={(e) =>
-                        setNewWorkout({
-                          ...newWorkout,
-                          distance: e.target.value,
-                        })
-                      }
-                      className="bg-gray-700 border-gray-600"
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-sm font-medium mb-1">
-                      Calories
-                    </label>
-                    <Input
-                      type="number"
-                      placeholder="320"
-                      value={newWorkout.calories}
-                      onChange={(e) =>
-                        setNewWorkout({
-                          ...newWorkout,
-                          calories: e.target.value,
-                        })
-                      }
-                      className="bg-gray-700 border-gray-600"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">
-                      Date
-                    </label>
-                    <Input
-                      type="date"
-                      value={newWorkout.date}
-                      onChange={(e) =>
-                        setNewWorkout({ ...newWorkout, date: e.target.value })
-                      }
-                      className="bg-gray-700 border-gray-600"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">
-                    Location (optional)
-                  </label>
-                  <Input
-                    placeholder="Gym, Park, Home..."
-                    value={newWorkout.location}
-                    onChange={(e) =>
-                      setNewWorkout({ ...newWorkout, location: e.target.value })
-                    }
-                    className="bg-gray-700 border-gray-600"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">
-                    Notes (optional)
-                  </label>
-                  <Textarea
-                    placeholder="How did the workout feel?"
-                    value={newWorkout.notes}
-                    onChange={(e) =>
-                      setNewWorkout({ ...newWorkout, notes: e.target.value })
-                    }
-                    className="bg-gray-700 border-gray-600"
-                    rows={3}
-                  />
-                </div>
-                <Button
-                  onClick={handleAddWorkout}
-                  className="w-full bg-red-500 hover:bg-red-600"
-                >
-                  Add Workout
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
+          <AddWorkoutButton />
         </div>
       </div>
 
@@ -380,126 +157,9 @@ const WorkoutsPage = () => {
         </Card>
       </div>
 
-      <div className="flex flex-col gap-6">
-        <Card className="darkBackground border-0">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center">
-              <TrendingUp className="w-5 h-5 mr-2 text-red-400" />
-              Workout Duration Trend
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={workoutData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                <XAxis
-                  dataKey="date"
-                  stroke="#ffffff"
-                  tick={{ fontSize: 12 }}
-                />
-                <YAxis stroke="#ffffff" tick={{ fontSize: 12 }} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#272727',
-                    border: '1px solid #374151',
-                    borderRadius: '6px',
-                    color: '#fff',
-                  }}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="duration"
-                  stroke="#ef4444"
-                  strokeWidth={2}
-                  dot={{ fill: '#ef4444', strokeWidth: 2, r: 4 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
+      <WorkoutGraph />
 
-        <Card className="darkBackground border-0">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center">
-              <Target className="w-5 h-5 mr-2 text-red-400" />
-              Activity Types
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={activityTypes}
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={80}
-                  dataKey="value"
-                  label={({ name, percent }) =>
-                    `${name} ${((percent ?? 0) * 100).toFixed(0)}%`
-                  }
-                >
-                  {activityTypes.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#272727',
-                    border: '1px solid #374151',
-                    borderRadius: '6px',
-                    color: '#ffffff',
-                  }}
-                  labelStyle={{ color: '#ffffff' }}
-                  itemStyle={{ color: '#ffffff' }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card className="darkBackground border-0">
-        <CardHeader>
-          <CardTitle className="text-white flex items-center">
-            <Calendar className="w-5 h-5 mr-2 text-red-400" />
-            Recent Workouts
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {workoutData
-              .slice(-5)
-              .reverse()
-              .map((workout, index) => (
-                <div
-                  key={index}
-                  className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 darkBackground3 rounded-lg gap-3"
-                >
-                  <div className="flex items-center space-x-4">
-                    <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center shrink-0">
-                      <Activity className="w-5 h-5 text-white" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="font-semibold text-white truncate">
-                        {workout.type}
-                      </p>
-                      <p className="text-sm text-gray-100">{workout.date}</p>
-                    </div>
-                  </div>
-                  <div className="flex sm:flex-col sm:items-end gap-2 sm:gap-0">
-                    <p className="text-white font-medium">
-                      {workout.duration} min
-                    </p>
-                    <p className="text-sm text-gray-100">
-                      {workout.distance > 0 ? `${workout.distance} km • ` : ''}
-                      {workout.calories} cal
-                    </p>
-                  </div>
-                </div>
-              ))}
-          </div>
-        </CardContent>
-      </Card>
+      <RecentWorkouts />
     </div>
   );
 };
