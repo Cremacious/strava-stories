@@ -59,6 +59,8 @@ export async function createCircle(data: CreateCircleData) {
   }
 }
 
+
+
 export async function getCircleById(
   circleId: string
 ): Promise<{ success: boolean; circle?: CircleDetail; error?: string }> {
@@ -229,3 +231,4 @@ export async function getFriends() {
     };
   }
 }
+

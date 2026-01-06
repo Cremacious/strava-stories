@@ -62,7 +62,7 @@ const CirclePage = async ({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-8">
-          <FeatureSelector />
+          <FeatureSelector circleId={circleId} />
 
           {/* <TopMembers circle={circle} /> */}
         </div>

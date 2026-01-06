@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 import { createCircle } from '@/actions/circle.actions';
+import { addWorkoutToCircle } from '@/actions/workout.actions';
+import { WorkoutData } from '@/lib/types/workouts.type';
 
 interface CreateCircleData {
   name: string;
@@ -14,12 +16,19 @@ interface Circle {
   ownerId: string;
 }
 
+// ...existing code...
+
 interface CircleStore {
   isLoading: boolean;
   error: string | null;
   createCircle: (
     data: CreateCircleData
   ) => Promise<{ success: boolean; circle?: Circle }>;
+  addWorkoutToCircle: (
+    workoutData: WorkoutData,
+    circleId: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ) => Promise<{ success: boolean; workout?: any; error?: string }>;
   clearError: () => void;
 }
 
@@ -47,4 +56,22 @@ export const useCircleStore = create<CircleStore>((set) => ({
       return { success: false };
     }
   },
+  addWorkoutToCircle: async (workoutData: WorkoutData, circleId: string) => {
+    set({ isLoading: true, error: null });
+    try {
+      const result = await addWorkoutToCircle(workoutData, circleId);
+      if (!result.success) {
+        set({ isLoading: false, error: result.error || 'Failed to add workout' });
+        return result;
+      }
+      set({ isLoading: false });
+      return result;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      set({ isLoading: false, error: errorMessage });
+      return { success: false, error: errorMessage };
+    }
+  },
 }));
+
+// ...existing code...

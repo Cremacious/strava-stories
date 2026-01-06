@@ -4,15 +4,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { circleDetailSample } from '@/lib/sample/circle-detail.sample';
 import { Heart, MapPin, MessageSquare, Plus, Trophy } from 'lucide-react';
 import { useState } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import AddWorkoutToCircleButton from './AddWorkoutToCircleButton';
 
-const FeatureSelector = () => {
+const FeatureSelector = ({ circleId }: { circleId: string }) => {
   const [activeTab, setActiveTab] = useState<
     'feed' | 'routines' | 'stories' | 'challenges' | 'events' | 'polls'
   >('feed');
   const circle = circleDetailSample;
   const router = useRouter();
-  const { circleId } = useParams();
+  // const { circleId } = useParams();
 
   const tabs = [
     { id: 'feed', label: 'Workout Feed', icon: '📊' },
@@ -48,15 +49,7 @@ const FeatureSelector = () => {
             <h2 className="text-2xl font-bold text-white">
               Recent Workout Logs
             </h2>
-            <Button
-              className="bg-red-500 hover:bg-red-600"
-              onClick={() =>
-                router.push(`/circles/${circleId}/create?type=workout`)
-              }
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Log Workout
-            </Button>
+            <AddWorkoutToCircleButton circleId={circleId} />
           </div>
           {circle.recentWorkouts.map((workout) => (
             <Card key={workout.id} className="bg-[#2e2e2e] border-0">
