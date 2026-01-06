@@ -13,20 +13,111 @@ datasource db {
   provider = "postgresql"
 }
 
+enum Privacy {
+  PUBLIC
+  FRIENDS
+}
+
+enum Feeling {
+  HAPPY
+  SAD
+  EXCITED
+  ANGRY
+  TIRED
+  MOTIVATED
+}
+
+enum TagType {
+  USER
+  LOCATION
+}
+
+enum CircleRole {
+  OWNER
+  MODERATOR
+  MEMBER
+}
+
+enum FriendshipStatus {
+  PENDING
+  ACCEPTED
+}
+
+enum Difficulty {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum ChallengeStatus {
+  UPCOMING
+  ACTIVE
+  COMPLETED
+  EXPIRED
+}
+
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+  ONGOING
+  COMPLETED
+  CANCELED
+}
+
+enum Visibility {
+  PUBLIC
+  PRIVATE
+  FRIENDS
+  CIRCLE
+}
+
+enum PollResultsVisibility {
+  LIVE
+  AFTER_CLOSE
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+  AUDIO
+  EMBED
+}
+
 model User {
-  id        String    @id @db.Uuid // Matches Supabase auth.users.id
+  id        String    @id @db.Uuid 
   email     String    @unique
   name      String?
   avatarUrl String?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  workouts  Workout[]
+
+
+  workouts Workout[]
+  posts Post[]
+  comments Comment[]
+  circles Circle[]
+  memberships CircleMember[]
+  friendships Friendship[] @relation("Friendships")
+  friendOf Friendship[] @relation("FriendOf")
+  routines WorkoutRoutine[]
+  routineComments RoutineComment[]
+  challenges CircleChallenge[]
+  events CircleEvent[]
+  polls CirclePoll[]
+  stories Story[]
+  storyComments StoryComment[]
+  storyLikes StoryLike[]
+  storyShares StoryShare[]
+  pollVotes PollVote[]
+  storyPollVotes StoryPollVote[]
 }
 
 model Workout {
   id          String   @id @default(cuid())
   userId      String   @db.Uuid
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  circleId    String?
+  circle      Circle?  @relation(fields: [circleId], references: [id], onDelete: Cascade)
   title       String
   description String?
   type        String   
@@ -36,6 +127,358 @@ model Workout {
   date        DateTime @default(now())
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@index([circleId])
+}
+
+model Post {
+  id        String     @id @default(cuid())
+  userId    String     @db.Uuid
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  circleId  String?
+  circle    Circle?    @relation(fields: [circleId], references: [id], onDelete: Cascade)
+  createdAt DateTime   @default(now())
+  content   String
+  privacy   Privacy    @default(FRIENDS)
+  feeling   Feeling?
+  images    PostImage[]
+  tags      PostTag[]
+  comments  Comment[]
+
+  @@index([userId])
+  @@index([circleId])
+}
+
+model PostImage {
+  id      String @id @default(cuid())
+  postId  String
+  post    Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  url     String
+  altText String?
+
+  @@index([postId])
+}
+
+model PostTag {
+  id     String   @id @default(cuid())
+  postId String
+  post   Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  type   TagType
+  value  String  
+
+  @@index([postId])
+}
+
+model Comment {
+  id       String    @id @default(cuid())
+  postId   String
+  post     Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId   String    @db.Uuid
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content  String
+  parentId String?
+  parent   Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies  Comment[] @relation("CommentReplies")
+  createdAt DateTime @default(now())
+
+  @@index([postId])
+  @@index([userId])
+  @@index([parentId])
+}
+
+model Circle {
+  id          String         @id @default(cuid())
+  name        String
+  description String?
+  coverImage  String?
+  createdAt   DateTime       @default(now())
+  ownerId     String         @db.Uuid
+  owner       User           @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  members     CircleMember[]
+  posts       Post[]
+  workouts    Workout[]
+  routines    WorkoutRoutine[]
+  stories     Story[]
+  challenges  CircleChallenge[]
+  events      CircleEvent[]
+  polls       CirclePoll[]
+
+  @@index([ownerId])
+}
+
+model CircleMember {
+  id       String     @id @default(cuid())
+  circleId String
+  circle   Circle     @relation(fields: [circleId], references: [id], onDelete: Cascade)
+  userId   String     @db.Uuid
+  user     User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role     CircleRole
+  joinedAt DateTime   @default(now())
+
+  @@unique([circleId, userId])
+  @@index([userId])
+}
+
+model Friendship {
+  id       String           @id @default(cuid())
+  userId   String           @db.Uuid
+  user     User             @relation("Friendships", fields: [userId], references: [id], onDelete: Cascade)
+  friendId String           @db.Uuid
+  friend   User             @relation("FriendOf", fields: [friendId], references: [id], onDelete: Cascade)
+  status   FriendshipStatus @default(PENDING)
+  createdAt DateTime        @default(now())
+
+  @@unique([userId, friendId])
+}
+
+model WorkoutRoutine {
+  id                 String           @id @default(cuid())
+  userId             String           @db.Uuid
+  user               User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  circleId           String?
+  circle             Circle?          @relation(fields: [circleId], references: [id], onDelete: Cascade)
+  title              String
+  description        String?
+  difficulty         Difficulty
+  estimatedDuration  Int?             // in seconds
+  requiredEquipment  String?
+  category           String?
+  fitnessGoals       String[]
+  tags               String[]
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  averageRating      Float            @default(0)
+  likesCount         Int              @default(0)
+  exercisesCount     Int              @default(0)
+  comments           RoutineComment[]
+
+  @@index([userId])
+  @@index([circleId])
+}
+
+model RoutineComment {
+  id       String          @id @default(cuid())
+  routineId String
+  routine  WorkoutRoutine  @relation(fields: [routineId], references: [id], onDelete: Cascade)
+  userId   String          @db.Uuid
+  user     User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content  String
+  parentId String?
+  parent   RoutineComment? @relation("RoutineCommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies  RoutineComment[] @relation("RoutineCommentReplies")
+  createdAt DateTime       @default(now())
+
+  @@index([routineId])
+  @@index([userId])
+  @@index([parentId])
+}
+
+model CircleChallenge {
+  id                   String         @id @default(cuid())
+  userId               String         @db.Uuid
+  user                 User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  circleId             String
+  circle               Circle         @relation(fields: [circleId], references: [id], onDelete: Cascade)
+  title                String
+  description          String
+  startDate            DateTime?
+  endDate              DateTime
+  status               ChallengeStatus @default(UPCOMING)
+  goal                 String
+  rules                String
+  category             String?
+  tags                 String[]
+  difficulty           Difficulty
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+  totalParticipants    Int            @default(0)
+  completedParticipants Int           @default(0)
+  averageProgress      Float          @default(0)
+
+  @@index([userId])
+  @@index([circleId])
+}
+
+model CircleEvent {
+  id                 String      @id @default(cuid())
+  userId             String      @db.Uuid
+  user               User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  circleId           String
+  circle             Circle      @relation(fields: [circleId], references: [id], onDelete: Cascade)
+  name               String
+  description        String
+  date               DateTime
+  location           String?
+  category           String?
+  image              String?
+  tags               String[]
+  status             EventStatus @default(DRAFT)
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+  publishedAt        DateTime?
+  totalRsvps         Int         @default(0)
+  confirmedAttendees Int         @default(0)
+
+  @@index([userId])
+  @@index([circleId])
+}
+
+model CirclePoll {
+  id                String               @id @default(cuid())
+  userId            String               @db.Uuid
+  user              User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  circleId          String
+  circle            Circle               @relation(fields: [circleId], references: [id], onDelete: Cascade)
+  question          String
+  options           PollOption[]
+  votes             PollVote[]
+  resultsVisibility PollResultsVisibility @default(LIVE)
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+  closedAt          DateTime?
+
+  @@index([userId])
+  @@index([circleId])
+}
+
+model PollOption {
+  id        String     @id @default(cuid())
+  pollId    String
+  poll      CirclePoll @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  text      String
+  votesCount Int       @default(0)
+  votes     PollVote[]
+
+  @@index([pollId])
+}
+
+model PollVote {
+  id       String      @id @default(cuid())
+  pollId   String
+  poll     CirclePoll  @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  optionId String
+  option   PollOption  @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  userId   String      @db.Uuid
+  user     User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  votedAt  DateTime    @default(now())
+
+  @@unique([pollId, userId])
+  @@index([userId])
+  @@index([optionId])
+}
+
+model Story {
+  id         String        @id @default(cuid())
+  userId     String        @db.Uuid
+  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  circleId   String?
+  circle     Circle?       @relation(fields: [circleId], references: [id], onDelete: Cascade)
+  title      String?
+  description String?
+  visibility Visibility    @default(FRIENDS)
+  tags       String[]
+  category   String?
+  isDraft    Boolean       @default(true)
+  publishedAt DateTime?
+  expiresAt  DateTime?
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+  events     StoryEvent[]
+  likes      StoryLike[]
+  comments   StoryComment[]
+  shares     StoryShare[]
+
+  @@index([userId])
+  @@index([circleId])
+}
+
+model StoryEvent {
+  id        String      @id @default(cuid())
+  storyId   String
+  story     Story       @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  order     Int
+  timestamp DateTime
+  location  String?
+  content   String
+  media     StoryMedia[]
+  polls     StoryPoll[]
+  createdAt DateTime    @default(now())
+
+  @@index([storyId])
+}
+
+model StoryMedia {
+  id      String    @id @default(cuid())
+  eventId String
+  event   StoryEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  type    MediaType
+  url     String
+  altText String?
+
+  @@index([eventId])
+}
+
+model StoryPoll {
+  id       String          @id @default(cuid())
+  eventId  String
+  event    StoryEvent      @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  question String
+  options  String[]
+  votes    StoryPollVote[]
+
+  @@index([eventId])
+}
+
+model StoryPollVote {
+  id          String     @id @default(cuid())
+  pollId      String
+  poll        StoryPoll  @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  userId      String     @db.Uuid
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  optionIndex Int
+  votedAt     DateTime   @default(now())
+
+  @@unique([pollId, userId])
+  @@index([userId])
+}
+
+model StoryLike {
+  id      String  @id @default(cuid())
+  storyId String
+  story   Story   @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  userId  String  @db.Uuid
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  likedAt DateTime @default(now())
+
+  @@unique([storyId, userId])
+  @@index([userId])
+}
+
+model StoryComment {
+  id       String         @id @default(cuid())
+  storyId  String
+  story    Story          @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  userId   String         @db.Uuid
+  user     User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content  String
+  parentId String?
+  parent   StoryComment?  @relation("StoryCommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies  StoryComment[] @relation("StoryCommentReplies")
+  createdAt DateTime      @default(now())
+
+  @@index([storyId])
+  @@index([userId])
+  @@index([parentId])
+}
+
+model StoryShare {
+  id       String  @id @default(cuid())
+  storyId  String
+  story    Story   @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  userId   String  @db.Uuid
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sharedAt DateTime @default(now())
 
   @@index([userId])
 }
