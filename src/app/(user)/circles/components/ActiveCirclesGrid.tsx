@@ -3,17 +3,12 @@ import { Users } from 'lucide-react';
 import { Circle } from '@/lib/types/circles.type';
 import Link from 'next/link';
 
-const circleId = '1111';
-
 const ActiveCirclesGrid = ({ myCircles }: { myCircles: Circle[] }) => {
   return (
-    <Link href={`/circles/${circleId}`}>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {myCircles.slice(0, 4).map((circle) => (
-          <Card
-            key={circle.id}
-            className="cardBackground border-0 hover:border-red-500 cursor-pointer"
-          >
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {myCircles.slice(0, 4).map((circle) => (
+        <Link key={circle.id} href={`/circles/${circle.id}`}>
+          <Card className="cardBackground border-0 hover:border-red-500 cursor-pointer">
             <CardHeader className="pb-3">
               <div className="flex items-center space-x-3">
                 <div className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center">
@@ -54,9 +49,10 @@ const ActiveCirclesGrid = ({ myCircles }: { myCircles: Circle[] }) => {
               </div>
             </CardContent>
           </Card>
-        ))}
-      </div>
-    </Link>
+        </Link>
+      ))}
+    </div>
   );
 };
+
 export default ActiveCirclesGrid;

@@ -20,6 +20,7 @@ import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useWorkoutStore } from '@/stores/useWorkoutStore';
 import { WorkoutData } from '@/lib/types/workouts.type';
+import { workoutFormSchema } from '@/lib/validators/workout.validators';
 
 const AddWorkoutButton = () => {
   const workoutTypes = [
@@ -34,8 +35,9 @@ const AddWorkoutButton = () => {
     'Boxing',
     'Other',
   ];
-
   const [isAddWorkoutOpen, setIsAddWorkoutOpen] = useState(false);
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [newWorkout, setNewWorkout] = useState({
     title: '',
     description: '',
@@ -49,23 +51,37 @@ const AddWorkoutButton = () => {
   const { addWorkout, isLoading, error, clearError } = useWorkoutStore();
 
   const handleAddWorkout = async () => {
-    if (!newWorkout.title || !newWorkout.type || !newWorkout.date) {
-      alert('Please fill in title, type, and date');
+    const result = workoutFormSchema.safeParse(newWorkout);
+    if (!result.success) {
+      const fieldErrors = result.error.flatten().fieldErrors;
+      setErrors({
+        title: fieldErrors.title?.[0] || '',
+        description: '',
+        type: fieldErrors.type?.[0] || '',
+        duration: fieldErrors.duration?.[0] || '',
+        distance: fieldErrors.distance?.[0] || '',
+        calories: fieldErrors.calories?.[0] || '',
+        date: fieldErrors.date?.[0] || '',
+      });
       return;
     }
 
+    setErrors({});
+
     const workoutData: WorkoutData = {
-      title: newWorkout.title,
-      description: newWorkout.description || undefined,
-      type: newWorkout.type,
-      duration: newWorkout.duration
-        ? parseInt(newWorkout.duration) * 60
+      title: result.data.title,
+      description: result.data.description || undefined,
+      type: result.data.type,
+      duration: result.data.duration
+        ? parseInt(result.data.duration) * 60
         : undefined,
-      distance: newWorkout.distance
-        ? parseFloat(newWorkout.distance) * 1000
+      distance: result.data.distance
+        ? parseFloat(result.data.distance) * 1000
         : undefined,
-      calories: newWorkout.calories ? parseInt(newWorkout.calories) : undefined,
-      date: new Date(newWorkout.date),
+      calories: result.data.calories
+        ? parseInt(result.data.calories)
+        : undefined,
+      date: new Date(result.data.date),
     };
 
     await addWorkout(workoutData);
@@ -81,6 +97,7 @@ const AddWorkoutButton = () => {
         calories: '',
         date: '',
       });
+      setErrors({});
     }
   };
 
@@ -88,6 +105,7 @@ const AddWorkoutButton = () => {
     setIsAddWorkoutOpen(open);
     if (!open) {
       clearError();
+      setErrors({});
     }
   };
 
@@ -109,15 +127,19 @@ const AddWorkoutButton = () => {
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-1 text-red-500">Title *</label>
+              <label className="block text-sm font-medium mb-1 text-red-500">
+                Title *
+              </label>
               <Input
                 placeholder="Morning Run"
                 value={newWorkout.title}
                 onChange={(e) =>
                   setNewWorkout({ ...newWorkout, title: e.target.value })
                 }
-                
               />
+              {errors.title && (
+                <p className="text-sm text-red-500 mt-1">{errors.title}</p>
+              )}
             </div>
             <div>
               <label className="block text-sm font-medium mb-1 text-red-500">
@@ -140,6 +162,9 @@ const AddWorkoutButton = () => {
                   ))}
                 </SelectContent>
               </Select>
+              {errors.type && (
+                <p className="text-sm text-red-500 mt-1">{errors.type}</p>
+              )}
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
@@ -157,6 +182,9 @@ const AddWorkoutButton = () => {
                     })
                   }
                 />
+                {errors.duration && (
+                  <p className="text-sm text-red-500 mt-1">{errors.duration}</p>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1 text-red-500">
@@ -174,6 +202,9 @@ const AddWorkoutButton = () => {
                     })
                   }
                 />
+                {errors.distance && (
+                  <p className="text-sm text-red-500 mt-1">{errors.distance}</p>
+                )}
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -192,9 +223,14 @@ const AddWorkoutButton = () => {
                     })
                   }
                 />
+                {errors.calories && (
+                  <p className="text-sm text-red-500 mt-1">{errors.calories}</p>
+                )}
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1 text-red-500">Date *</label>
+                <label className="block text-sm font-medium mb-1 text-red-500">
+                  Date *
+                </label>
                 <Input
                   type="date"
                   value={newWorkout.date}
@@ -202,6 +238,9 @@ const AddWorkoutButton = () => {
                     setNewWorkout({ ...newWorkout, date: e.target.value })
                   }
                 />
+                {errors.date && (
+                  <p className="text-sm text-red-500 mt-1">{errors.date}</p>
+                )}
               </div>
             </div>
             <div>

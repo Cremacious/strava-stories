@@ -1,13 +1,28 @@
 import { Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { circleDetailSample } from '@/lib/sample/circle-detail.sample';
 import FeatureSelector from './components/FeatureSelector';
 import TopMembers from './components/TopMembers';
-import CircleStats from './components/CircleStats';
 import CircleTimelineFeed from './components/CircleTimelineFeed';
+import { getCircleById } from '@/actions/circle.actions';
 
-const CirclePage = () => {
-  const circle = circleDetailSample;
+const CirclePage = async ({
+  params,
+}: {
+  params: Promise<{ circleId: string }>;
+}) => {
+  const { circleId } = await params;
+  const result = await getCircleById(circleId);
+  const circle = result.success ? result.circle : null;
+
+  if (!circle) {
+    return (
+      <div className="p-4 text-white">
+        <h1 className="text-2xl font-bold mb-4">Circle Not Found</h1>
+        <p>The circle you are looking for does not exist or is unavailable.</p>
+      </div>
+    );
+  }
+
   return (
     <div className=" text-white min-h-full p-4">
       <div className="bg-linear-to-r from-red-600 to-red-700 rounded-lg p-6 mb-6 text-white">
@@ -43,13 +58,13 @@ const CirclePage = () => {
         </div>
       </div>
 
-      {/* <CircleStats circle={circle} /> */}
+  
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-8">
           <FeatureSelector />
 
-          <TopMembers circle={circle} />
+          {/* <TopMembers circle={circle} /> */}
         </div>
         <CircleTimelineFeed />
       </div>

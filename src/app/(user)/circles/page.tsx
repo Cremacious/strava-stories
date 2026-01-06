@@ -8,9 +8,13 @@ import TimelineFeed from '@/components/shared/TimelineFeed';
 import ActiveCirclesGrid from './components/ActiveCirclesGrid';
 import ChallengesHighlights from './components/ChallengesHighlights';
 import RecentCirclesHighlights from './components/RecentCirclesHighlights';
+import Link from 'next/link';
+import { getCirclesForUser } from '@/actions/circle.actions';
 
-const CirclesPage = () => {
-  const myCircles = myCirclesSample;
+const CirclesPage = async () => {
+  const result = await getCirclesForUser();
+  const myCircles = result.success ? result.circles : [];
+
   const featuredChallenges = featuredChallengesSample;
   const recentHighlights = recentHighlightsSample;
 
@@ -28,8 +32,11 @@ const CirclesPage = () => {
             </p>
           </div>
         </div>
-        <Button className="w-full md:w-auto bg-red-500 hover:bg-red-600">
-          Create Circle
+        <Button
+          asChild
+          className="w-full md:w-auto bg-red-500 hover:bg-red-600"
+        >
+          <Link href="/circles/create">Create Circle</Link>
         </Button>
       </div>
 

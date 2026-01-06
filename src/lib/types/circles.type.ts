@@ -1,15 +1,13 @@
-
 export interface CircleActivity {
   user: string;
   action: string;
   time: string;
 }
 
-
 export interface Circle {
   id: string;
   name: string;
-  description: string;
+  description: string | null;
   memberCount: number;
   avatar: string;
   category: string;
@@ -18,7 +16,6 @@ export interface Circle {
   achievements: string[];
   recentActivity: CircleActivity[];
 }
-
 
 export interface FeaturedChallenge {
   id: string;
@@ -30,7 +27,6 @@ export interface FeaturedChallenge {
   type: string;
 }
 
-
 export interface RecentHighlight {
   id: string;
   circle: string;
@@ -39,7 +35,6 @@ export interface RecentHighlight {
   type: string;
   time: string;
 }
-
 
 export type Circles = Circle[];
 export type FeaturedChallenges = FeaturedChallenge[];

@@ -1,16 +1,21 @@
-// Friend represents a user's friend connection
+
 export interface Friend {
   id: string;
-  name: string;
-  avatar: string;
-  bio: string;
-  circles: string[];
-  lastActivity: string;
-  mutualFriends: number;
-  isOnline: boolean;
+  name: string | null;
+  email: string;
+  avatarUrl: string | null;
 }
 
-// Array type for friends collection
+
+export interface FriendWithDetails extends Friend {
+  bio?: string;
+  circles?: string[];
+  lastActivity?: string;
+  mutualFriends?: number;
+  isOnline?: boolean;
+}
+
+
 export type Friends = Friend[];
 
 // Filter and sort options
