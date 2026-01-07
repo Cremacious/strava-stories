@@ -4,6 +4,7 @@ import FeatureSelector from './components/FeatureSelector/FeatureSelector';
 import TopMembers from './components/TopMembers';
 import CircleTimelineFeed from './components/CircleTimelineFeed';
 import { getCircleById } from '@/actions/circle.actions';
+import { getCircleRoutines } from '@/actions/routine.actions';
 
 const CirclePage = async ({
   params,
@@ -13,6 +14,8 @@ const CirclePage = async ({
   const { circleId } = await params;
   const result = await getCircleById(circleId);
   const circle = result.success ? result.circle : null;
+  const routinesResult = await getCircleRoutines(circleId);
+  const routines = routinesResult.success ? routinesResult.routines || [] : [];
 
   if (!circle) {
     return (
@@ -60,7 +63,7 @@ const CirclePage = async ({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-8">
-          <FeatureSelector circleId={circleId} />
+          <FeatureSelector circleId={circleId} routines={routines} />
 
           {/* <TopMembers circle={circle} /> */}
         </div>

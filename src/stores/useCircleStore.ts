@@ -5,6 +5,34 @@ import {
   getCircleWorkouts,
 } from '@/actions/workout.actions';
 import { WorkoutData } from '@/lib/types/workouts.type';
+import {
+  addRoutineToCircle,
+  getCircleRoutines,
+} from '@/actions/routine.actions';
+
+interface RoutineData {
+  title: string;
+  description?: string;
+  difficulty: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
+  estimatedDuration?: number;
+  requiredEquipment?: string;
+  category?: string;
+  fitnessGoals?: string[];
+  tags?: string[];
+  warmUps?: Array<{
+    activity: string;
+    duration: number;
+    instructions?: string;
+  }>;
+  exercises?: Array<{
+    name: string;
+    sets: number;
+    reps: number;
+    rest: number;
+    instructions?: string;
+    equipment?: string;
+  }>;
+}
 
 interface CreateCircleData {
   name: string;
@@ -33,9 +61,17 @@ interface CircleStore {
   ) => Promise<{ success: boolean; workout?: any; error?: string }>;
   fetchWorkouts: (
     circleId: string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ) => Promise<{ success: boolean; workouts?: any; error?: string }>;
-  addRoutineToCircle: () => Promise<void>;
+  addRoutineToCircle: (
+    routineData: RoutineData,
+    circleId: string
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ) => Promise<{ success: boolean; routine?: any; error?: string }>;
+  fetchRoutines: (
+    circleId: string
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ) => Promise<{ success: boolean; routines?: any; error?: string }>;
 }
 
 export const useCircleStore = create<CircleStore>((set) => ({
@@ -102,5 +138,44 @@ export const useCircleStore = create<CircleStore>((set) => ({
       return { success: false, error: errorMessage };
     }
   },
-  addRoutineToCircle: async () => {}
+  addRoutineToCircle: async (routineData: RoutineData, circleId: string) => {
+    set({ isLoading: true, error: null });
+    try {
+      const result = await addRoutineToCircle(routineData, circleId);
+      if (!result.success) {
+        set({
+          isLoading: false,
+          error: result.error || 'Failed to add routine',
+        });
+        return result;
+      }
+      set({ isLoading: false });
+      return result;
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      set({ isLoading: false, error: errorMessage });
+      return { success: false, error: errorMessage };
+    }
+  },
+  fetchRoutines: async (circleId: string) => {
+    set({ isLoading: true, error: null });
+    try {
+      const result = await getCircleRoutines(circleId);
+      if (!result.success) {
+        set({
+          isLoading: false,
+          error: result.error || 'Failed to fetch routines',
+        });
+        return result;
+      }
+      set({ isLoading: false });
+      return result; // { success: true, routines: [...] }
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      set({ isLoading: false, error: errorMessage });
+      return { success: false, error: errorMessage };
+    }
+  },
 }));

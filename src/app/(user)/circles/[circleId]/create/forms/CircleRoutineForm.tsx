@@ -11,6 +11,7 @@ import {
   type RoutineFormInput,
 } from '@/lib/validators/routine.validators';
 import { z } from 'zod';
+import { useCircleStore } from '@/stores/useCircleStore';
 
 type FormInput = z.input<typeof routineFormSchema>;
 
@@ -23,6 +24,7 @@ export default function CircleRoutineForm({
   circleId,
   onSuccess,
 }: CircleRoutineFormProps) {
+  const { addRoutineToCircle } = useCircleStore();
   const [isLoading, setIsLoading] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
@@ -95,10 +97,33 @@ export default function CircleRoutineForm({
   const onSubmit = async (data: RoutineFormInput) => {
     setIsLoading(true);
     setSubmitError(null);
-    console.log(data);
+    const transformedData = {
+      ...data,
+      estimatedDuration: data.estimatedDuration
+        ? parseInt(data.estimatedDuration, 10) || undefined
+        : undefined,
+      fitnessGoals: data.fitnessGoals
+        ? data.fitnessGoals
+            .split(',')
+            .map((s) => s.trim())
+            .filter(Boolean)
+        : undefined,
+      tags: data.tags
+        ? data.tags
+            .split(',')
+            .map((s) => s.trim())
+            .filter(Boolean)
+        : undefined,
+      warmUps,
+      exercises,
+    };
 
     try {
-      console.log(data);
+      const result = await addRoutineToCircle(transformedData, circleId);
+      if (!result.success) {
+        setSubmitError(result.error || 'Failed to add routine');
+        return;
+      }
 
       reset();
       setWarmUps([]);
@@ -126,7 +151,6 @@ export default function CircleRoutineForm({
       )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        {/* Title - Required */}
         <div>
           <label className="block text-gray-300 mb-2 font-semibold">
             Title *
@@ -141,7 +165,6 @@ export default function CircleRoutineForm({
           )}
         </div>
 
-        {/* Description */}
         <div>
           <label className="block text-gray-300 mb-2 font-semibold">
             Description
@@ -154,7 +177,6 @@ export default function CircleRoutineForm({
           />
         </div>
 
-        {/* Difficulty */}
         <div>
           <label className="block text-gray-300 mb-2 font-semibold">
             Difficulty
@@ -169,7 +191,6 @@ export default function CircleRoutineForm({
           </select>
         </div>
 
-        {/* Estimated Duration */}
         <div>
           <label className="block text-gray-300 mb-2 font-semibold">
             Estimated Duration (minutes)
@@ -183,7 +204,6 @@ export default function CircleRoutineForm({
           />
         </div>
 
-        {/* Required Equipment */}
         <div>
           <label className="block text-gray-300 mb-2 font-semibold">
             Required Equipment
@@ -195,7 +215,6 @@ export default function CircleRoutineForm({
           />
         </div>
 
-        {/* Category */}
         <div>
           <label className="block text-gray-300 mb-2 font-semibold">
             Category
@@ -207,7 +226,6 @@ export default function CircleRoutineForm({
           />
         </div>
 
-        {/* Fitness Goals */}
         <div>
           <label className="block text-gray-300 mb-2 font-semibold">
             Fitness Goals (comma-separated)
@@ -219,7 +237,6 @@ export default function CircleRoutineForm({
           />
         </div>
 
-        {/* Tags */}
         <div>
           <label className="block text-gray-300 mb-2 font-semibold">
             Tags (comma-separated)
@@ -231,7 +248,6 @@ export default function CircleRoutineForm({
           />
         </div>
 
-        {/* Warm-Ups */}
         <div>
           <label className="block text-gray-300 mb-2 font-semibold">
             Warm-Up Steps (Optional)
@@ -288,7 +304,6 @@ export default function CircleRoutineForm({
           </Button>
         </div>
 
-        {/* Exercises */}
         <div>
           <label className="block text-gray-300 mb-2 font-semibold">
             Main Exercises (Optional)

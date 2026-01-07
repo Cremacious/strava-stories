@@ -10,8 +10,15 @@ import WorkoutCard from './WorkoutCard';
 import { useCircleStore } from '@/stores/useCircleStore';
 import { useQuery } from '@tanstack/react-query';
 import { CircleWorkout } from '@/lib/types/circles.type';
+import { Routine } from '@/lib/types/routine.type';
 
-const FeatureSelector = ({ circleId }: { circleId: string }) => {
+const FeatureSelector = ({
+  circleId,
+  routines,
+}: {
+  circleId: string;
+  routines: Routine[];
+}) => {
   const [activeTab, setActiveTab] = useState<
     'feed' | 'routines' | 'stories' | 'challenges' | 'events' | 'polls'
   >('feed');
@@ -43,6 +50,22 @@ const FeatureSelector = ({ circleId }: { circleId: string }) => {
     },
     staleTime: 5 * 60 * 1000,
   });
+
+  // const {
+  //   data: routines = [],
+  //   isLoading: routinesLoading,
+  //   error: routinesError,
+  // } = useQuery<Routine[]>({
+  //   queryKey: ['circleRoutines', circleId],
+  //   queryFn: async () => {
+  //     const result = await fetchRoutines(circleId);
+  //     if (!result.success) {
+  //       throw new Error(result.error || 'Failed to fetch routines');
+  //     }
+  //     return result.routines || [];
+  //   },
+  //   staleTime: 5 * 60 * 1000,
+  // });
 
   return (
     <div className="cardBackground md:p-4 rounded-2xl">
@@ -103,12 +126,12 @@ const FeatureSelector = ({ circleId }: { circleId: string }) => {
             </Button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {circle.routines.map((routine) => (
+            {routines.map((routine) => (
               <Card key={routine.id} className="bg-[#292929] border-gray-700">
                 <CardHeader>
-                  <CardTitle className="text-white">{routine.name}</CardTitle>
+                  <CardTitle className="text-white">{routine.title}</CardTitle>
                   <p className="text-gray-400 text-sm">
-                    by {routine.createdBy}
+                    by {routine.createdBy.name}
                   </p>
                 </CardHeader>
                 <CardContent className="space-y-3">
@@ -118,17 +141,10 @@ const FeatureSelector = ({ circleId }: { circleId: string }) => {
                       {routine.difficulty}
                     </span>
                     <span className="text-gray-400 text-sm">
-                      {routine.downloads} downloads
+                      {routine.steps.length} steps
                     </span>
                   </div>
-                  <div className="flex gap-2">
-                    <Button className="flex-1 bg-red-500 hover:bg-red-600 h-8">
-                      Download
-                    </Button>
-                    <button className="flex-1 hover:bg-gray-600 h-8 flex items-center justify-center rounded">
-                      <Heart className="w-4 h-4" /> {routine.likes}
-                    </button>
-                  </div>
+                  {/* Add more details or actions here */}
                 </CardContent>
               </Card>
             ))}

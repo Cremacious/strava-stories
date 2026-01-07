@@ -77,7 +77,7 @@ enum MediaType {
   EMBED
 }
 
-// New enum for step types
+
 enum StepType {
   WARM_UP
   EXERCISE
