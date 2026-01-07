@@ -35,6 +35,7 @@ interface CircleStore {
     circleId: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ) => Promise<{ success: boolean; workouts?: any; error?: string }>;
+  addRoutineToCircle: () => Promise<void>;
 }
 
 export const useCircleStore = create<CircleStore>((set) => ({
@@ -101,4 +102,5 @@ export const useCircleStore = create<CircleStore>((set) => ({
       return { success: false, error: errorMessage };
     }
   },
+  addRoutineToCircle: async () => {}
 }));

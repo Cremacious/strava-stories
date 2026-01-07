@@ -77,6 +77,13 @@ enum MediaType {
   EMBED
 }
 
+// New enum for step types
+enum StepType {
+  WARM_UP
+  EXERCISE
+  COOL_DOWN
+}
+
 model User {
   id        String    @id @db.Uuid 
   email     String    @unique
@@ -84,7 +91,6 @@ model User {
   avatarUrl String?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-
 
   workouts Workout[]
   posts Post[]
@@ -246,9 +252,30 @@ model WorkoutRoutine {
   likesCount         Int              @default(0)
   exercisesCount     Int              @default(0)
   comments           RoutineComment[]
+  // New: Relation to steps
+  steps              WorkoutStep[]
 
   @@index([userId])
   @@index([circleId])
+}
+
+model WorkoutStep {
+  id           String        @id @default(cuid())
+  routineId    String
+  routine      WorkoutRoutine @relation(fields: [routineId], references: [id], onDelete: Cascade)
+  stepNumber   Int           // For ordering (e.g., 1 for first step)
+  type         StepType      // WARM_UP, EXERCISE, COOL_DOWN
+  name         String        // Exercise name or warm-up activity
+  sets         Int?          // For exercises only
+  reps         Int?          // For exercises only
+  duration     Int?          // In seconds (for time-based steps like warm-ups)
+  rest         Int?          // In seconds (for exercises)
+  instructions String?       // Optional notes
+  equipment    String?       // Optional equipment per step
+  createdAt    DateTime      @default(now())
+
+  @@index([routineId])
+  @@index([stepNumber])  // For efficient ordering queries
 }
 
 model RoutineComment {
