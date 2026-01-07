@@ -1,14 +1,8 @@
 import { create } from 'zustand';
 import { createCircle } from '@/actions/circle.actions';
-import {
-  addWorkoutToCircle,
-  getCircleWorkouts,
-} from '@/actions/workout.actions';
+import { addWorkoutToCircle } from '@/actions/workout.actions';
 import { WorkoutData } from '@/lib/types/workouts.type';
-import {
-  addRoutineToCircle,
-  getCircleRoutines,
-} from '@/actions/routine.actions';
+import { addRoutineToCircle } from '@/actions/routine.actions';
 
 interface RoutineData {
   title: string;
@@ -59,19 +53,12 @@ interface CircleStore {
     circleId: string
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ) => Promise<{ success: boolean; workout?: any; error?: string }>;
-  fetchWorkouts: (
-    circleId: string
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ) => Promise<{ success: boolean; workouts?: any; error?: string }>;
+
   addRoutineToCircle: (
     routineData: RoutineData,
     circleId: string
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ) => Promise<{ success: boolean; routine?: any; error?: string }>;
-  fetchRoutines: (
-    circleId: string
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ) => Promise<{ success: boolean; routines?: any; error?: string }>;
 }
 
 export const useCircleStore = create<CircleStore>((set) => ({
@@ -118,26 +105,6 @@ export const useCircleStore = create<CircleStore>((set) => ({
       return { success: false, error: errorMessage };
     }
   },
-  fetchWorkouts: async (circleId: string) => {
-    set({ isLoading: true, error: null });
-    try {
-      const result = await getCircleWorkouts(circleId);
-      if (!result.success) {
-        set({
-          isLoading: false,
-          error: result.error || 'Failed to fetch workouts',
-        });
-        return result;
-      }
-      set({ isLoading: false });
-      return result;
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : 'Unknown error';
-      set({ isLoading: false, error: errorMessage });
-      return { success: false, error: errorMessage };
-    }
-  },
   addRoutineToCircle: async (routineData: RoutineData, circleId: string) => {
     set({ isLoading: true, error: null });
     try {
@@ -151,26 +118,6 @@ export const useCircleStore = create<CircleStore>((set) => ({
       }
       set({ isLoading: false });
       return result;
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : 'Unknown error';
-      set({ isLoading: false, error: errorMessage });
-      return { success: false, error: errorMessage };
-    }
-  },
-  fetchRoutines: async (circleId: string) => {
-    set({ isLoading: true, error: null });
-    try {
-      const result = await getCircleRoutines(circleId);
-      if (!result.success) {
-        set({
-          isLoading: false,
-          error: result.error || 'Failed to fetch routines',
-        });
-        return result;
-      }
-      set({ isLoading: false });
-      return result; // { success: true, routines: [...] }
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';

@@ -15,3 +15,5 @@ export type WorkoutDisplayData = {
   calories: number;
   type: string;
 };
+
+

@@ -38,18 +38,19 @@ export interface RecentHighlight {
 
 export type CircleWorkout = {
   id: string;
-  userId: string;
-  memberName: string;
+  circleId: string | null;
   title: string;
-  description?: string;
   type: string;
-  duration?: number;
-  distance?: number;
-  calories?: number;
-  date: Date;
+  description: string | null;
   createdAt: Date;
   updatedAt: Date;
-  xpEarned: number;
+  userId: string;
+  duration: number | null;
+  distance: number | null;
+  calories: number | null;
+  date: Date;
+  memberName?: string | null;
+  xpEarned?: number | null;
 };
 
 export type Circles = Circle[];

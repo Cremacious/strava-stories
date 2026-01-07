@@ -1,10 +1,11 @@
 import { Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import FeatureSelector from './components/FeatureSelector/FeatureSelector';
-import TopMembers from './components/TopMembers';
+// import TopMembers from './components/TopMembers';
 import CircleTimelineFeed from './components/CircleTimelineFeed';
 import { getCircleById } from '@/actions/circle.actions';
 import { getCircleRoutines } from '@/actions/routine.actions';
+import { getCircleWorkouts } from '@/actions/workout.actions';
 
 const CirclePage = async ({
   params,
@@ -16,6 +17,8 @@ const CirclePage = async ({
   const circle = result.success ? result.circle : null;
   const routinesResult = await getCircleRoutines(circleId);
   const routines = routinesResult.success ? routinesResult.routines || [] : [];
+  const workoutsResult = await getCircleWorkouts(circleId);
+  const workouts = workoutsResult.success ? workoutsResult.workouts || [] : [];
 
   if (!circle) {
     return (
@@ -63,7 +66,7 @@ const CirclePage = async ({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-8">
-          <FeatureSelector circleId={circleId} routines={routines} />
+          <FeatureSelector circleId={circleId} workouts={workouts} routines={routines}  />
 
           {/* <TopMembers circle={circle} /> */}
         </div>

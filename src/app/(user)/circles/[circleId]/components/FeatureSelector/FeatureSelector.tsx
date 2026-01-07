@@ -7,17 +7,16 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import AddWorkoutToCircleButton from '../AddWorkoutToCircleButton';
 import WorkoutCard from './WorkoutCard';
-import { useCircleStore } from '@/stores/useCircleStore';
-import { useQuery } from '@tanstack/react-query';
-import { CircleWorkout } from '@/lib/types/circles.type';
 import { Routine } from '@/lib/types/routine.type';
-
+import { CircleWorkout } from '@/lib/types/circles.type';
 const FeatureSelector = ({
   circleId,
   routines,
+  workouts,
 }: {
   circleId: string;
   routines: Routine[];
+  workouts: CircleWorkout[];
 }) => {
   const [activeTab, setActiveTab] = useState<
     'feed' | 'routines' | 'stories' | 'challenges' | 'events' | 'polls'
@@ -33,39 +32,6 @@ const FeatureSelector = ({
     { id: 'events', label: 'Events', icon: '📅' },
     { id: 'polls', label: 'Polls', icon: '🗳️' },
   ];
-
-  const { fetchWorkouts } = useCircleStore();
-  const {
-    data: workouts = [],
-    isLoading,
-    error,
-  } = useQuery<CircleWorkout[]>({
-    queryKey: ['circleWorkouts', circleId],
-    queryFn: async () => {
-      const result = await fetchWorkouts(circleId);
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to fetch workouts');
-      }
-      return result.workouts || [];
-    },
-    staleTime: 5 * 60 * 1000,
-  });
-
-  // const {
-  //   data: routines = [],
-  //   isLoading: routinesLoading,
-  //   error: routinesError,
-  // } = useQuery<Routine[]>({
-  //   queryKey: ['circleRoutines', circleId],
-  //   queryFn: async () => {
-  //     const result = await fetchRoutines(circleId);
-  //     if (!result.success) {
-  //       throw new Error(result.error || 'Failed to fetch routines');
-  //     }
-  //     return result.routines || [];
-  //   },
-  //   staleTime: 5 * 60 * 1000,
-  // });
 
   return (
     <div className="cardBackground md:p-4 rounded-2xl">
@@ -94,17 +60,9 @@ const FeatureSelector = ({
             </h2>
             <AddWorkoutToCircleButton circleId={circleId} />
           </div>
-          {isLoading ? (
-            <p className="text-white text-center">Loading...</p>
-          ) : error ? (
-            <p className="text-red-500 text-center">
-              Error: {error.message || 'Failed to load workouts'}
-            </p>
-          ) : (
-            workouts.map((workout) => (
-              <WorkoutCard key={workout.id} workout={workout} />
-            ))
-          )}
+          {workouts.map((workout) => (
+            <WorkoutCard key={workout.id} workout={workout} />
+          ))}
         </div>
       )}
 
