@@ -4,7 +4,8 @@ import { addWorkoutToCircle } from '@/actions/workout.actions';
 import { WorkoutData } from '@/lib/types/workouts.type';
 import { addRoutineToCircle } from '@/actions/routine.actions';
 import { createCircleChallengeAction } from '@/actions/challenge.actions';
-import { CreateChallengeData } from '@/lib/types/challenge.type'; // Added import for type safety
+import { CreateChallengeData } from '@/lib/types/challenge.type';
+import { createCirclePoll } from '@/actions/poll.actions';
 
 interface RoutineData {
   title: string;
@@ -66,6 +67,13 @@ interface CircleStore {
     circleId: string
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ) => Promise<{ success: boolean; challenge?: any; error?: string }>;
+
+  createCirclePoll: (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    pollData: any,
+    circleId: string
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ) => Promise<{ success: boolean; poll?: any; error?: string }>;
 }
 
 export const useCircleStore = create<CircleStore>((set) => ({
@@ -143,6 +151,27 @@ export const useCircleStore = create<CircleStore>((set) => ({
         set({
           isLoading: false,
           error: result.error || 'Failed to add challenge',
+        });
+        return result;
+      }
+      set({ isLoading: false });
+      return result;
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      set({ isLoading: false, error: errorMessage });
+      return { success: false, error: errorMessage };
+    }
+  },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  createCirclePoll: async (pollData: any, circleId: string) => {
+    set({ isLoading: true, error: null });
+    try {
+      const result = await createCirclePoll(pollData, circleId);
+      if (!result.success) {
+        set({
+          isLoading: false,
+          error: result.error || 'Failed to create poll',
         });
         return result;
       }

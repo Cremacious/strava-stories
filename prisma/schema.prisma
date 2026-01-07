@@ -263,19 +263,19 @@ model WorkoutStep {
   id           String        @id @default(cuid())
   routineId    String
   routine      WorkoutRoutine @relation(fields: [routineId], references: [id], onDelete: Cascade)
-  stepNumber   Int           // For ordering (e.g., 1 for first step)
-  type         StepType      // WARM_UP, EXERCISE, COOL_DOWN
-  name         String        // Exercise name or warm-up activity
-  sets         Int?          // For exercises only
-  reps         Int?          // For exercises only
-  duration     Int?          // In seconds (for time-based steps like warm-ups)
-  rest         Int?          // In seconds (for exercises)
-  instructions String?       // Optional notes
-  equipment    String?       // Optional equipment per step
+  stepNumber   Int           
+  type         StepType      
+  name         String        
+  sets         Int?          
+  reps         Int?          
+  duration     Int?         
+  rest         Int?          
+  instructions String?       
+  equipment    String?       
   createdAt    DateTime      @default(now())
 
   @@index([routineId])
-  @@index([stepNumber])  // For efficient ordering queries
+  @@index([stepNumber])  
 }
 
 model RoutineComment {

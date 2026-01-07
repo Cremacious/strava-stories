@@ -2,7 +2,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { circleDetailSample } from '@/lib/sample/circle-detail.sample';
-import { Heart, MapPin, MessageSquare, Plus, Trophy } from 'lucide-react';
+import { Heart, MapPin, MessageSquare, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import AddWorkoutToCircleButton from '../AddWorkoutToCircleButton';
@@ -12,17 +12,20 @@ import { CircleWorkout } from '@/lib/types/circles.type';
 import RoutineCard from './RoutineCard';
 import { Challenge } from '@/lib/types/challenge.type';
 import ChallengeCard from './ChallengeCard';
+import { Poll } from '@/lib/types/poll.type';
 
 const FeatureSelector = ({
   circleId,
   routines,
   workouts,
   challenges,
+  polls,
 }: {
   circleId: string;
   routines: Routine[];
   workouts: CircleWorkout[];
   challenges: Challenge[];
+  polls: Poll[];
 }) => {
   const [activeTab, setActiveTab] = useState<
     'feed' | 'routines' | 'stories' | 'challenges' | 'events' | 'polls'
@@ -72,7 +75,6 @@ const FeatureSelector = ({
         </div>
       )}
 
-      {/* Routines Tab */}
       {activeTab === 'routines' && (
         <div className="space-y-4">
           <div className="flex justify-between items-center mb-4">
@@ -101,7 +103,6 @@ const FeatureSelector = ({
         </div>
       )}
 
-      {/* Adventure Stories Tab */}
       {activeTab === 'stories' && (
         <div className="space-y-4">
           <div className="flex justify-between items-center mb-4">
@@ -156,7 +157,6 @@ const FeatureSelector = ({
         </div>
       )}
 
-      {/* Challenges Tab */}
       {activeTab === 'challenges' && (
         <div className="space-y-4">
           <h2 className="text-2xl font-bold text-white">Challenges</h2>
@@ -174,7 +174,6 @@ const FeatureSelector = ({
         </div>
       )}
 
-      {/* Events Tab */}
       {activeTab === 'events' && (
         <div className="space-y-4">
           <div className="flex justify-between items-center mb-4">
@@ -241,7 +240,6 @@ const FeatureSelector = ({
         </div>
       )}
 
-      {/* Polls Tab */}
       {activeTab === 'polls' && (
         <div className="space-y-4">
           <div className="flex justify-between items-center mb-4">
@@ -256,7 +254,7 @@ const FeatureSelector = ({
               Create Poll
             </Button>
           </div>
-          {circle.recentPolls.map((poll) => (
+          {polls.map((poll) => (
             <Card key={poll.id} className="bg-[#292929] border-0">
               <CardHeader>
                 <div className="flex items-start justify-between">
@@ -272,7 +270,10 @@ const FeatureSelector = ({
               </CardHeader>
               <CardContent className="space-y-3">
                 {poll.options.map((option, index) => {
-                  const percentage = (option.votes / poll.totalVotes) * 100;
+                  const percentage =
+                    poll.totalVotes > 0
+                      ? (option.votes / poll.totalVotes) * 100
+                      : 0;
                   return (
                     <div key={index} className="space-y-1">
                       <div className="flex justify-between items-center">

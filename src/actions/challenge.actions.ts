@@ -56,10 +56,11 @@ export async function createCircleChallengeAction(
         ...challengeData,
         circleId,
         status: ChallengeStatus.ACTIVE,
-        userId: user.id, 
+        userId: user.id,
         averageProgress: 0,
         createdAt: new Date(),
         updatedAt: new Date(),
+        endDate: new Date(),
       },
     });
 
@@ -72,4 +73,3 @@ export async function createCircleChallengeAction(
     };
   }
 }
-

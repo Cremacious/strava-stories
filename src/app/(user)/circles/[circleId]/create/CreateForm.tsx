@@ -24,7 +24,7 @@ export default function CreateForm({
     case 'event':
       return <CircleEventForm />;
     case 'poll':
-      return <CirclePollForm />;
+      return <CirclePollForm circleId={circleId} />;
     case 'challenge':
       return <CircleChallengeForm circleId={circleId} />;
     default:

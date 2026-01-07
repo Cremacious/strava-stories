@@ -1,5 +1,3 @@
-// export type ChallengeStatus = 'ACTIVE' | 'COMPLETED' | 'CANCELLED';
-
 export enum ChallengeStatus {
   ACTIVE = 'ACTIVE',
   COMPLETED = 'COMPLETED',
@@ -14,7 +12,7 @@ export interface Challenge {
   category?: string | null;
   tags: string[];
   difficulty: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
-  startDate?: Date | null; // Updated to allow null
+  startDate?: Date | null; 
   endDate: Date;
   circleId: string;
   createdAt: Date;
@@ -32,6 +30,5 @@ export interface CreateChallengeData {
   category?: string | null;
   tags: string[];
   difficulty: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
-  startDate?: Date | null; // Updated to allow null
-  endDate: Date;
+  startDate?: Date | null; 
 }

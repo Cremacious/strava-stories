@@ -7,6 +7,7 @@ import { getCircleById } from '@/actions/circle.actions';
 import { getCircleRoutines } from '@/actions/routine.actions';
 import { getCircleWorkouts } from '@/actions/workout.actions';
 import { getCircleChallenges } from '@/actions/challenge.actions';
+import {getCirclePolls} from '@/actions/poll.actions';
 
 const CirclePage = async ({
   params,
@@ -24,6 +25,8 @@ const CirclePage = async ({
   const challenges = challengesResult.success
     ? challengesResult.challenges || []
     : [];
+  const pollsResult = await getCirclePolls(circleId);
+  const polls = pollsResult.success ? pollsResult.polls || [] : [];
 
   if (!circle) {
     return (
@@ -71,7 +74,7 @@ const CirclePage = async ({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-8">
-          <FeatureSelector circleId={circleId} workouts={workouts} routines={routines} challenges={challenges} />
+          <FeatureSelector circleId={circleId} workouts={workouts} routines={routines} challenges={challenges} polls={polls} />
 
           {/* <TopMembers circle={circle} /> */}
         </div>
