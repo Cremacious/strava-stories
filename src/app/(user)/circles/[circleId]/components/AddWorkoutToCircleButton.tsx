@@ -74,10 +74,10 @@ const AddWorkoutToCircleButton = ({ circleId }: { circleId: string }) => {
       description: result.data.description || undefined,
       type: result.data.type,
       duration: result.data.duration
-        ? parseInt(result.data.duration) * 60
+        ? parseInt(result.data.duration)
         : undefined,
       distance: result.data.distance
-        ? parseFloat(result.data.distance) * 1000
+        ? parseFloat(result.data.distance)
         : undefined,
       calories: result.data.calories
         ? parseInt(result.data.calories)
@@ -189,7 +189,7 @@ const AddWorkoutToCircleButton = ({ circleId }: { circleId: string }) => {
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1 text-red-500">
-                  Distance (km)
+                  Distance (miles)
                 </label>
                 <Input
                   type="number"

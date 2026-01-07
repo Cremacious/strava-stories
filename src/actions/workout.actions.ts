@@ -4,7 +4,6 @@ import { prisma } from '@/lib/prisma';
 import { createClient } from '@/lib/supabase/server';
 import { WorkoutData } from '@/lib/types/workouts.type';
 
-
 export async function addWorkout(data: WorkoutData) {
   try {
     const supabase = await createClient();
@@ -39,7 +38,6 @@ export async function addWorkout(data: WorkoutData) {
     };
   }
 }
-
 
 export async function addWorkoutToCircle(data: WorkoutData, circleId: string) {
   try {
@@ -117,6 +115,22 @@ export async function getWorkouts() {
     return { success: true, workouts };
   } catch (error) {
     console.error('Error fetching workouts:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}
+
+export async function getCircleWorkouts(circleId: string) {
+  try {
+    const workouts = await prisma.workout.findMany({
+      where: { circleId },
+      orderBy: { createdAt: 'desc' },
+    });
+    return { success: true, workouts };
+  } catch (error) {
+    console.error('Error fetching circle workouts:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error',

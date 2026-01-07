@@ -1,6 +1,7 @@
 import LeftSidebar from '@/components/layout/LeftSidebar';
 import MobileNavbar from '@/components/layout/MobileNavbar';
 import RightSidebar from '@/components/layout/RightSidebar';
+import QueryProvider from './QueryProvider';
 
 export default function UserLayout({
   children,
@@ -8,23 +9,24 @@ export default function UserLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="h-screen flex">
-      <div className="hidden lg:block w-64 shrink-0">
-        <LeftSidebar />
-      </div>
+    <QueryProvider>
+      <div className="h-screen flex">
+        <div className="hidden lg:block w-64 shrink-0">
+          <LeftSidebar />
+        </div>
+        <div
+          className="flex-1 lg:flex-none lg:w-[calc(100%-32rem)] overflow-y-auto pb-20 lg:pb-0 custom-scrollbar darkBackground2 "
+          style={{ flexGrow: 1 }}
+        >
+          {children}
+        </div>
 
-      <div
-        className="flex-1 lg:flex-none lg:w-[calc(100%-32rem)] overflow-y-auto pb-20 lg:pb-0 custom-scrollbar darkBackground2 "
-        style={{ flexGrow: 1 }}
-      >
-        {children}
-      </div>
+        <div className="hidden lg:block w-64 shrink-0">
+          <RightSidebar />
+        </div>
 
-      <div className="hidden lg:block w-64 shrink-0">
-        <RightSidebar />
+        <MobileNavbar />
       </div>
-
-      <MobileNavbar />
-    </div>
+    </QueryProvider>
   );
 }

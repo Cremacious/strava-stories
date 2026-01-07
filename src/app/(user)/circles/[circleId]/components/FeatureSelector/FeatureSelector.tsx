@@ -5,7 +5,11 @@ import { circleDetailSample } from '@/lib/sample/circle-detail.sample';
 import { Heart, MapPin, MessageSquare, Plus, Trophy } from 'lucide-react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import AddWorkoutToCircleButton from './AddWorkoutToCircleButton';
+import AddWorkoutToCircleButton from '../AddWorkoutToCircleButton';
+import WorkoutCard from './WorkoutCard';
+import { useCircleStore } from '@/stores/useCircleStore';
+import { useQuery } from '@tanstack/react-query';
+import { CircleWorkout } from '@/lib/types/circles.type';
 
 const FeatureSelector = ({ circleId }: { circleId: string }) => {
   const [activeTab, setActiveTab] = useState<
@@ -13,7 +17,6 @@ const FeatureSelector = ({ circleId }: { circleId: string }) => {
   >('feed');
   const circle = circleDetailSample;
   const router = useRouter();
-  // const { circleId } = useParams();
 
   const tabs = [
     { id: 'feed', label: 'Workout Feed', icon: '📊' },
@@ -23,6 +26,23 @@ const FeatureSelector = ({ circleId }: { circleId: string }) => {
     { id: 'events', label: 'Events', icon: '📅' },
     { id: 'polls', label: 'Polls', icon: '🗳️' },
   ];
+
+  const { fetchWorkouts } = useCircleStore();
+  const {
+    data: workouts = [],
+    isLoading,
+    error,
+  } = useQuery<CircleWorkout[]>({
+    queryKey: ['circleWorkouts', circleId],
+    queryFn: async () => {
+      const result = await fetchWorkouts(circleId);
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to fetch workouts');
+      }
+      return result.workouts || [];
+    },
+    staleTime: 5 * 60 * 1000,
+  });
 
   return (
     <div className="cardBackground md:p-4 rounded-2xl">
@@ -51,69 +71,17 @@ const FeatureSelector = ({ circleId }: { circleId: string }) => {
             </h2>
             <AddWorkoutToCircleButton circleId={circleId} />
           </div>
-          {circle.recentWorkouts.map((workout) => (
-            <Card key={workout.id} className="bg-[#2e2e2e] border-0">
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center text-sm font-bold">
-                      {workout.memberName[0]}
-                    </div>
-                    <div>
-                      <p className="text-white font-semibold">
-                        {workout.memberName}
-                      </p>
-                      <p className="text-gray-400 text-sm">
-                        {workout.timestamp}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="bg-red-500/20 text-red-400 px-3 py-1 rounded-lg text-sm font-bold">
-                    +{workout.xpEarned} XP
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div>
-                  <p className="text-gray-300 mb-2">{workout.description}</p>
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  <div className="bg-[#272727] p-2 rounded">
-                    <p className="text-gray-100 text-xs">Type</p>
-                    <p className="text-white font-bold">{workout.type}</p>
-                  </div>
-                  <div className="bg-[#272727] p-2 rounded">
-                    <p className="text-gray-400 text-xs">Duration</p>
-                    <p className="text-white font-bold">{workout.duration}m</p>
-                  </div>
-                  {workout.distance && (
-                    <div className="bg-[#272727] p-2 rounded">
-                      <p className="text-gray-400 text-xs">Distance</p>
-                      <p className="text-white font-bold">
-                        {workout.distance}km
-                      </p>
-                    </div>
-                  )}
-                  {workout.calories && (
-                    <div className="bg-[#272727] p-2 rounded">
-                      <p className="text-gray-400 text-xs">Calories</p>
-                      <p className="text-white font-bold">{workout.calories}</p>
-                    </div>
-                  )}
-                </div>
-                <div className="flex gap-4 pt-2">
-                  <button className="flex items-center space-x-1 text-gray-400 hover:text-red-400 transition-colors">
-                    <Heart className="w-4 h-4" />
-                    <span className="text-sm">Like</span>
-                  </button>
-                  <button className="flex items-center space-x-1 text-gray-400 hover:text-red-400 transition-colors">
-                    <MessageSquare className="w-4 h-4" />
-                    <span className="text-sm">Comment</span>
-                  </button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+          {isLoading ? (
+            <p className="text-white text-center">Loading...</p>
+          ) : error ? (
+            <p className="text-red-500 text-center">
+              Error: {error.message || 'Failed to load workouts'}
+            </p>
+          ) : (
+            workouts.map((workout) => (
+              <WorkoutCard key={workout.id} workout={workout} />
+            ))
+          )}
         </div>
       )}
 

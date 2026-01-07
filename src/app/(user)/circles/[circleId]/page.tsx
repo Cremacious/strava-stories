@@ -1,6 +1,6 @@
 import { Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import FeatureSelector from './components/FeatureSelector';
+import FeatureSelector from './components/FeatureSelector/FeatureSelector';
 import TopMembers from './components/TopMembers';
 import CircleTimelineFeed from './components/CircleTimelineFeed';
 import { getCircleById } from '@/actions/circle.actions';
@@ -57,8 +57,6 @@ const CirclePage = async ({
           </Button>
         </div>
       </div>
-
-  
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-8">

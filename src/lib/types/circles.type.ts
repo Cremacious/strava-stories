@@ -36,6 +36,22 @@ export interface RecentHighlight {
   time: string;
 }
 
+export type CircleWorkout = {
+  id: string;
+  userId: string;
+  memberName: string;
+  title: string;
+  description?: string;
+  type: string;
+  duration?: number;
+  distance?: number;
+  calories?: number;
+  date: Date;
+  createdAt: Date;
+  updatedAt: Date;
+  xpEarned: number;
+};
+
 export type Circles = Circle[];
 export type FeaturedChallenges = FeaturedChallenge[];
 export type RecentHighlights = RecentHighlight[];
