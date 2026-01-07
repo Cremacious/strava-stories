@@ -5,8 +5,15 @@ import CircleWorkoutForm from './forms/CircleWorkoutForm';
 import CircleStoryForm from './forms/CircleStoryForm';
 import CircleEventForm from './forms/CircleEventForm';
 import CirclePollForm from './forms/CirclePollForm';
+import CircleChallengeForm from './forms/CircleChallengeForm';
 
-export default function CreateForm({ type, circleId }: { type?: string; circleId: string }) {
+export default function CreateForm({
+  type,
+  circleId,
+}: {
+  type?: string;
+  circleId: string;
+}) {
   switch (type) {
     case 'workout':
       return <CircleWorkoutForm />;
@@ -18,6 +25,8 @@ export default function CreateForm({ type, circleId }: { type?: string; circleId
       return <CircleEventForm />;
     case 'poll':
       return <CirclePollForm />;
+    case 'challenge':
+      return <CircleChallengeForm circleId={circleId} />;
     default:
       return <div className="text-white">Select a valid feature type.</div>;
   }

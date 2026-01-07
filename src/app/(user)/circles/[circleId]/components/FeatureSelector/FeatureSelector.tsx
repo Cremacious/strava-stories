@@ -86,7 +86,11 @@ const FeatureSelector = ({
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {routines.map((routine) => (
-              <RoutineCard key={routine.id} routine={routine} circleId={circleId} />
+              <RoutineCard
+                key={routine.id}
+                routine={routine}
+                circleId={circleId}
+              />
             ))}
           </div>
         </div>
@@ -151,6 +155,14 @@ const FeatureSelector = ({
       {activeTab === 'challenges' && (
         <div className="space-y-4">
           <h2 className="text-2xl font-bold text-white">Challenges</h2>
+          <Button
+            onClick={() =>
+              router.push(`/circles/${circleId}/create?type=challenge`)
+            }
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Create Challenge
+          </Button>
           {circle.challenges.map((challenge) => (
             <Card key={challenge.id} className="bg-[#292929] border-0">
               <CardHeader>
