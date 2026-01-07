@@ -9,6 +9,7 @@ import AddWorkoutToCircleButton from '../AddWorkoutToCircleButton';
 import WorkoutCard from './WorkoutCard';
 import { Routine } from '@/lib/types/routine.type';
 import { CircleWorkout } from '@/lib/types/circles.type';
+import RoutineCard from './RoutineCard';
 const FeatureSelector = ({
   circleId,
   routines,
@@ -85,26 +86,7 @@ const FeatureSelector = ({
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {routines.map((routine) => (
-              <Card key={routine.id} className="bg-[#292929] border-gray-700">
-                <CardHeader>
-                  <CardTitle className="text-white">{routine.title}</CardTitle>
-                  <p className="text-gray-400 text-sm">
-                    by {routine.createdBy.name}
-                  </p>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <p className="text-gray-300 text-sm">{routine.description}</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-red-400 text-sm font-bold">
-                      {routine.difficulty}
-                    </span>
-                    <span className="text-gray-400 text-sm">
-                      {routine.steps.length} steps
-                    </span>
-                  </div>
-                  {/* Add more details or actions here */}
-                </CardContent>
-              </Card>
+              <RoutineCard key={routine.id} routine={routine} circleId={circleId} />
             ))}
           </div>
         </div>

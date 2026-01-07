@@ -1,4 +1,4 @@
-// Define enums locally (matches your Prisma schema)
+
 export enum Difficulty {
   BEGINNER = 'BEGINNER',
   INTERMEDIATE = 'INTERMEDIATE',
@@ -14,18 +14,18 @@ export enum StepType {
 export type Routine = {
   id: string;
   title: string;
-  description?: string | null; // Allow null from DB
-  difficulty: Difficulty; // Uses local enum
-  estimatedDuration?: number | null; // Allow null
-  requiredEquipment?: string | null; // Allow null
-  category?: string | null; // Allow null
+  description?: string | null; 
+  difficulty: Difficulty; 
+  estimatedDuration?: number | null; 
+  requiredEquipment?: string | null; 
+  category?: string | null; 
   fitnessGoals: string[];
   tags: string[];
   createdAt: Date;
   createdBy: {
     id: string;
-    name?: string | null; // Allow null
-    avatarUrl?: string | null; // Allow null
+    name?: string | null; 
+    avatarUrl?: string | null; 
   };
   steps: RoutineStep[];
 };
@@ -33,12 +33,13 @@ export type Routine = {
 export type RoutineStep = {
   id: string;
   stepNumber: number;
-  type: StepType; // Uses local enum
+  type: StepType; 
   name: string;
-  sets?: number | null; // Allow null
-  reps?: number | null; // Allow null
-  duration?: number | null; // Allow null
-  rest?: number | null; // Allow null
-  instructions?: string | null; // Allow null
-  equipment?: string | null; // Allow null
+  sets?: number | null; 
+  reps?: number | null;
+  duration?: number | null;
+  rest?: number | null; 
+  instructions?: string | null; 
+  equipment?: string | null;
 };
+

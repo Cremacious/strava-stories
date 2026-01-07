@@ -200,7 +200,130 @@ export async function getCircleRoutines(circleId: string) {
   }
 }
 
-// export async function getRoutineById(routineId: string) {
-//   try {
-//   } catch (error) {}
-// }
+export async function getRoutineById(routineId: string) {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return { success: false, error: 'User not authenticated' };
+    }
+
+    const routine = await prisma.workoutRoutine.findUnique({
+      where: { id: routineId },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            avatarUrl: true,
+          },
+        },
+        circle: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        comments: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                avatarUrl: true,
+              },
+            },
+            replies: {
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    name: true,
+                    avatarUrl: true,
+                  },
+                },
+              },
+            },
+          },
+          orderBy: { createdAt: 'desc' },
+        },
+      },
+    });
+
+    if (!routine) {
+      return { success: false, error: 'Routine not found' };
+    }
+
+    const steps = await prisma.workoutStep.findMany({
+      where: { routineId: routine.id },
+      orderBy: { stepNumber: 'asc' },
+    });
+
+    const transformedRoutine = {
+      id: routine.id,
+      title: routine.title,
+      description: routine.description,
+      difficulty: routine.difficulty as Difficulty,
+      estimatedDuration: routine.estimatedDuration,
+      requiredEquipment: routine.requiredEquipment,
+      category: routine.category,
+      fitnessGoals: routine.fitnessGoals,
+      tags: routine.tags,
+      createdAt: routine.createdAt,
+      updatedAt: routine.updatedAt,
+      averageRating: routine.averageRating,
+      likesCount: routine.likesCount,
+      exercisesCount: routine.exercisesCount,
+      createdBy: {
+        id: routine.user.id,
+        name: routine.user.name,
+        avatarUrl: routine.user.avatarUrl,
+      },
+      circle: routine.circle ? {
+        id: routine.circle.id,
+        name: routine.circle.name,
+      } : null,
+      steps: steps.map((step) => ({
+        id: step.id,
+        stepNumber: step.stepNumber,
+        type: step.type as StepType,
+        name: step.name,
+        duration: step.duration,
+        sets: step.sets,
+        reps: step.reps,
+        rest: step.rest,
+        instructions: step.instructions,
+        equipment: step.equipment,
+      })),
+      comments: routine.comments.map((comment) => ({
+        id: comment.id,
+        content: comment.content,
+        createdAt: comment.createdAt,
+        user: {
+          id: comment.user.id,
+          name: comment.user.name,
+          avatarUrl: comment.user.avatarUrl,
+        },
+        replies: comment.replies.map((reply) => ({
+          id: reply.id,
+          content: reply.content,
+          createdAt: reply.createdAt,
+          user: {
+            id: reply.user.id,
+            name: reply.user.name,
+            avatarUrl: reply.user.avatarUrl,
+          },
+        })),
+      })),
+    };
+
+    return { success: true, routine: transformedRoutine };
+  } catch (error) {
+    console.error('Error fetching routine by ID:', error);
+    return { success: false, error: 'Failed to fetch routine' };
+  }
+}
