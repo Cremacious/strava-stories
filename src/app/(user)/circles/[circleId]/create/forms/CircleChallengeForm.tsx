@@ -25,11 +25,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { CalendarIcon, Plus, X } from 'lucide-react';
+import { CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { useCircleStore } from '@/stores/useCircleStore'; 
-import { CreateChallengeData } from '@/lib/types/challenge.type'; 
+import { useCircleStore } from '@/stores/useCircleStore';
+import { CreateChallengeData } from '@/lib/types/challenge.type';
 
 type Difficulty = 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
 
@@ -42,7 +42,6 @@ const CircleChallengeForm = ({
   circleId,
   onSuccess,
 }: CircleChallengeFormProps) => {
-  // Removed local isLoading and submitError; using store state instead
   const { isLoading, error, addChallengeToCircle, clearError } =
     useCircleStore();
 
@@ -100,7 +99,6 @@ const CircleChallengeForm = ({
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          {/* Title */}
           <div className="space-y-2">
             <Label htmlFor="title" className="text-white">
               Challenge Title *
@@ -116,7 +114,6 @@ const CircleChallengeForm = ({
             )}
           </div>
 
-          {/* Description */}
           <div className="space-y-2">
             <Label htmlFor="description" className="text-white">
               Description *
@@ -135,7 +132,6 @@ const CircleChallengeForm = ({
             )}
           </div>
 
-          {/* Goal */}
           <div className="space-y-2">
             <Label htmlFor="goal" className="text-white">
               Challenge Goal *
@@ -151,7 +147,6 @@ const CircleChallengeForm = ({
             )}
           </div>
 
-          {/* Rules */}
           <div className="space-y-2">
             <Label htmlFor="rules" className="text-white">
               Rules & Guidelines *
@@ -168,9 +163,7 @@ const CircleChallengeForm = ({
             )}
           </div>
 
-          {/* Dates */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Start Date */}
             <div className="space-y-2">
               <Label className="text-white">Start Date (Optional)</Label>
               <Popover>
@@ -203,7 +196,6 @@ const CircleChallengeForm = ({
               )}
             </div>
 
-            {/* End Date */}
             <div className="space-y-2">
               <Label className="text-white">End Date *</Label>
               <Popover>
@@ -235,9 +227,7 @@ const CircleChallengeForm = ({
             </div>
           </div>
 
-          {/* Difficulty & Category */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Difficulty */}
             <div className="space-y-2">
               <Label className="text-white">Difficulty *</Label>
               <Select
@@ -277,7 +267,6 @@ const CircleChallengeForm = ({
               )}
             </div>
 
-            {/* Category */}
             <div className="space-y-2">
               <Label htmlFor="category" className="text-white">
                 Category (Optional)
@@ -296,7 +285,6 @@ const CircleChallengeForm = ({
             </div>
           </div>
 
-          {/* Tags */}
           <div className="space-y-2">
             <Label htmlFor="tags" className="text-white">
               Tags (Optional)
@@ -315,14 +303,12 @@ const CircleChallengeForm = ({
             )}
           </div>
 
-          {/* Error Message - Now using store's error */}
           {error && (
             <div className="bg-red-500/10 border border-red-500 text-red-500 px-4 py-2 rounded">
               {error}
             </div>
           )}
 
-          {/* Submit Button - Using store's isLoading */}
           <div className="flex justify-end space-x-4">
             <Button
               type="button"

@@ -10,14 +10,19 @@ import WorkoutCard from './WorkoutCard';
 import { Routine } from '@/lib/types/routine.type';
 import { CircleWorkout } from '@/lib/types/circles.type';
 import RoutineCard from './RoutineCard';
+import { Challenge } from '@/lib/types/challenge.type';
+import ChallengeCard from './ChallengeCard';
+
 const FeatureSelector = ({
   circleId,
   routines,
   workouts,
+  challenges,
 }: {
   circleId: string;
   routines: Routine[];
   workouts: CircleWorkout[];
+  challenges: Challenge[];
 }) => {
   const [activeTab, setActiveTab] = useState<
     'feed' | 'routines' | 'stories' | 'challenges' | 'events' | 'polls'
@@ -163,66 +168,8 @@ const FeatureSelector = ({
             <Plus className="w-4 h-4 mr-2" />
             Create Challenge
           </Button>
-          {circle.challenges.map((challenge) => (
-            <Card key={challenge.id} className="bg-[#292929] border-0">
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div>
-                    <CardTitle className="text-white">
-                      {challenge.title}
-                    </CardTitle>
-                    <p className="text-gray-400 text-sm mt-1">
-                      {challenge.description}
-                    </p>
-                  </div>
-                  <div
-                    className={`px-3 py-1 rounded-lg text-sm font-bold ${
-                      challenge.isActive
-                        ? 'bg-green-500/20 text-green-400'
-                        : 'bg-gray-600/20 text-gray-400'
-                    }`}
-                  >
-                    {challenge.isActive ? 'Active' : 'Completed'}
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="grid grid-cols-3 gap-2">
-                  <div className="bg-gray-700 p-2 rounded">
-                    <p className="text-gray-400 text-xs">Participants</p>
-                    <p className="text-white font-bold">
-                      {challenge.participants}
-                    </p>
-                  </div>
-                  <div className="bg-gray-700 p-2 rounded">
-                    <p className="text-gray-400 text-xs">Type</p>
-                    <p className="text-white font-bold">{challenge.type}</p>
-                  </div>
-                  <div className="bg-red-500/20 p-2 rounded">
-                    <p className="text-red-400 text-xs">XP Reward</p>
-                    <p className="text-red-400 font-bold">
-                      +{challenge.xpReward}
-                    </p>
-                  </div>
-                </div>
-                {challenge.winners && challenge.winners.length > 0 && (
-                  <div className="bg-gray-700/50 p-3 rounded border border-red-500/30">
-                    <p className="text-gray-400 text-sm mb-1 flex items-center">
-                      <Trophy className="w-4 h-4 mr-1 text-yellow-500" />
-                      Past Winners
-                    </p>
-                    <p className="text-white text-sm">
-                      {challenge.winners.join(', ')}
-                    </p>
-                  </div>
-                )}
-                {challenge.isActive && (
-                  <Button className="w-full bg-red-500 hover:bg-red-600">
-                    Join Challenge
-                  </Button>
-                )}
-              </CardContent>
-            </Card>
+          {challenges.map((challenge) => (
+            <ChallengeCard key={challenge.id} challenge={challenge} />
           ))}
         </div>
       )}

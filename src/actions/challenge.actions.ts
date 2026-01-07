@@ -2,7 +2,39 @@
 
 import { prisma } from '@/lib/prisma';
 import { createClient } from '@/lib/supabase/server';
+import { ChallengeStatus } from '@/lib/types/challenge.type';
 import { CreateChallengeData } from '@/lib/types/challenge.type';
+
+export async function getCircleChallenges(circleId: string) {
+  try {
+    const challenges = await prisma.circleChallenge.findMany({
+      where: { circleId },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    const transformedChallenges = challenges
+      .filter((challenge) => {
+        return ['ACTIVE', 'COMPLETED', 'CANCELLED'].includes(challenge.status);
+      })
+      .map((challenge) => ({
+        ...challenge,
+        status:
+          challenge.status === 'ACTIVE'
+            ? ChallengeStatus.ACTIVE
+            : challenge.status === 'COMPLETED'
+            ? ChallengeStatus.COMPLETED
+            : ChallengeStatus.CANCELLED,
+      }));
+
+    return { success: true, challenges: transformedChallenges };
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : 'Failed to fetch challenges',
+    };
+  }
+}
 
 export async function createCircleChallengeAction(
   challengeData: CreateChallengeData,
@@ -18,31 +50,14 @@ export async function createCircleChallengeAction(
     if (authError || !user) {
       throw new Error('User not authenticated');
     }
-    const circle = await prisma.circle.findUnique({
-      where: { id: circleId },
-      select: { ownerId: true },
-    });
-
-    if (!circle) {
-      throw new Error('Circle not found');
-    }
-
-    const membership = await prisma.circleMember.findFirst({
-      where: {
-        circleId: circleId,
-        userId: user.id,
-      },
-    });
-
-    if (!membership && circle.ownerId !== user.id) {
-      throw new Error('Unauthorized to add challenges to this circle');
-    }
 
     const challenge = await prisma.circleChallenge.create({
       data: {
         ...challengeData,
-        userId: user.id,
         circleId,
+        status: ChallengeStatus.ACTIVE,
+        userId: user.id, 
+        averageProgress: 0,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -57,3 +72,4 @@ export async function createCircleChallengeAction(
     };
   }
 }
+
