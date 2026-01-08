@@ -73,3 +73,39 @@ export async function getCircleEvents(circleId: string) {
     };
   }
 }
+
+export async function getEventById(eventId: string) {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      throw new Error('User not authenticated');
+    }
+
+    const event = await prisma.circleEvent.findUnique({
+      where: { id: eventId },
+    });
+
+    if (!event) {
+      throw new Error('Event not found');
+    }
+
+    const isMember = await prisma.circleMember.findFirst({
+      where: { circleId: event.circleId, userId: user.id },
+    });
+    if (!isMember) {
+      throw new Error('Access denied');
+    }
+
+    return { success: true, event };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to fetch event',
+    };
+  }
+}

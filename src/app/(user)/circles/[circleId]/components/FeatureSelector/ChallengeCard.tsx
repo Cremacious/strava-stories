@@ -1,11 +1,16 @@
 import Link from 'next/link';
-import { Card} from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Target, Trophy, Users } from 'lucide-react';
 import { Challenge } from '@/lib/types/challenge.type';
 
-
-const ChallengeCard = ({ challenge }: { challenge: Challenge }) => {
+const ChallengeCard = ({
+  challenge,
+  circleId,
+}: {
+  challenge: Challenge;
+  circleId: string;
+}) => {
   const formatDate = (date: Date | null | undefined) =>
     date ? date.toLocaleDateString() : 'N/A';
 
@@ -22,7 +27,7 @@ const ChallengeCard = ({ challenge }: { challenge: Challenge }) => {
   };
 
   return (
-    <Link href={`./challenges/${challenge.id}`}>
+    <Link href={`/circles/${circleId}/challenges/${challenge.id}`}>
       <Card className="bg-[#292929] border-0 hover:bg-[#333] transition-colors cursor-pointer p-4">
         <div className="flex items-start justify-between">
           <div className="flex-1">

@@ -14,8 +14,9 @@ const CircleChallengesPage = async ({
 
   return (
     <div>
-      <ChallengesDisplay challenges={challenges} />
+      <ChallengesDisplay challenges={challenges} circleId={circleId} />
     </div>
   );
 };
+
 export default CircleChallengesPage;

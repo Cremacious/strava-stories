@@ -187,14 +187,16 @@ const FeatureSelector = ({
             Create Challenge
           </Button>
           <Button
-            onClick={() =>
-              router.push(`/circles/${circleId}/challenges`)
-            }
+            onClick={() => router.push(`/circles/${circleId}/challenges`)}
           >
             View All
           </Button>
           {challenges.map((challenge) => (
-            <ChallengeCard key={challenge.id} challenge={challenge} />
+            <ChallengeCard
+              circleId={circleId}
+              key={challenge.id}
+              challenge={challenge}
+            />
           ))}
         </div>
       )}
@@ -212,9 +214,15 @@ const FeatureSelector = ({
               <Plus className="w-4 h-4 mr-2" />
               Create Event
             </Button>
+            <Button
+              className="bg-red-500 hover:bg-red-600"
+              onClick={() => router.push(`/circles/${circleId}/events`)}
+            >
+              View All
+            </Button>
           </div>
           {events.map((event) => (
-            <EventCard key={event.id} event={event} />
+            <EventCard circleId={circleId} key={event.id} event={event} />
           ))}
         </div>
       )}

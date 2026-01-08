@@ -74,4 +74,25 @@ export async function createCircleChallengeAction(
   }
 }
 
+export async function getCircleChallengeById(challengeId: string) {
+  try {
+    const challenge = await prisma.circleChallenge.findUnique({
+      where: { id: challengeId },
+    });
 
+    if (!challenge) {
+      return {
+        success: false,
+        error: 'Challenge not found',
+      };
+    }
+
+    return { success: true, challenge };
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : 'Failed to fetch challenge',
+    };
+  }
+}
