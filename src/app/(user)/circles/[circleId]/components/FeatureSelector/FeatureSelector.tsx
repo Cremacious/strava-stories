@@ -6,7 +6,7 @@ import { Heart, MapPin, MessageSquare, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import AddWorkoutToCircleButton from '../AddWorkoutToCircleButton';
-import WorkoutCard from './WorkoutCard';
+import WorkoutCard from '../../../../../../components/shared/cards/WorkoutCard';
 import { Routine } from '@/lib/types/routine.type';
 import { CircleWorkout } from '@/lib/types/circles.type';
 import RoutineCard from './RoutineCard';
@@ -15,6 +15,7 @@ import ChallengeCard from './ChallengeCard';
 import { Poll } from '@/lib/types/poll.type';
 import { Event } from '@/lib/types/event.type';
 import EventCard from './EventCard';
+import Link from 'next/link';
 
 const FeatureSelector = ({
   circleId,
@@ -72,9 +73,16 @@ const FeatureSelector = ({
               Recent Workout Logs
             </h2>
             <AddWorkoutToCircleButton circleId={circleId} />
+            <Button asChild>
+              <Link href={`/circles/${circleId}/workouts`}>View All</Link>
+            </Button>
           </div>
           {workouts.map((workout) => (
-            <WorkoutCard key={workout.id} workout={workout} />
+            <WorkoutCard
+              circleId={circleId}
+              key={workout.id}
+              workout={workout}
+            />
           ))}
         </div>
       )}
@@ -93,6 +101,12 @@ const FeatureSelector = ({
             >
               <Plus className="w-4 h-4 mr-2" />
               Upload Routine
+            </Button>
+            <Button
+              className="bg-red-500 hover:bg-red-600"
+              onClick={() => router.push(`/circles/${circleId}/routines`)}
+            >
+              View All
             </Button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -171,6 +185,13 @@ const FeatureSelector = ({
           >
             <Plus className="w-4 h-4 mr-2" />
             Create Challenge
+          </Button>
+          <Button
+            onClick={() =>
+              router.push(`/circles/${circleId}/challenges`)
+            }
+          >
+            View All
           </Button>
           {challenges.map((challenge) => (
             <ChallengeCard key={challenge.id} challenge={challenge} />

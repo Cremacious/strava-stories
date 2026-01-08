@@ -137,3 +137,21 @@ export async function getCircleWorkouts(circleId: string) {
     };
   }
 }
+
+export async function getWorkoutById(workoutId: string) {
+  try {
+    const workout = await prisma.workout.findUnique({
+      where: { id: workoutId },
+    });
+    if (!workout) {
+      return { success: false, error: 'Workout not found' };
+    }
+    return { success: true, workout };
+  } catch (error) {
+    console.error('Error fetching workout by ID:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}
