@@ -6,6 +6,7 @@ import { addRoutineToCircle } from '@/actions/routine.actions';
 import { createCircleChallengeAction } from '@/actions/challenge.actions';
 import { CreateChallengeData } from '@/lib/types/challenge.type';
 import { createCirclePoll } from '@/actions/poll.actions';
+import { createCircleEventAction } from '@/actions/event.actions';
 
 interface RoutineData {
   title: string;
@@ -74,6 +75,12 @@ interface CircleStore {
     circleId: string
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ) => Promise<{ success: boolean; poll?: any; error?: string }>;
+  createCircleEvent: (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    eventData: any,
+    circleId: string
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ) => Promise<{ success: boolean; event?: any; error?: string }>;
 }
 
 export const useCircleStore = create<CircleStore>((set) => ({
@@ -172,6 +179,27 @@ export const useCircleStore = create<CircleStore>((set) => ({
         set({
           isLoading: false,
           error: result.error || 'Failed to create poll',
+        });
+        return result;
+      }
+      set({ isLoading: false });
+      return result;
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      set({ isLoading: false, error: errorMessage });
+      return { success: false, error: errorMessage };
+    }
+  },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  createCircleEvent: async (eventData: any, circleId: string) => {
+    set({ isLoading: true, error: null });
+    try {
+      const result = await createCircleEventAction(eventData, circleId);
+      if (!result.success) {
+        set({
+          isLoading: false,
+          error: result.error || 'Failed to create event',
         });
         return result;
       }

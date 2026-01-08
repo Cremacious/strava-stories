@@ -22,7 +22,7 @@ export default function CreateForm({
     case 'story':
       return <CircleStoryForm />;
     case 'event':
-      return <CircleEventForm />;
+      return <CircleEventForm circleId={circleId} />;
     case 'poll':
       return <CirclePollForm circleId={circleId} />;
     case 'challenge':

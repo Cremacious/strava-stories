@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import { Search, Filter, SortAsc, Users, Circle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+// import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -25,7 +25,7 @@ const FriendsPage = () => {
   const allCircles = useMemo(() => {
     const circles = new Set<string>();
     friendsSample.forEach((friend) => {
-      friend.circles.forEach((circle) => circles.add(circle));
+      friend.circles?.forEach((circle) => circles.add(circle));
     });
     return Array.from(circles).sort();
   }, []);
@@ -33,13 +33,13 @@ const FriendsPage = () => {
   const filteredAndSortedFriends = useMemo(() => {
     const filtered = friendsSample.filter((friend) => {
       const matchesSearch =
-        friend.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        friend.bio.toLowerCase().includes(searchQuery.toLowerCase());
+        friend.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        friend.bio?.toLowerCase().includes(searchQuery.toLowerCase());
 
       const matchesFilter =
         filterBy === 'all' ||
         (filterBy === 'online' && friend.isOnline) ||
-        (filterBy === 'circle' && friend.circles.includes(selectedCircle));
+        (filterBy === 'circle' && friend.circles?.includes(selectedCircle));
 
       return matchesSearch && (filterBy === 'all' || matchesFilter);
     });
@@ -47,11 +47,11 @@ const FriendsPage = () => {
     filtered.sort((a, b) => {
       switch (sortBy) {
         case 'name':
-          return a.name.localeCompare(b.name);
+          return (a.name || '').localeCompare(b.name || '');
         case 'activity':
-          return a.lastActivity.localeCompare(b.lastActivity);
+          return (a.lastActivity || '').localeCompare(b.lastActivity || '');
         case 'circles':
-          return b.circles.length - a.circles.length;
+          return (b.circles?.length || 0) - (a.circles?.length || 0);
         default:
           return 0;
       }
@@ -160,8 +160,8 @@ const FriendsPage = () => {
               <div className="flex items-center space-x-3">
                 <div className="relative">
                   <Image
-                    src={friend.avatar}
-                    alt={`${friend.name} avatar`}
+                    src={friend.avatarUrl || '/placeholder-avatar.jpg'}
+                    alt={`${friend.name || 'Unknown'} avatar`}
                     width={48}
                     height={48}
                     className="w-12 h-12 rounded-full border-2 border-red-600"
@@ -169,23 +169,27 @@ const FriendsPage = () => {
                 </div>
                 <div className="flex-1 min-w-0">
                   <CardTitle className="text-white text-lg truncate">
-                    {friend.name}
+                    {friend.name || 'Unknown'}
                   </CardTitle>
-                  <p className="text-gray-100 text-sm">{friend.lastActivity}</p>
+                  <p className="text-gray-100 text-sm">
+                    {friend.lastActivity || 'Unknown'}
+                  </p>
                 </div>
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              <p className="text-gray-100 text-sm line-clamp-2">{friend.bio}</p>
+              <p className="text-gray-100 text-sm line-clamp-2">
+                {friend.bio || 'No bio available.'}
+              </p>
 
               {/* Circles */}
               <div className="space-y-2">
                 <div className="flex items-center text-gray-100 text-sm">
                   <Circle className="w-4 h-4 mr-1" />
-                  <span>{friend.circles.length} circles</span>
+                  <span>{friend.circles?.length || 0} circles</span>
                 </div>
                 <div className="flex flex-wrap gap-1">
-                  {friend.circles.slice(0, 3).map((circle, index) => (
+                  {(friend.circles || []).slice(0, 3).map((circle, index) => (
                     <span
                       key={index}
                       className="bg-red-500 text-white text-xs px-2 py-1 rounded"
@@ -193,9 +197,9 @@ const FriendsPage = () => {
                       {circle}
                     </span>
                   ))}
-                  {friend.circles.length > 3 && (
+                  {(friend.circles?.length || 0) > 3 && (
                     <span className="text-gray-400 text-xs px-2 py-1">
-                      +{friend.circles.length - 3} more
+                      +{(friend.circles?.length || 0) - 3} more
                     </span>
                   )}
                 </div>

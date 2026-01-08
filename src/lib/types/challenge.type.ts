@@ -12,7 +12,7 @@ export interface Challenge {
   category?: string | null;
   tags: string[];
   difficulty: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
-  startDate?: Date | null; 
+  startDate?: Date | null;
   endDate: Date;
   circleId: string;
   createdAt: Date;
@@ -30,5 +30,6 @@ export interface CreateChallengeData {
   category?: string | null;
   tags: string[];
   difficulty: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
-  startDate?: Date | null; 
+  startDate?: Date | null;
+  endDate: Date;
 }

@@ -13,6 +13,8 @@ import RoutineCard from './RoutineCard';
 import { Challenge } from '@/lib/types/challenge.type';
 import ChallengeCard from './ChallengeCard';
 import { Poll } from '@/lib/types/poll.type';
+import { Event } from '@/lib/types/event.type';
+import EventCard from './EventCard';
 
 const FeatureSelector = ({
   circleId,
@@ -20,12 +22,14 @@ const FeatureSelector = ({
   workouts,
   challenges,
   polls,
+  events,
 }: {
   circleId: string;
   routines: Routine[];
   workouts: CircleWorkout[];
   challenges: Challenge[];
   polls: Poll[];
+  events: Event[];
 }) => {
   const [activeTab, setActiveTab] = useState<
     'feed' | 'routines' | 'stories' | 'challenges' | 'events' | 'polls'
@@ -188,54 +192,8 @@ const FeatureSelector = ({
               Create Event
             </Button>
           </div>
-          {circle.upcomingEvents.map((event) => (
-            <Card key={event.id} className="bg-[#292929] border-0">
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div>
-                    <CardTitle className="text-white">{event.title}</CardTitle>
-                    <p className="text-gray-400 text-sm mt-1">
-                      {event.description}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-red-400 font-bold">
-                      {event.type.replace('_', ' ').toUpperCase()}
-                    </p>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                  <div className="bg-gray-700 p-2 rounded">
-                    <p className="text-gray-400 text-xs">Date</p>
-                    <p className="text-white font-bold text-sm">{event.date}</p>
-                  </div>
-                  <div className="bg-gray-700 p-2 rounded">
-                    <p className="text-gray-400 text-xs">Time</p>
-                    <p className="text-white font-bold text-sm">{event.time}</p>
-                  </div>
-                  <div className="bg-gray-700 p-2 rounded">
-                    <p className="text-gray-400 text-xs">Location</p>
-                    <p className="text-white font-bold text-sm">
-                      {event.location}
-                    </p>
-                  </div>
-                  <div className="bg-gray-700 p-2 rounded">
-                    <p className="text-gray-400 text-xs">Attendees</p>
-                    <p className="text-white font-bold text-sm">
-                      {event.attendees}/{event.maxAttendees || '∞'}
-                    </p>
-                  </div>
-                </div>
-                <p className="text-gray-400 text-sm">
-                  Organized by {event.organizer}
-                </p>
-                <Button className="w-full bg-red-500 hover:bg-red-600">
-                  RSVP
-                </Button>
-              </CardContent>
-            </Card>
+          {events.map((event) => (
+            <EventCard key={event.id} event={event} />
           ))}
         </div>
       )}

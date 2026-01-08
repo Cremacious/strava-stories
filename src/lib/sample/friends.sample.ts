@@ -1,10 +1,11 @@
-import { Friends } from '../types/friends.type';
+import { FriendWithDetails } from '../types/friends.type';
 
-export const friendsSample: Friends = [
+export const friendsSample: FriendWithDetails[] = [
   {
     id: '1',
     name: 'Sarah Chen',
-    avatar: '/placeholder-avatar.jpg',
+    email: 'sarah.chen@example.com',
+    avatarUrl: '/placeholder-avatar.jpg',
     bio: 'Trail runner and mountain enthusiast. Always up for an adventure! 🏔️',
     circles: ['Mountain Runners', 'Trail Blazers'],
     lastActivity: '2 hours ago',
@@ -14,7 +15,8 @@ export const friendsSample: Friends = [
   {
     id: '2',
     name: 'Mike Rodriguez',
-    avatar: '/placeholder-avatar.jpg',
+    email: 'mike.rodriguez@example.com',
+    avatarUrl: '/placeholder-avatar.jpg',
     bio: 'Strength training coach and nutrition expert. Building champions one rep at a time.',
     circles: ['Strength Collective', 'Fitness Mentors'],
     lastActivity: '1 day ago',
@@ -24,7 +26,8 @@ export const friendsSample: Friends = [
   {
     id: '3',
     name: 'Emma Davis',
-    avatar: '/placeholder-avatar.jpg',
+    email: 'emma.davis@example.com',
+    avatarUrl: '/placeholder-avatar.jpg',
     bio: 'Cyclist and coffee lover. Morning rides and sunset cruises are my therapy.',
     circles: ['Urban Cyclists', 'Coffee & Cardio'],
     lastActivity: '30 min ago',
@@ -34,7 +37,8 @@ export const friendsSample: Friends = [
   {
     id: '4',
     name: 'Tom Wilson',
-    avatar: '/placeholder-avatar.jpg',
+    email: 'tom.wilson@example.com',
+    avatarUrl: '/placeholder-avatar.jpg',
     bio: 'Marathon runner turned ultra-distance cyclist. The longer the better!',
     circles: ['Urban Cyclists', 'Endurance Athletes'],
     lastActivity: '3 hours ago',
@@ -44,7 +48,8 @@ export const friendsSample: Friends = [
   {
     id: '5',
     name: 'Lisa Park',
-    avatar: '/placeholder-avatar.jpg',
+    email: 'lisa.park@example.com',
+    avatarUrl: '/placeholder-avatar.jpg',
     bio: 'Yoga instructor and mindfulness coach. Finding balance in body and mind.',
     circles: ['Mindful Movement', 'Wellness Warriors'],
     lastActivity: '5 hours ago',
@@ -54,7 +59,8 @@ export const friendsSample: Friends = [
   {
     id: '6',
     name: 'Jordan Lee',
-    avatar: '/placeholder-avatar.jpg',
+    email: 'jordan.lee@example.com',
+    avatarUrl: '/placeholder-avatar.jpg',
     bio: 'CrossFit athlete and transformation coach. Turning impossible into possible.',
     circles: ['Strength Collective', 'Transformation Tribe'],
     lastActivity: '1 hour ago',
@@ -64,7 +70,8 @@ export const friendsSample: Friends = [
   {
     id: '7',
     name: 'Casey Morgan',
-    avatar: '/placeholder-avatar.jpg',
+    email: 'casey.morgan@example.com',
+    avatarUrl: '/placeholder-avatar.jpg',
     bio: 'Swimmer and triathlete. Water is my second home, roads are my playground.',
     circles: ['Triathlon Titans', 'Swim Squad'],
     lastActivity: '2 days ago',
@@ -74,7 +81,8 @@ export const friendsSample: Friends = [
   {
     id: '8',
     name: 'Alex Johnson',
-    avatar: '/placeholder-avatar.jpg',
+    email: 'alex.johnson@example.com',
+    avatarUrl: '/placeholder-avatar.jpg',
     bio: 'Fitness photographer and content creator. Capturing the journey, inspiring others.',
     circles: ['Content Creators', 'Fitness Photography'],
     lastActivity: '4 hours ago',
