@@ -4,6 +4,14 @@ import { Building } from 'lucide-react';
 import { useState } from 'react';
 import defaultAvatar from '@/app/assets/defaults/default_avatar.jpg';
 import Image from 'next/image';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { createPostSchema } from '@/lib/validators/post.validators';
+import { z } from 'zod';
+import { usePostStore } from '@/stores/usePostStore';
+import { useRouter } from 'next/navigation';
+
+type FormData = z.infer<typeof createPostSchema>;
 
 const friends = [
   'Alice Johnson',
@@ -27,33 +35,75 @@ const cities = [
   'San Jose',
 ];
 
-const StatusUpdateInput = () => {
+const StatusUpdateInput = ({
+  location,
+  id,
+}: {
+  location: string;
+  id?: string;
+}) => {
+  const { createPost, loading } = usePostStore();
+  const router = useRouter();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [dialogMode, setDialogMode] = useState<
     'compose' | 'tagFriends' | 'location'
   >('compose');
-  const [postContent, setPostContent] = useState('');
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [friendTags, setFriendTags] = useState('');
-  const [cityTags, setCityTags] = useState('');
-  const [feeling, setFeeling] = useState('');
   const [selectedFriends, setSelectedFriends] = useState<string[]>([]);
   const [friendSearch, setFriendSearch] = useState('');
   const [selectedCities, setSelectedCities] = useState<string[]>([]);
   const [citySearch, setCitySearch] = useState('');
 
-  const handleCreatePost = () => {
-    setIsDialogOpen(false);
-    setDialogMode('compose');
-    setPostContent('');
-    setSelectedImage(null);
-    setFriendTags('');
-    setCityTags('');
-    setFeeling('');
-    setSelectedFriends([]);
-    setFriendSearch('');
-    setSelectedCities([]);
-    setCitySearch('');
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    reset,
+  } = useForm<FormData>({
+    resolver: zodResolver(createPostSchema),
+    defaultValues: {
+      content: '',
+      privacy: 'FRIENDS',
+      feeling: undefined,
+      images: [],
+      tags: [],
+    },
+  });
+
+  const handleCreatePost = async (data: FormData) => {
+    const tags = [
+      ...selectedFriends.map((friend) => ({
+        type: 'USER' as const,
+        value: friend,
+      })),
+      ...selectedCities.map((city) => ({
+        type: 'LOCATION' as const,
+        value: city,
+      })),
+    ];
+    const postData = {
+      ...data,
+      tags,
+      images: selectedImage ? [selectedImage] : [],
+      location,
+      circleId: id,
+    };
+
+    try {
+      await createPost(postData);
+      reset();
+      setIsDialogOpen(false);
+      setDialogMode('compose');
+      setSelectedImage(null);
+      setSelectedFriends([]);
+      setFriendSearch('');
+      setSelectedCities([]);
+      setCitySearch('');
+      router.refresh();
+    } catch (error) {
+      console.error('Failed to create post:', error);
+    }
   };
 
   const handleFriendSelect = (friend: string) => {
@@ -80,7 +130,7 @@ const StatusUpdateInput = () => {
 
   return (
     <div className="max-w-2xl mx-auto w-full">
-      <div className=" p-4">
+      <div className="p-4">
         <div className="flex items-center mb-3">
           <Image
             src={defaultAvatar}
@@ -104,7 +154,7 @@ const StatusUpdateInput = () => {
               </h2>
             </div>
 
-            <div className="p-4">
+            <form onSubmit={handleSubmit(handleCreatePost)} className="p-4">
               {dialogMode === 'compose' ? (
                 <>
                   <div className="flex items-center mb-4">
@@ -116,28 +166,31 @@ const StatusUpdateInput = () => {
                     <div>
                       <p className="font-semibold text-white">You</p>
                       <select
+                        {...register('feeling')}
                         className="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm text-white"
-                        value={feeling}
-                        onChange={(e) => setFeeling(e.target.value)}
                       >
                         <option value="">Feeling</option>
-                        <option value="Happy">Happy</option>
-                        <option value="Sad">Sad</option>
-                        <option value="Excited">Excited</option>
-                        <option value="Angry">Angry</option>
-                        <option value="Tired">Tired</option>
-                        <option value="Motivated">Motivated</option>
+                        <option value="HAPPY">Happy</option>
+                        <option value="SAD">Sad</option>
+                        <option value="EXCITED">Excited</option>
+                        <option value="ANGRY">Angry</option>
+                        <option value="TIRED">Tired</option>
+                        <option value="MOTIVATED">Motivated</option>
                       </select>
                     </div>
                   </div>
 
                   <textarea
+                    {...register('content')}
                     className="w-full bg-transparent border-none outline-none resize-none text-white text-lg placeholder-gray-400"
                     placeholder="What's on your mind?"
-                    value={postContent}
-                    onChange={(e) => setPostContent(e.target.value)}
                     rows={4}
                   />
+                  {errors.content && (
+                    <p className="text-red-500 text-sm">
+                      {errors.content.message}
+                    </p>
+                  )}
 
                   {selectedImage && (
                     <div className="mt-4">
@@ -172,19 +225,23 @@ const StatusUpdateInput = () => {
                             type="file"
                             accept="image/*"
                             className="hidden"
-                            onChange={(e) =>
-                              setSelectedImage(e.target.files?.[0] || null)
-                            }
+                            onChange={(e) => {
+                              const file = e.target.files?.[0] || null;
+                              setSelectedImage(file);
+                              setValue('images', file ? [file] : []);
+                            }}
                           />
                           <span>📷</span>
                         </label>
                         <button
+                          type="button"
                           className="text-gray-300 hover:text-red-400"
                           onClick={() => setDialogMode('tagFriends')}
                         >
                           👥
                         </button>
                         <button
+                          type="button"
                           className="text-gray-300 hover:text-red-400"
                           onClick={() => setDialogMode('location')}
                         >
@@ -198,6 +255,7 @@ const StatusUpdateInput = () => {
                 <>
                   <div className="flex items-center mb-4">
                     <button
+                      type="button"
                       className="text-gray-400 hover:text-white mr-2"
                       onClick={() => setDialogMode('compose')}
                     >
@@ -249,6 +307,7 @@ const StatusUpdateInput = () => {
                 <>
                   <div className="flex items-center mb-4">
                     <button
+                      type="button"
                       className="text-gray-400 hover:text-white mr-2"
                       onClick={() => setDialogMode('compose')}
                     >
@@ -293,26 +352,29 @@ const StatusUpdateInput = () => {
                   )}
                 </>
               ) : null}
-            </div>
 
-            <div className="p-4 border-t border-gray-700 flex justify-end">
-              <button
-                className="bg-gray-600 hover:bg-gray-500 text-white px-4 py-2 rounded mr-2"
-                onClick={() => setIsDialogOpen(false)}
-              >
-                Cancel
-              </button>
-              <button
-                className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded font-semibold"
-                onClick={handleCreatePost}
-              >
-                Post
-              </button>
-            </div>
+              <div className="p-4 border-t border-gray-700 flex justify-end">
+                <button
+                  type="button"
+                  className="bg-gray-600 hover:bg-gray-500 text-white px-4 py-2 rounded mr-2"
+                  onClick={() => setIsDialogOpen(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded font-semibold"
+                  disabled={loading}
+                >
+                  {loading ? 'Posting...' : 'Post'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
     </div>
   );
 };
+
 export default StatusUpdateInput;

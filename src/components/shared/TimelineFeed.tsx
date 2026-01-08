@@ -1,16 +1,15 @@
 'use client';
+import { Post } from '@/lib/types/posts.type';
+import SocialPost from './SocialPost';
 
-import SocialPost from '@/components/shared/SocialPost';
-import { samplePosts } from '@/lib/sample/posts.sample';
-
-
-const TimelineFeed = () => {
+const TimelineFeed = ({ posts }: { posts: Post[] }) => {
   return (
     <div className="space-y-8 max-w-3xl mx-auto">
-      {samplePosts.map((post) => (
+      {posts.map((post) => (
         <SocialPost key={post.id} post={post} />
       ))}
     </div>
   );
 };
+
 export default TimelineFeed;

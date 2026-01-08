@@ -6,5 +6,5 @@ export interface Post {
   content: string;
   image?: string;
   tags: { friends: string[]; cities: string[] };
-  feeling: string;
+  feeling?: string; 
 }

@@ -241,7 +241,7 @@ model WorkoutRoutine {
   title              String
   description        String?
   difficulty         Difficulty
-  estimatedDuration  Int?             // in seconds
+  estimatedDuration  Int?             
   requiredEquipment  String?
   category           String?
   fitnessGoals       String[]
