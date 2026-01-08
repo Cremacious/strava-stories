@@ -4,7 +4,7 @@ import {
   featuredChallengesSample,
   recentHighlightsSample,
 } from '@/lib/sample/circles.sample';
-import TimelineFeed from '@/components/shared/TimelineFeed';
+// import TimelineFeed from '@/components/shared/TimelineFeed';
 import ActiveCirclesGrid from './components/ActiveCirclesGrid';
 import ChallengesHighlights from './components/ChallengesHighlights';
 import RecentCirclesHighlights from './components/RecentCirclesHighlights';
@@ -62,7 +62,7 @@ const CirclesPage = async () => {
           <RecentCirclesHighlights recentHighlights={recentHighlights} />
         </div>
 
-        <TimelineFeed />
+        {/* <TimelineFeed /> */}
       </div>
     </div>
   );
