@@ -1,6 +1,6 @@
 'use client';
 
-import { Building } from 'lucide-react';
+import { Building, Camera, Users } from 'lucide-react';
 import { useState } from 'react';
 import defaultAvatar from '@/app/assets/defaults/default_avatar.jpg';
 import Image from 'next/image';
@@ -10,6 +10,7 @@ import { createPostSchema } from '@/lib/validators/post.validators';
 import { z } from 'zod';
 import { usePostStore } from '@/stores/usePostStore';
 import { useRouter } from 'next/navigation';
+import { Button } from '../ui/button';
 
 type FormData = z.infer<typeof createPostSchema>;
 
@@ -147,8 +148,8 @@ const StatusUpdateInput = ({
       </div>
       {isDialogOpen && (
         <div className="fixed inset-0 bg-black/20 backdrop-blur-md flex items-center justify-center z-50">
-          <div className="bg-gray-800 border border-gray-700 rounded-lg w-full max-w-lg max-h-[90vh] overflow-y-auto">
-            <div className="p-4 border-b border-gray-700">
+          <div className="darkBackground border-0 rounded-lg w-full max-w-lg max-h-[90vh] overflow-y-auto m-2">
+            <div className="p-4 border-b border-red-700">
               <h2 className="text-xl font-bold text-center text-white">
                 Create Post
               </h2>
@@ -167,7 +168,7 @@ const StatusUpdateInput = ({
                       <p className="font-semibold text-white">You</p>
                       <select
                         {...register('feeling')}
-                        className="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm text-white"
+                        className="darkBackground2 border border-red-700 rounded px-2 py-1 text-sm text-white"
                       >
                         <option value="">Feeling</option>
                         <option value="HAPPY">Happy</option>
@@ -182,7 +183,7 @@ const StatusUpdateInput = ({
 
                   <textarea
                     {...register('content')}
-                    className="w-full bg-transparent border-none outline-none resize-none text-white text-lg placeholder-gray-400"
+                    className="w-full bg-transparent border-none outline-none resize-none text-white text-lg placeholder-white/60"
                     placeholder="What's on your mind?"
                     rows={4}
                   />
@@ -214,7 +215,7 @@ const StatusUpdateInput = ({
                     </div>
                   )}
 
-                  <div className="mt-4 border border-gray-600 rounded-lg p-4 bg-gray-700">
+                  <div className="mt-4 border border-red-700 rounded-lg p-4 darkBackground2">
                     <div className="flex justify-between items-center">
                       <p className="text-white font-semibold">
                         Add to your post
@@ -231,21 +232,23 @@ const StatusUpdateInput = ({
                               setValue('images', file ? [file] : []);
                             }}
                           />
-                          <span>📷</span>
+                          <span>
+                            <Camera className="text-red-500" size={25} />
+                          </span>
                         </label>
                         <button
                           type="button"
                           className="text-gray-300 hover:text-red-400"
                           onClick={() => setDialogMode('tagFriends')}
                         >
-                          👥
+                          <Users className="text-red-500" size={25} />
                         </button>
                         <button
                           type="button"
                           className="text-gray-300 hover:text-red-400"
                           onClick={() => setDialogMode('location')}
                         >
-                          <Building size={20} />
+                          <Building className="text-red-500" size={25} />
                         </button>
                       </div>
                     </div>
@@ -354,20 +357,17 @@ const StatusUpdateInput = ({
               ) : null}
 
               <div className="p-4 border-t border-gray-700 flex justify-end">
-                <button
+                <Button
                   type="button"
-                  className="bg-gray-600 hover:bg-gray-500 text-white px-4 py-2 rounded mr-2"
+                  variant={'secondary'}
                   onClick={() => setIsDialogOpen(false)}
+                  className="mr-2"
                 >
                   Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded font-semibold"
-                  disabled={loading}
-                >
+                </Button>
+                <Button type="submit" disabled={loading}>
                   {loading ? 'Posting...' : 'Post'}
-                </button>
+                </Button>
               </div>
             </form>
           </div>
