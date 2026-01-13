@@ -2,6 +2,9 @@
 
 import { Calendar, MapPin, Users, Activity } from 'lucide-react';
 import SocialPost from '@/components/shared/SocialPost';
+import ProfileImage from './ProfileImage';
+
+
 
 const userProfile = {
   name: 'Alex Johnson',
@@ -92,14 +95,7 @@ const ProfilePage = () => {
       <div className="border-0 rounded-lg p-6">
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
           {/* Profile Image */}
-          <div className="relative">
-            <img
-              src={userProfile.avatar}
-              alt={`${userProfile.name} profile`}
-              className="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-red-500"
-            />
-          </div>
-
+          <ProfileImage  />
           {/* Profile Info */}
           <div className="flex-1 text-center sm:text-left">
             <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">

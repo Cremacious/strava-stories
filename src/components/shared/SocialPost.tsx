@@ -9,13 +9,13 @@ const SocialPost = ({ post }: { post: Post }) => {
       className="bg-[#3F3F3F] w-full  rounded-lg overflow-hidden"
     >
       <div className="p-4 flex items-center relative">
-        <Image
+        {/* <Image
           src={post.avatar || defaultAvatar}
           alt={`${post.userName} avatar`}
           className="w-10 h-10 rounded-full mr-3"
           width={40}
           height={40}
-        />
+        /> */}
         <div className="flex-1">
           <p className="font-semibold text-white">{post.userName}</p>
           <p className="text-sm text-gray-400">{post.time}</p>
@@ -45,12 +45,12 @@ const SocialPost = ({ post }: { post: Post }) => {
 
       {post.image && (
         <div className="px-4 pb-4 relative">
-          <Image
+          {/* <Image
             src={post.image}
             alt="Post image"
             fill
             className="rounded-lg object-cover"
-          />
+          /> */}
         </div>
       )}
 
