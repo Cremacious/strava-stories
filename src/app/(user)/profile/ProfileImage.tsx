@@ -1,15 +1,14 @@
 'use client';
 import { useState, useRef } from 'react';
 import defaultProfileImage from '@/app/assets/defaults/default_avatar.jpg';
-import StockProfileImage from '@/app/assets/defaults/stock-profile.jpg';
 import Image, { StaticImageData } from 'next/image';
 import { Camera } from 'lucide-react';
 import { useUserStore } from '@/stores/useUserStore';
 
-const ProfileImage = () => {
+const ProfileImage = ({ avatarUrl }: { avatarUrl?: string }) => {
   const { updateUserProfileImage } = useUserStore();
   const [imageSrc, setImageSrc] = useState<string | StaticImageData>(
-    StockProfileImage || defaultProfileImage
+    avatarUrl || defaultProfileImage
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
 

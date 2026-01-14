@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { createClient } from '@/lib/supabase/server';
 import { deleteCloudinaryImage } from '@/lib/cloudinary-utils';
 import cloudinary from '@/lib/cloudinary';
+import { User } from '@/lib/types/user.type';
 
 export async function getUserSession() {
   try {
@@ -86,6 +87,60 @@ export async function updateUserProfileImage(formData: FormData) {
         error instanceof Error
           ? error.message
           : 'Failed to update profile image',
+    };
+  }
+}
+
+export async function getUserProfile(): Promise<{
+  success: boolean;
+  user?: User;
+  error?: string;
+}> {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return { success: false, error: 'User not authenticated' };
+    }
+
+    const profile = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        avatarUrl: true,
+        bio: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    if (!profile) {
+      return { success: false, error: 'User not found' };
+    }
+
+    const userProfile: User = {
+      id: profile.id,
+      username: profile.name || '',
+      email: profile.email,
+      avatarUrl: profile.avatarUrl || undefined,
+      bio: profile.bio || undefined,
+      createdAt: profile.createdAt.toISOString(),
+      updatedAt: profile.updatedAt.toISOString(),
+    };
+
+    return { success: true, user: userProfile };
+  } catch (error) {
+    console.error('Error fetching user profile:', error);
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : 'Failed to fetch user profile',
     };
   }
 }

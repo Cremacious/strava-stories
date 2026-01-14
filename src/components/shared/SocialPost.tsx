@@ -45,12 +45,12 @@ const SocialPost = ({ post }: { post: Post }) => {
 
       {post.image && (
         <div className="px-4 pb-4 relative">
-          {/* <Image
+          <Image
             src={post.image}
             alt="Post image"
             fill
             className="rounded-lg object-cover"
-          /> */}
+          />
         </div>
       )}
 

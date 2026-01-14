@@ -2,15 +2,15 @@
 
 import { Building, Camera, Users } from 'lucide-react';
 import { useState } from 'react';
-import defaultAvatar from '@/app/assets/defaults/default_avatar.jpg';
 import Image from 'next/image';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createPostSchema } from '@/lib/validators/post.validators';
 import { z } from 'zod';
 import { usePostStore } from '@/stores/usePostStore';
 import { useRouter } from 'next/navigation';
 import { Button } from '../ui/button';
+import defaultProfileImage from '@/app/assets/defaults/default_avatar.jpg';
 
 type FormData = z.infer<typeof createPostSchema>;
 
@@ -39,9 +39,11 @@ const cities = [
 const StatusUpdateInput = ({
   location,
   id,
+  userImage,
 }: {
   location: string;
   id?: string;
+  userImage?: string;
 }) => {
   const { createPost, loading } = usePostStore();
   const router = useRouter();
@@ -49,7 +51,6 @@ const StatusUpdateInput = ({
   const [dialogMode, setDialogMode] = useState<
     'compose' | 'tagFriends' | 'location'
   >('compose');
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [selectedFriends, setSelectedFriends] = useState<string[]>([]);
   const [friendSearch, setFriendSearch] = useState('');
   const [selectedCities, setSelectedCities] = useState<string[]>([]);
@@ -61,6 +62,7 @@ const StatusUpdateInput = ({
     formState: { errors },
     setValue,
     reset,
+    control,
   } = useForm<FormData>({
     resolver: zodResolver(createPostSchema),
     defaultValues: {
@@ -71,6 +73,8 @@ const StatusUpdateInput = ({
       tags: [],
     },
   });
+
+  const watchedImages = useWatch({ control, name: 'images' });
 
   const handleCreatePost = async (data: FormData) => {
     const tags = [
@@ -86,7 +90,6 @@ const StatusUpdateInput = ({
     const postData = {
       ...data,
       tags,
-      images: selectedImage ? [selectedImage] : [],
       location,
       circleId: id,
     };
@@ -96,7 +99,6 @@ const StatusUpdateInput = ({
       reset();
       setIsDialogOpen(false);
       setDialogMode('compose');
-      setSelectedImage(null);
       setSelectedFriends([]);
       setFriendSearch('');
       setSelectedCities([]);
@@ -134,9 +136,11 @@ const StatusUpdateInput = ({
       <div className="p-4">
         <div className="flex items-center mb-3">
           <Image
-            src={defaultAvatar}
+            src={userImage || defaultProfileImage}
             alt="Your avatar"
             className="w-10 h-10 rounded-full mr-3"
+            width={40}
+            height={40}
           />
           <div
             className="flex-1 darkBackground border border-red-700 rounded-full px-4 py-2 cursor-pointer hover:bg-[#4d3030] transition-colors"
@@ -159,10 +163,12 @@ const StatusUpdateInput = ({
               {dialogMode === 'compose' ? (
                 <>
                   <div className="flex items-center mb-4">
-                    <img
-                      src="/placeholder-avatar.jpg"
+                    <Image
+                      src={userImage || '/placeholder-avatar.jpg'}
                       alt="Your avatar"
                       className="w-10 h-10 rounded-full mr-3"
+                      width={40}
+                      height={40}
                     />
                     <div>
                       <p className="font-semibold text-white">You</p>
@@ -193,10 +199,10 @@ const StatusUpdateInput = ({
                     </p>
                   )}
 
-                  {selectedImage && (
+                  {watchedImages && watchedImages.length > 0 && (
                     <div className="mt-4">
                       <img
-                        src={URL.createObjectURL(selectedImage)}
+                        src={URL.createObjectURL(watchedImages[0])}
                         alt="Selected"
                         className="w-full max-w-md rounded-lg"
                       />
@@ -227,8 +233,7 @@ const StatusUpdateInput = ({
                             accept="image/*"
                             className="hidden"
                             onChange={(e) => {
-                              const file = e.target.files?.[0] || null;
-                              setSelectedImage(file);
+                              const file = e.target.files?.[0];
                               setValue('images', file ? [file] : []);
                             }}
                           />
@@ -286,9 +291,11 @@ const StatusUpdateInput = ({
                         }`}
                         onClick={() => handleFriendSelect(friend)}
                       >
-                        <img
+                        <Image
                           src="/placeholder-avatar.jpg"
                           alt={`${friend} avatar`}
+                          width={32}
+                          height={32}
                           className="w-8 h-8 rounded-full mr-3"
                         />
                         <span className="text-white">{friend}</span>
