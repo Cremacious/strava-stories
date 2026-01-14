@@ -4,7 +4,7 @@ import { createPost } from '@/actions/post.actions';
 interface PostStore {
   loading: boolean;
   createPost: (data: {
-    content: string;
+    content?: string;
     privacy: string;
     feeling?: string;
     images?: File[];

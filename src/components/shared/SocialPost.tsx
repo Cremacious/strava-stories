@@ -28,7 +28,7 @@ const SocialPost = ({ post }: { post: Post }) => {
       </div>
 
       <div className="px-4 pb-2">
-        <p className="text-white mb-2">{post.content}</p>
+        {post.content && <p className="text-white mb-2">{post.content}</p>}
         <div className="flex flex-row gap-1">
           {post.tags.friends.length > 0 && (
             <p className="text-sm text-gray-300 mb-1">
@@ -44,12 +44,13 @@ const SocialPost = ({ post }: { post: Post }) => {
       </div>
 
       {post.image && (
-        <div className="px-4 pb-4 relative">
+        <div className="px-4 pb-4">
           <Image
             src={post.image}
             alt="Post image"
-            fill
-            className="rounded-lg object-cover"
+            width={500}
+            height={300}
+            className="w-full h-auto max-h-96 rounded-lg object-contain"
           />
         </div>
       )}

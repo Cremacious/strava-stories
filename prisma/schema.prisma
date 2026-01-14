@@ -140,7 +140,7 @@ model Post {
   circleId  String?
   circle    Circle?    @relation(fields: [circleId], references: [id], onDelete: Cascade)
   createdAt DateTime   @default(now())
-  content   String
+  content   String?
   privacy   Privacy    @default(FRIENDS)
   feeling   Feeling?
   images    PostImage[]

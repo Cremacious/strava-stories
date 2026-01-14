@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const createPostSchema = z.object({
-  content: z.string().min(1, 'Content is required'),
+  content: z.string().optional(),
   privacy: z.enum(['PUBLIC', 'FRIENDS']), // Remove .optional() to make it required
   feeling: z
     .enum(['HAPPY', 'SAD', 'EXCITED', 'ANGRY', 'TIRED', 'MOTIVATED'])

@@ -3,9 +3,10 @@
 import { prisma } from '@/lib/prisma';
 import { createClient } from '@/lib/supabase/server';
 import { Post } from '@/lib/types/posts.type';
+import cloudinary from '@/lib/cloudinary';
 
 export async function createPost(data: {
-  content: string;
+  content?: string;
   privacy: string;
   feeling?: string;
   images?: File[];
@@ -26,27 +27,33 @@ export async function createPost(data: {
   const imageUrls: string[] = [];
   if (data.images && data.images.length > 0) {
     for (const file of data.images) {
-      const fileName = `${user.id}/${Date.now()}-${file.name}`;
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('posts')
-        .upload(fileName, file);
+      const buffer = Buffer.from(await file.arrayBuffer());
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const result = await new Promise<any>((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          {
+            folder: 'fit-posts',
+            resource_type: 'image',
+          },
+          (error, result) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve(result);
+            }
+          }
+        );
+        uploadStream.end(buffer);
+      });
 
-      if (uploadError) {
-        throw new Error(`Image upload failed: ${uploadError.message}`);
-      }
-
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from('posts').getPublicUrl(uploadData.path);
-
-      imageUrls.push(publicUrl);
+      imageUrls.push(result.secure_url);
     }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const postData: any = {
     userId: user.id,
-    content: data.content,
+    content: data.content || '',
     privacy: data.privacy,
     feeling: data.feeling,
     images: {
@@ -98,7 +105,7 @@ export async function getUserPosts() {
       userName: p.user.name || 'Unknown',
       avatar: p.user.avatarUrl || '',
       time: p.createdAt.toLocaleString(),
-      content: p.content,
+      content: p.content ?? undefined,
       image: p.images[0]?.url,
       tags: {
         friends: p.tags.filter((t) => t.type === 'USER').map((t) => t.value),

@@ -291,11 +291,9 @@ const StatusUpdateInput = ({
                         }`}
                         onClick={() => handleFriendSelect(friend)}
                       >
-                        <Image
+                        <img
                           src="/placeholder-avatar.jpg"
                           alt={`${friend} avatar`}
-                          width={32}
-                          height={32}
                           className="w-8 h-8 rounded-full mr-3"
                         />
                         <span className="text-white">{friend}</span>

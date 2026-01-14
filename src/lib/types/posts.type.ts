@@ -3,7 +3,7 @@ export interface Post {
   userName: string;
   avatar: string;
   time: string;
-  content: string;
+  content?: string;
   image?: string;
   tags: { friends: string[]; cities: string[] };
   feeling?: string; 
