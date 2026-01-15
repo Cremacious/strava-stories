@@ -1,15 +1,16 @@
 import { Button } from '@/components/ui/button';
 import {
-  myCirclesSample,
   featuredChallengesSample,
   recentHighlightsSample,
 } from '@/lib/sample/circles.sample';
-// import TimelineFeed from '@/components/shared/TimelineFeed';
+import TimelineFeed from '@/components/shared/TimelineFeed';
 import ActiveCirclesGrid from './components/ActiveCirclesGrid';
 import ChallengesHighlights from './components/ChallengesHighlights';
 import RecentCirclesHighlights from './components/RecentCirclesHighlights';
 import Link from 'next/link';
 import { getCirclesForUser } from '@/actions/circle.actions';
+import { getCurrentUserCirclePosts } from '@/actions/post.actions';
+import { Post } from '@/lib/types/posts.type';
 
 const CirclesPage = async () => {
   const result = await getCirclesForUser();
@@ -17,6 +18,11 @@ const CirclesPage = async () => {
 
   const featuredChallenges = featuredChallengesSample;
   const recentHighlights = recentHighlightsSample;
+
+  const circlePostsResult = await getCurrentUserCirclePosts();
+  const circlePosts: Post[] = circlePostsResult.success
+    ? circlePostsResult.posts || []
+    : [];
 
   return (
     <div className="p-4 sm:p-6 space-y-6 w-full">
@@ -55,7 +61,7 @@ const CirclesPage = async () => {
       </div>
       {/* <div className="border-t-2 border-red-900/40 max-w-3xl mx-auto"></div> */}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start ">
         <div className="space-y-6 ">
           <ChallengesHighlights featuredChallenges={featuredChallenges} />
 
@@ -63,6 +69,7 @@ const CirclesPage = async () => {
         </div>
 
         {/* <TimelineFeed /> */}
+        <TimelineFeed posts={circlePosts} />
       </div>
     </div>
   );

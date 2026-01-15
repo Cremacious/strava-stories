@@ -216,3 +216,94 @@ export async function getCirclePosts(circleId: string) {
     };
   }
 }
+
+export async function getCurrentUserCirclePosts() {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+    if (authError || !user) {
+      return { success: false, error: 'User not authenticated' };
+    }
+
+    const memberships = await prisma.circleMember.findMany({
+      where: { userId: user.id },
+      select: { circleId: true },
+    });
+
+    const circleIds = memberships.map((m) => m.circleId);
+
+    if (circleIds.length === 0) {
+      return { success: true, posts: [] };
+    }
+
+    const posts = await prisma.post.findMany({
+      where: { circleId: { in: circleIds } },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            avatarUrl: true,
+          },
+        },
+        images: true,
+        tags: true,
+        comments: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                avatarUrl: true,
+              },
+            },
+            replies: {
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    name: true,
+                    avatarUrl: true,
+                  },
+                },
+              },
+            },
+          },
+          orderBy: { createdAt: 'asc' },
+        },
+        circle: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    const transformedPosts: Post[] = posts.map((p) => ({
+      id: p.id,
+      userName: p.user.name || 'Unknown',
+      avatar: p.user.avatarUrl || '',
+      time: p.createdAt.toLocaleString(),
+      content: p.content ?? undefined,
+      image: p.images[0]?.url,
+      tags: {
+        friends: p.tags.filter((t) => t.type === 'USER').map((t) => t.value),
+        cities: p.tags.filter((t) => t.type === 'LOCATION').map((t) => t.value),
+      },
+      feeling: p.feeling ?? undefined,
+    }));
+
+    return { success: true, posts: transformedPosts };
+  } catch (error) {
+    console.error('Error fetching current user circle posts:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to fetch posts',
+    };
+  }
+}
