@@ -1,8 +1,13 @@
 import { friendsSample } from '@/lib/sample/friends.sample';
 import FriendDisplay from './components/FriendDisplay';
 import SearchFriends from './components/SearchFriends';
+import PendingFriendRequests from './components/PendingFriendRequests';
+import { getPendingFriendRequests } from '@/actions/friend.actions';
 
-const FriendsPage = () => {
+const FriendsPage = async () => {
+  const result = await getPendingFriendRequests();
+  const pendingFriendRequests = result.friendRequests; 
+
   return (
     <div className="p-4 sm:p-6 space-y-6">
       {/* Header */}
@@ -16,7 +21,10 @@ const FriendsPage = () => {
         <div className="text-sm text-gray-400"></div>
       </div>
       <div className="space-y-8">
-        <SearchFriends />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <SearchFriends />
+          <PendingFriendRequests friendRequests={pendingFriendRequests} />
+        </div>
         <FriendDisplay friends={friendsSample} />
       </div>
     </div>

@@ -16,8 +16,19 @@ export interface FriendWithDetails extends Friend {
 }
 
 
+
+export type FriendRequest = {
+  id: string;
+  name?: string;
+  email: string;
+  avatarUrl?: string;
+  bio?: string;
+  isSentByCurrentUser: boolean;  
+};
+
+
+
 export type Friends = Friend[];
 
-// Filter and sort options
 export type FriendSortOption = 'name' | 'activity' | 'circles';
 export type FriendFilterOption = 'all' | 'online' | 'circle';

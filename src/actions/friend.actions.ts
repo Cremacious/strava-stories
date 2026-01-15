@@ -1,7 +1,7 @@
 'use server';
 import { createClient } from '@/lib/supabase/server';
 import { prisma } from '@/lib/prisma';
-
+import { User } from '@/lib/types/user.type';
 export async function getCurrentUserFriends() {}
 
 export async function getFriendById(friendId: string) {}
@@ -9,10 +9,8 @@ export async function getFriendById(friendId: string) {}
 export async function sendFriendRequest(friendId: string) {
   try {
     const supabase = await createClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    const { data, error: authError } = await supabase.auth.getUser();
+    const user = data?.user as User | null;
 
     if (authError || !user) {
       return { success: false, error: 'User not authenticated' };
@@ -41,7 +39,6 @@ export async function sendFriendRequest(friendId: string) {
       };
     }
 
-   
     await prisma.friendship.create({
       data: {
         userId: user.id,
@@ -67,7 +64,94 @@ export async function acceptFriendRequest(friendId: string) {}
 
 export async function declineFriendRequest(friendId: string) {}
 
-export async function getPendingFriendRequests() {}
+export async function getPendingFriendRequests() {
+  try {
+    const supabase = await createClient();
+    const { data, error: authError } = await supabase.auth.getUser();
+    const user = data?.user as User | null;
+
+    if (authError || !user) {
+      return {
+        success: false,
+        error: 'User not authenticated',
+        friendRequests: [],
+      };
+    }
+
+    console.log('Current user ID:', user.id, 'Email:', user.email); // Log current user details
+
+    const friendships = await prisma.friendship.findMany({
+      where: {
+        OR: [
+          { userId: user.id, status: 'PENDING' },
+          { friendId: user.id, status: 'PENDING' },
+        ],
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            avatarUrl: true,
+            bio: true,
+          },
+        },
+        friend: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            avatarUrl: true,
+            bio: true,
+          },
+        },
+      },
+    });
+
+    console.log(
+      'Raw friendships from DB:',
+      friendships.map((f) => ({
+        id: f.id,
+        userId: f.userId,
+        friendId: f.friendId,
+        status: f.status,
+        userEmail: f.user.email,
+        friendEmail: f.friend.email,
+      }))
+    );
+
+    const friendRequests = friendships.map((friendship) => {
+      const isSentByCurrentUser = friendship.userId === user.id ? false : true;
+      const otherUser = isSentByCurrentUser
+        ? friendship.friend
+        : friendship.user;
+      console.log(
+        `Mapping for friendship ${friendship.id}: isSentByCurrentUser = ${isSentByCurrentUser}, otherUserEmail = ${otherUser.email}`
+      );
+      return {
+        id: friendship.id,
+        name: otherUser.name || undefined,
+        email: otherUser.email,
+        avatarUrl: otherUser.avatarUrl || undefined,
+        bio: otherUser.bio || undefined,
+        isSentByCurrentUser,
+      };
+    });
+
+    return { success: true, friendRequests };
+  } catch (error) {
+    console.error('Error fetching pending friend requests:', error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Failed to fetch pending friend requests',
+      friendRequests: [],
+    };
+  }
+}
 
 export async function removeFriend(friendId: string) {}
 
@@ -96,7 +180,7 @@ export async function searchUsers(query: string) {
               { email: { contains: query, mode: 'insensitive' } },
             ],
           },
-          { id: { not: user.id } }, 
+          { id: { not: user.id } },
         ],
       },
       select: {
@@ -106,7 +190,7 @@ export async function searchUsers(query: string) {
         avatarUrl: true,
         bio: true,
       },
-      take: 10, 
+      take: 10,
     });
 
     return { success: true, users };
