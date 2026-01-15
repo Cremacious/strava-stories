@@ -7,8 +7,10 @@ import { getCircleById } from '@/actions/circle.actions';
 import { getCircleRoutines } from '@/actions/routine.actions';
 import { getCircleWorkouts } from '@/actions/workout.actions';
 import { getCircleChallenges } from '@/actions/challenge.actions';
-import {getCirclePolls} from '@/actions/poll.actions';
+import { getCirclePolls } from '@/actions/poll.actions';
 import { getCircleEvents } from '@/actions/event.actions';
+import { getUserProfile } from '@/actions/user.actions';
+import { getCirclePosts } from '@/actions/post.actions';
 
 const CirclePage = async ({
   params,
@@ -16,6 +18,7 @@ const CirclePage = async ({
   params: Promise<{ circleId: string }>;
 }) => {
   const { circleId } = await params;
+  const { user } = await getUserProfile();
   const result = await getCircleById(circleId);
   const circle = result.success ? result.circle : null;
   const routinesResult = await getCircleRoutines(circleId);
@@ -30,6 +33,10 @@ const CirclePage = async ({
   const polls = pollsResult.success ? pollsResult.polls || [] : [];
   const eventsResult = await getCircleEvents(circleId);
   const events = eventsResult.success ? eventsResult.events || [] : [];
+  const postsResult = await getCirclePosts(circleId);
+  const posts = postsResult.success ? postsResult.posts || [] : [];
+
+  // console.log(posts);
 
   if (!circle) {
     return (
@@ -77,11 +84,22 @@ const CirclePage = async ({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-8">
-          <FeatureSelector circleId={circleId} workouts={workouts} routines={routines} challenges={challenges} polls={polls} events={events} />
+          <FeatureSelector
+            circleId={circleId}
+            workouts={workouts}
+            routines={routines}
+            challenges={challenges}
+            polls={polls}
+            events={events}
+          />
 
           {/* <TopMembers circle={circle} /> */}
         </div>
-        <CircleTimelineFeed />
+        <CircleTimelineFeed
+          initialPosts={posts}
+          userImage={user?.avatarUrl}
+          circleId={circleId}
+        />
       </div>
     </div>
   );

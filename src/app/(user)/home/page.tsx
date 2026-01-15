@@ -10,7 +10,7 @@ const UserHomePage = async () => {
     ? postsResult.posts || []
     : [];
   const { user } = await getUserProfile();
-  console.log(user);
+  // console.log(user);
 
   return (
     <div className=" min-h-full p-4">

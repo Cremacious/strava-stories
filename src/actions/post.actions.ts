@@ -91,7 +91,7 @@ export async function getUserPosts() {
     }
 
     const rawPosts = await prisma.post.findMany({
-      where: { userId: user.id },
+      where: { userId: user.id, circleId: null },
       include: {
         user: { select: { name: true, avatarUrl: true } },
         images: true,
@@ -117,6 +117,99 @@ export async function getUserPosts() {
     return { success: true, posts: transformedPosts };
   } catch (error) {
     console.error('Error fetching user posts:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to fetch posts',
+    };
+  }
+}
+
+export async function getCirclePosts(circleId: string) {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return { success: false, error: 'User not authenticated' };
+    }
+
+    const circle = await prisma.circle.findUnique({
+      where: { id: circleId },
+      include: {
+        members: {
+          where: { userId: user.id },
+        },
+      },
+    });
+
+    if (!circle) {
+      return { success: false, error: 'Circle not found' };
+    }
+
+    const isMember = circle.members.length > 0;
+    if (!isMember) {
+      return { success: false, error: 'Access denied' };
+    }
+
+    const posts = await prisma.post.findMany({
+      where: { circleId },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            avatarUrl: true,
+          },
+        },
+        images: true,
+        tags: true,
+        comments: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                avatarUrl: true,
+              },
+            },
+            replies: {
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    name: true,
+                    avatarUrl: true,
+                  },
+                },
+              },
+            },
+          },
+          orderBy: { createdAt: 'asc' },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    const transformedPosts: Post[] = posts.map((p) => ({
+      id: p.id,
+      userName: p.user.name || 'Unknown',
+      avatar: p.user.avatarUrl || '',
+      time: p.createdAt.toLocaleString(),
+      content: p.content ?? undefined,
+      image: p.images[0]?.url,
+      tags: {
+        friends: p.tags.filter((t) => t.type === 'USER').map((t) => t.value),
+        cities: p.tags.filter((t) => t.type === 'LOCATION').map((t) => t.value),
+      },
+      feeling: p.feeling ?? undefined,
+    }));
+
+    return { success: true, posts: transformedPosts };
+  } catch (error) {
+    console.error('Error fetching circle posts:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Failed to fetch posts',

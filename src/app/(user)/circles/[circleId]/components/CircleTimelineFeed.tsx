@@ -1,14 +1,44 @@
+'use client';
+import { useEffect, useState } from 'react';
 import StatusUpdateInput from '@/components/shared/StatusUpdateInput';
-// import TimelineFeed from '@/components/shared/TimelineFeed';
+import TimelineFeed from '@/components/shared/TimelineFeed';
+import { Post } from '@/lib/types/posts.type';
+import { getCirclePosts } from '@/actions/post.actions';
 
-const CircleTimelineFeed = () => {
+const CircleTimelineFeed = ({
+  userImage,
+  circleId,
+  initialPosts,
+}: {
+  userImage: string | undefined;
+  circleId: string;
+  initialPosts: Post[];
+}) => {
+  const [posts, setPosts] = useState<Post[]>(initialPosts);
+
+  const fetchPosts = async () => {
+    const result = await getCirclePosts(circleId);
+    if (result.success) {
+      setPosts(result.posts || []);
+    }
+  };
+
+  useEffect(() => {
+    fetchPosts();
+  }, [circleId]);
+
   return (
     <div className="">
       <div className="">
         <h2 className="text-2xl font-bold mb-4">Circle Feed</h2>
       </div>
-      <StatusUpdateInput location="circle" />
-      {/* <TimelineFeed posts={} /> */}
+      <StatusUpdateInput
+        userImage={userImage}
+        id={circleId}
+        location="circle"
+        onPostCreated={fetchPosts}
+      />
+      <TimelineFeed posts={posts} />
     </div>
   );
 };

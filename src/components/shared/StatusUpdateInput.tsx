@@ -8,7 +8,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { createPostSchema } from '@/lib/validators/post.validators';
 import { z } from 'zod';
 import { usePostStore } from '@/stores/usePostStore';
-import { useRouter } from 'next/navigation';
 import { Button } from '../ui/button';
 import defaultProfileImage from '@/app/assets/defaults/default_avatar.jpg';
 
@@ -40,13 +39,14 @@ const StatusUpdateInput = ({
   location,
   id,
   userImage,
+  onPostCreated,
 }: {
   location: string;
   id?: string;
   userImage?: string;
+  onPostCreated?: () => void;
 }) => {
   const { createPost, loading } = usePostStore();
-  const router = useRouter();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [dialogMode, setDialogMode] = useState<
     'compose' | 'tagFriends' | 'location'
@@ -103,7 +103,7 @@ const StatusUpdateInput = ({
       setFriendSearch('');
       setSelectedCities([]);
       setCitySearch('');
-      router.refresh();
+      onPostCreated?.();
     } catch (error) {
       console.error('Failed to create post:', error);
     }
