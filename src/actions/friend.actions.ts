@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { User } from '@/lib/types/user.type';
 export async function getCurrentUserFriends() {}
 
-export async function getFriendById(friendId: string) {}
+// export async function getFriendById(friendId: string) {}
 
 export async function sendFriendRequest(friendId: string) {
   try {
@@ -249,7 +249,7 @@ export async function getPendingFriendRequests() {
   }
 }
 
-export async function removeFriend(friendId: string) {}
+// export async function removeFriend(friendId: string) {}
 
 export async function searchUsers(query: string) {
   try {
@@ -295,6 +295,73 @@ export async function searchUsers(query: string) {
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Failed to search users',
+    };
+  }
+}
+
+export async function getAllUserFriends() {
+  try {
+    const supabase = await createClient();
+    const { data, error: authError } = await supabase.auth.getUser();
+    const user = data?.user as User | null;
+
+    if (authError || !user) {
+      return {
+        success: false,
+        error: 'User not authenticated',
+        friends: [],
+      };
+    }
+
+    const friendships = await prisma.friendship.findMany({
+      where: {
+        OR: [
+          { userId: user.id, status: 'ACCEPTED' },
+          { friendId: user.id, status: 'ACCEPTED' },
+        ],
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            avatarUrl: true,
+            bio: true,
+          },
+        },
+        friend: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            avatarUrl: true,
+            bio: true,
+          },
+        },
+      },
+    });
+
+    const friends = friendships.map((friendship) => {
+      const otherUser =
+        friendship.userId === user.id ? friendship.friend : friendship.user;
+      return {
+        id: otherUser.id,
+        name: otherUser.name,
+        email: otherUser.email,
+        avatarUrl: otherUser.avatarUrl,
+        bio: otherUser.bio,
+      };
+    });
+
+    return { success: true, friends };
+  } catch (error) {
+    console.error('Error fetching user friends:', error);
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : 'Failed to fetch user friends',
+      friends: [],
     };
   }
 }

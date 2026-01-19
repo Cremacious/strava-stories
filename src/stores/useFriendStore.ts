@@ -1,12 +1,8 @@
 import { create } from 'zustand';
 import {
-  getCurrentUserFriends,
-  getFriendById,
   sendFriendRequest,
   acceptFriendRequest,
   declineFriendRequest,
-  getPendingFriendRequests,
-  removeFriend,
   searchUsers,
 } from '@/actions/friend.actions';
 

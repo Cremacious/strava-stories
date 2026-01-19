@@ -1,4 +1,3 @@
-
 export interface Friend {
   id: string;
   name: string | null;
@@ -6,16 +5,13 @@ export interface Friend {
   avatarUrl: string | null;
 }
 
-
 export interface FriendWithDetails extends Friend {
-  bio?: string;
+  bio?: string | null;
   circles?: string[];
   lastActivity?: string;
   mutualFriends?: number;
   isOnline?: boolean;
 }
-
-
 
 export type FriendRequest = {
   id: string;
@@ -23,10 +19,8 @@ export type FriendRequest = {
   email: string;
   avatarUrl?: string;
   bio?: string;
-  isSentByCurrentUser: boolean;  
+  isSentByCurrentUser: boolean;
 };
-
-
 
 export type Friends = Friend[];
 

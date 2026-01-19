@@ -10,13 +10,20 @@ import { Button } from '@/components/ui/button';
 const FriendDisplay = ({ friends }: { friends: FriendWithDetails[] }) => {
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredFriends = friends.filter(
-    (friend) =>
-      friend.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      friend.bio?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredFriends =
+    searchQuery.trim() === ''
+      ? friends
+      : friends.filter(
+          (friend) =>
+            (friend.name &&
+              friend.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
+            (friend.bio &&
+              friend.bio.toLowerCase().includes(searchQuery.toLowerCase()))
+        );
 
   const filteredAndSortedFriends = filteredFriends;
+
+  console.log('Friend Display:', friends);
 
   return (
     <div>
