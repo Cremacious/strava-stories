@@ -2,6 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar, Activity } from 'lucide-react';
 import { WorkoutDisplayData } from '@/lib/types/workouts.type';
+import Link from 'next/link';
 
 const RecentWorkouts = ({
   workoutData,
@@ -18,13 +19,9 @@ const RecentWorkouts = ({
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {workoutData
-            .slice(-5)
-            .map((workout, index) => (
-              <div
-                key={index}
-                className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 darkBackground3 rounded-lg gap-3"
-              >
+          {workoutData.slice(-5).map((workout, index) => (
+            <Link key={index} href={`/workouts/${workout.id}`}>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 p-4 darkBackground3 hover:bg-red-800 rounded-lg gap-3">
                 <div className="flex items-center space-x-4">
                   <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center shrink-0">
                     <Activity className="w-5 h-5 text-white" />
@@ -46,7 +43,8 @@ const RecentWorkouts = ({
                   </p>
                 </div>
               </div>
-            ))}
+            </Link>
+          ))}
         </div>
       </CardContent>
     </Card>

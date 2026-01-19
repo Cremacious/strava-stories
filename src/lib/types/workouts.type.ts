@@ -9,11 +9,10 @@ export type WorkoutData = {
 };
 
 export type WorkoutDisplayData = {
+  id: string;
   date: string;
   duration: number;
   distance: number;
   calories: number;
   type: string;
 };
-
-

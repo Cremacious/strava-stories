@@ -307,3 +307,74 @@ export async function getCurrentUserCirclePosts() {
     };
   }
 }
+
+export async function getPostsByUserId(userId: string) {
+  try {
+    const posts = await prisma.post.findMany({
+      where: { userId },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            avatarUrl: true,
+          },
+        },
+        images: true,
+        tags: true,
+        comments: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                avatarUrl: true,
+              },
+            },
+            replies: {
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    name: true,
+                    avatarUrl: true,
+                  },
+                },
+              },
+            },
+          },
+          orderBy: { createdAt: 'asc' },
+        },
+        circle: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    const transformedPosts: Post[] = posts.map((p) => ({
+      id: p.id,
+      userName: p.user.name || 'Unknown',
+      avatar: p.user.avatarUrl || '',
+      time: p.createdAt.toLocaleString(),
+      content: p.content ?? undefined,
+      image: p.images[0]?.url,
+      tags: {
+        friends: p.tags.filter((t) => t.type === 'USER').map((t) => t.value),
+        cities: p.tags.filter((t) => t.type === 'LOCATION').map((t) => t.value),
+      },
+      feeling: p.feeling ?? undefined,
+    }));
+
+    return { success: true, posts: transformedPosts };
+  } catch (error) {
+    console.error('Error fetching posts by user ID:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to fetch posts',
+    };
+  }
+}

@@ -4,5 +4,4 @@ export const menuItems = [
   { name: 'Explore', href: '/explore' },
   { name: 'Friends', href: '/friends' },
   { name: 'Circles', href: '/circles' },
-  { name: 'Profile', href: '/profile' },
 ];

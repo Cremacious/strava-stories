@@ -144,3 +144,47 @@ export async function getUserProfile(): Promise<{
     };
   }
 }
+
+export async function getUserProfileById(userId: string): Promise<{
+  success: boolean;
+  user?: User;
+  error?: string;
+}> {
+  try {
+    const profile = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        avatarUrl: true,
+        bio: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    if (!profile) {
+      return { success: false, error: 'User not found' };
+    }
+
+    const userProfile: User = {
+      id: profile.id,
+      username: profile.name || '',
+      email: profile.email,
+      avatarUrl: profile.avatarUrl || undefined,
+      bio: profile.bio || undefined,
+      createdAt: profile.createdAt.toISOString(),
+      updatedAt: profile.updatedAt.toISOString(),
+    };
+
+    return { success: true, user: userProfile };
+  } catch (error) {
+    console.error('Error fetching user profile by ID:', error);
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : 'Failed to fetch user profile',
+    };
+  }
+}
