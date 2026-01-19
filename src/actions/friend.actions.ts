@@ -60,9 +60,104 @@ export async function sendFriendRequest(friendId: string) {
   }
 }
 
-export async function acceptFriendRequest(friendId: string) {}
+export async function acceptFriendRequest(friendId: string) {
+  try {
+    const supabase = await createClient();
+    const { data, error: authError } = await supabase.auth.getUser();
+    const user = data?.user as User | null;
 
-export async function declineFriendRequest(friendId: string) {}
+    if (authError || !user) {
+      return { success: false, error: 'User not authenticated' };
+    }
+
+    if (user.id === friendId) {
+      return {
+        success: false,
+        error: 'Cannot accept friend request from yourself',
+      };
+    }
+
+    const friendship = await prisma.friendship.findFirst({
+      where: {
+        userId: friendId,
+        friendId: user.id,
+        status: 'PENDING',
+      },
+    });
+
+    if (!friendship) {
+      return {
+        success: false,
+        error: 'No pending friend request found',
+      };
+    }
+
+    await prisma.friendship.update({
+      where: { id: friendship.id },
+      data: { status: 'ACCEPTED' },
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error accepting friend request:', error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Failed to accept friend request',
+    };
+  }
+}
+
+export async function declineFriendRequest(friendId: string) {
+  try {
+    const supabase = await createClient();
+    const { data, error: authError } = await supabase.auth.getUser();
+    const user = data?.user as User | null;
+
+    if (authError || !user) {
+      return { success: false, error: 'User not authenticated' };
+    }
+
+    if (user.id === friendId) {
+      return {
+        success: false,
+        error: 'Cannot decline friend request from yourself',
+      };
+    }
+
+    const friendship = await prisma.friendship.findFirst({
+      where: {
+        userId: friendId,
+        friendId: user.id,
+        status: 'PENDING',
+      },
+    });
+
+    if (!friendship) {
+      return {
+        success: false,
+        error: 'No pending friend request found',
+      };
+    }
+
+    await prisma.friendship.delete({
+      where: { id: friendship.id },
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error declining friend request:', error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Failed to decline friend request',
+    };
+  }
+}
 
 export async function getPendingFriendRequests() {
   try {
@@ -78,7 +173,7 @@ export async function getPendingFriendRequests() {
       };
     }
 
-    console.log('Current user ID:', user.id, 'Email:', user.email); // Log current user details
+    console.log('Current user ID:', user.id, 'Email:', user.email);
 
     const friendships = await prisma.friendship.findMany({
       where: {
@@ -122,7 +217,7 @@ export async function getPendingFriendRequests() {
     );
 
     const friendRequests = friendships.map((friendship) => {
-      const isSentByCurrentUser = friendship.userId === user.id ? false : true;
+      const isSentByCurrentUser = friendship.userId === user.id ? true : false;
       const otherUser = isSentByCurrentUser
         ? friendship.friend
         : friendship.user;
@@ -131,6 +226,7 @@ export async function getPendingFriendRequests() {
       );
       return {
         id: friendship.id,
+        friendId: otherUser.id,
         name: otherUser.name || undefined,
         email: otherUser.email,
         avatarUrl: otherUser.avatarUrl || undefined,

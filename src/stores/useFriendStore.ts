@@ -30,11 +30,17 @@ interface FriendStoreActions {
     friendId: string
   ) => Promise<{ success: boolean; error?: string }>;
   clearSearchResults: () => void;
+  acceptRequest: (
+    friendId: string
+  ) => Promise<{ success: boolean; error?: string }>;
+  declineRequest: (
+    friendId: string
+  ) => Promise<{ success: boolean; error?: string }>;
 }
 
 type FriendStore = FriendStoreState & FriendStoreActions;
 
-export const useFriendStore = create<FriendStore>((set, get) => ({
+export const useFriendStore = create<FriendStore>((set) => ({
   searchResults: [],
   isSearching: false,
   searchError: null,
@@ -64,6 +70,7 @@ export const useFriendStore = create<FriendStore>((set, get) => ({
         });
       }
     } catch (error) {
+      console.log(error);
       set({
         searchResults: [],
         isSearching: false,
@@ -81,6 +88,25 @@ export const useFriendStore = create<FriendStore>((set, get) => ({
       const result = await sendFriendRequest(friendId);
       return result;
     } catch (error) {
+      console.log(error);
+      return { success: false, error: 'An unexpected error occurred' };
+    }
+  },
+  acceptRequest: async (friendId: string) => {
+    try {
+      const result = await acceptFriendRequest(friendId);
+      return result;
+    } catch (error) {
+      console.log(error);
+      return { success: false, error: 'An unexpected error occurred' };
+    }
+  },
+  declineRequest: async (friendId: string) => {
+    try {
+      const result = await declineFriendRequest(friendId);
+      return result;
+    } catch (error) {
+      console.log(error);
       return { success: false, error: 'An unexpected error occurred' };
     }
   },

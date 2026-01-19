@@ -4,9 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { User, Mail, Check, X } from 'lucide-react';
 import Image from 'next/image';
+import { useFriendStore } from '@/stores/useFriendStore';
+import { useState, useEffect } from 'react';
 
 type FriendRequest = {
   id: string;
+  friendId: string;
   name?: string;
   email: string;
   avatarUrl?: string;
@@ -21,7 +24,48 @@ interface PendingFriendRequestsProps {
 const PendingFriendRequests = ({
   friendRequests,
 }: PendingFriendRequestsProps) => {
-  console.log('PendingFriendRequests - friendRequests:', friendRequests);
+  const { acceptRequest, declineRequest } = useFriendStore();
+  const [requests, setRequests] = useState(friendRequests);
+  const [loadingStates, setLoadingStates] = useState<
+    Record<string, 'accepting' | 'declining' | null>
+  >({});
+
+  useEffect(() => {
+    setRequests(friendRequests);
+  }, [friendRequests]);
+
+  const handleAccept = async (friendId: string) => {
+    setLoadingStates((prev) => ({ ...prev, [friendId]: 'accepting' }));
+    try {
+      const result = await acceptRequest(friendId);
+      if (result.success) {
+        setRequests((prev) => prev.filter((req) => req.friendId !== friendId));
+      } else {
+        // Handle error, maybe show toast
+        console.error('Failed to accept:', result.error);
+      }
+    } catch (error) {
+      console.error('Error accepting:', error);
+    } finally {
+      setLoadingStates((prev) => ({ ...prev, [friendId]: null }));
+    }
+  };
+
+  const handleDecline = async (friendId: string) => {
+    setLoadingStates((prev) => ({ ...prev, [friendId]: 'declining' }));
+    try {
+      const result = await declineRequest(friendId);
+      if (result.success) {
+        setRequests((prev) => prev.filter((req) => req.friendId !== friendId));
+      } else {
+        console.error('Failed to decline:', result.error);
+      }
+    } catch (error) {
+      console.error('Error declining:', error);
+    } finally {
+      setLoadingStates((prev) => ({ ...prev, [friendId]: null }));
+    }
+  };
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
@@ -38,13 +82,12 @@ const PendingFriendRequests = ({
         </CardHeader>
       </Card>
 
-    
-      {friendRequests.length > 0 ? (
+      {requests.length > 0 ? (
         <div className="space-y-3">
-          {friendRequests.map((request) => {
+          {requests.map((request) => {
             console.log(
               `Request for ${request.email}: isSentByCurrentUser = ${request.isSentByCurrentUser}`
-            ); 
+            );
 
             return (
               <Card
@@ -77,28 +120,38 @@ const PendingFriendRequests = ({
                     </div>
                     <div className="flex gap-2 w-full sm:w-auto">
                       {request.isSentByCurrentUser ? (
-                        // Outgoing request: Show "Pending" status
                         <div className="text-gray-400 text-sm font-medium flex items-center gap-2">
                           <span className="w-2 h-2 bg-yellow-500 rounded-full"></span>
                           Pending
                         </div>
                       ) : (
-                        // Incoming request: Show Accept/Decline buttons
                         <>
                           <Button
                             size="sm"
                             className="bg-green-600 hover:bg-green-700 text-white transition-colors flex-1 sm:flex-none"
+                            onClick={() => handleAccept(request.friendId)}
+                            disabled={
+                              loadingStates[request.friendId] === 'accepting'
+                            }
                           >
                             <Check className="w-4 h-4 mr-2" />
-                            Accept
+                            {loadingStates[request.friendId] === 'accepting'
+                              ? 'Accepting...'
+                              : 'Accept'}
                           </Button>
                           <Button
                             size="sm"
                             variant="outline"
                             className="border-red-600 text-red-400 hover:bg-red-600 hover:text-white transition-colors flex-1 sm:flex-none"
+                            onClick={() => handleDecline(request.friendId)}
+                            disabled={
+                              loadingStates[request.friendId] === 'declining'
+                            }
                           >
                             <X className="w-4 h-4 mr-2" />
-                            Decline
+                            {loadingStates[request.friendId] === 'declining'
+                              ? 'Declining...'
+                              : 'Decline'}
                           </Button>
                         </>
                       )}
