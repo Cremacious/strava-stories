@@ -55,6 +55,10 @@ interface Circle {
 
 interface CircleStore {
   isLoading: boolean;
+  isJoining: boolean;
+  isLeaving: boolean;
+  isApproving: boolean;
+  isRejecting: boolean;
   error: string | null;
   clearError: () => void;
   createCircle: (
@@ -107,6 +111,10 @@ interface CircleStore {
 
 export const useCircleStore = create<CircleStore>((set) => ({
   isLoading: false,
+  isJoining: false,
+  isLeaving: false,
+  isApproving: false,
+  isRejecting: false,
   error: null,
   clearError: () => set({ error: null }),
   createCircle: async (data: CreateCircleData) => {
@@ -130,42 +138,42 @@ export const useCircleStore = create<CircleStore>((set) => ({
     }
   },
   joinCircle: async (circleId: string) => {
-    set({ isLoading: true, error: null });
+    set({ isJoining: true, error: null });
     try {
       const result = await joinCircle(circleId);
       if (!result.success) {
         set({
           error: result.error || 'Failed to join circle',
-          isLoading: false,
+          isJoining: false,
         });
         return result;
       }
-      set({ isLoading: false });
+      set({ isJoining: false });
       return result;
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';
-      set({ error: errorMessage, isLoading: false });
+      set({ error: errorMessage, isJoining: false });
       return { success: false, error: errorMessage };
     }
   },
   leaveCircle: async (circleId: string) => {
-    set({ isLoading: true, error: null });
+    set({ isLeaving: true, error: null });
     try {
       const result = await leaveCircle(circleId);
       if (!result.success) {
         set({
           error: result.error || 'Failed to leave circle',
-          isLoading: false,
+          isLeaving: false,
         });
         return result;
       }
-      set({ isLoading: false });
+      set({ isLeaving: false });
       return result;
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';
-      set({ error: errorMessage, isLoading: false });
+      set({ error: errorMessage, isLeaving: false });
       return { success: false, error: errorMessage };
     }
   },
@@ -275,42 +283,42 @@ export const useCircleStore = create<CircleStore>((set) => ({
     }
   },
   approveCircleRequest: async (circleId: string, userId: string) => {
-    set({ isLoading: true, error: null });
+    set({ isApproving: true, error: null });
     try {
       const result = await approveCircleRequest(circleId, userId);
       if (!result.success) {
         set({
           error: result.error || 'Failed to approve request',
-          isLoading: false,
+          isApproving: false,
         });
         return result;
       }
-      set({ isLoading: false });
+      set({ isApproving: false });
       return result;
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';
-      set({ error: errorMessage, isLoading: false });
+      set({ error: errorMessage, isApproving: false });
       return { success: false, error: errorMessage };
     }
   },
   rejectCircleRequest: async (circleId: string, userId: string) => {
-    set({ isLoading: true, error: null });
+    set({ isRejecting: true, error: null });
     try {
       const result = await rejectCircleRequest(circleId, userId);
       if (!result.success) {
         set({
           error: result.error || 'Failed to reject request',
-          isLoading: false,
+          isRejecting: false,
         });
         return result;
       }
-      set({ isLoading: false });
+      set({ isRejecting: false });
       return result;
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';
-      set({ error: errorMessage, isLoading: false });
+      set({ error: errorMessage, isRejecting: false });
       return { success: false, error: errorMessage };
     }
   },

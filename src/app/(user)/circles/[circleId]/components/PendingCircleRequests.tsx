@@ -25,8 +25,12 @@ const PendingCircleRequests = ({
 }) => {
   const [requests, setRequests] = useState<PendingRequest[]>([]);
   const [loading, setLoading] = useState(true);
-  const { approveCircleRequest, rejectCircleRequest, isLoading } =
-    useCircleStore();
+  const {
+    approveCircleRequest,
+    rejectCircleRequest,
+    isApproving,
+    isRejecting,
+  } = useCircleStore();
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -96,7 +100,7 @@ const PendingCircleRequests = ({
                   <div className="flex space-x-2">
                     <Button
                       onClick={() => handleApprove(request.user.id)}
-                      disabled={isLoading}
+                      disabled={isApproving}
                       size="sm"
                       className="bg-green-600 hover:bg-green-700"
                     >
@@ -104,7 +108,7 @@ const PendingCircleRequests = ({
                     </Button>
                     <Button
                       onClick={() => handleReject(request.user.id)}
-                      disabled={isLoading}
+                      disabled={isRejecting}
                       size="sm"
                       variant="destructive"
                     >

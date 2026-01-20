@@ -89,7 +89,11 @@ export async function getCircleById(
         },
         _count: {
           select: {
-            members: true,
+            members: {
+              where: {
+                status: 'ACTIVE',
+              },
+            },
           },
         },
       },
@@ -166,7 +170,11 @@ export async function getCirclesForUser() {
           include: {
             _count: {
               select: {
-                members: true,
+                members: {
+                  where: {
+                    status: 'ACTIVE',
+                  },
+                },
               },
             },
             members: {
@@ -304,7 +312,11 @@ export async function getAllCircles() {
       include: {
         _count: {
           select: {
-            members: true,
+            members: {
+              where: {
+                status: 'ACTIVE',
+              },
+            },
           },
         },
         members: {

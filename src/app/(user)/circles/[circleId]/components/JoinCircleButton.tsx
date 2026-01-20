@@ -15,7 +15,8 @@ const JoinCircleButton = ({
   membershipStatus,
   circleId,
 }: JoinCircleButtonProps) => {
-  const { joinCircle, leaveCircle, isLoading, error } = useCircleStore();
+  const { joinCircle, leaveCircle, isJoining, isLeaving, error } =
+    useCircleStore();
   const router = useRouter();
 
   const handleJoin = async () => {
@@ -36,10 +37,10 @@ const JoinCircleButton = ({
     return (
       <Button
         onClick={handleLeave}
-        disabled={isLoading}
+        disabled={isLeaving}
         className="bg-red-600 text-white hover:bg-red-700 font-semibold w-full sm:w-auto"
       >
-        {isLoading ? 'Leaving...' : 'Leave Circle'}
+        {isLeaving ? 'Leaving...' : 'Leave Circle'}
       </Button>
     );
   }
@@ -59,10 +60,10 @@ const JoinCircleButton = ({
     <div className="space-y-2">
       <Button
         onClick={handleJoin}
-        disabled={isLoading}
+        disabled={isJoining}
         className="bg-white text-red-600 hover:bg-gray-100 font-semibold w-full sm:w-auto"
       >
-        {isLoading ? 'Joining...' : 'Join Circle'}
+        {isJoining ? 'Joining...' : 'Join Circle'}
       </Button>
       {error && <p className="text-sm text-red-500">{error}</p>}
     </div>
