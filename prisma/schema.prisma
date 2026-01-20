@@ -97,8 +97,12 @@ model User {
   bio       String?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+  stravaAccessToken  String?
+  stravaRefreshToken String?
+  stravaTokenExpiresAt DateTime?
 
   workouts Workout[]
+  stravaWorkouts StravaWorkout[]
   posts Post[]
   comments Comment[]
   circles Circle[]
@@ -136,6 +140,70 @@ model Workout {
 
   @@index([userId])
   @@index([circleId])
+}
+
+model StravaWorkout {
+  id                    BigInt   @id
+  userId                String   @db.Uuid
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  resourceState         Int      @default(2)
+  athleteId             BigInt?
+  athleteResourceState  Int?
+  name                  String
+  distance              Float    @default(0)
+  movingTime            Int      @default(0)
+  elapsedTime           Int      @default(0)
+  totalElevationGain    Float    @default(0)
+  type                  String
+  sportType             String
+  workoutType           Int?
+  startDate             DateTime
+  startDateLocal        DateTime
+  timezone              String   @default("")
+  utcOffset             Int      @default(0)
+  locationCity          String?
+  locationState         String?
+  locationCountry       String?
+  achievementCount      Int      @default(0)
+  kudosCount            Int      @default(0)
+  commentCount          Int      @default(0)
+  athleteCount          Int      @default(1)
+  photoCount            Int      @default(0)
+  mapId                 String?
+  summaryPolyline       String?
+  mapResourceState      Int?
+  trainer               Boolean  @default(false)
+  commute               Boolean  @default(false)
+  manual                Boolean  @default(false)
+  private               Boolean  @default(false)
+  visibility            String?
+  flagged               Boolean  @default(false)
+  gearId                String?
+  startLat              Float?
+  startLng              Float?
+  endLat                Float?
+  endLng                Float?
+  averageSpeed          Float    @default(0)
+  maxSpeed              Float    @default(0)
+  hasHeartrate          Boolean  @default(false)
+  averageHeartrate      Int?
+  maxHeartrate          Int?
+  heartrateOptOut       Boolean  @default(false)
+  displayHideHeartrateOption Boolean @default(false)
+  elevHigh              Float?
+  elevLow               Float?
+  uploadId              BigInt?
+  uploadIdStr           String   @default("")
+  externalId            String   @default("")
+  fromAcceptedTag       Boolean  @default(false)
+  prCount               Int      @default(0)
+  totalPhotoCount       Int      @default(0)
+  hasKudoed             Boolean  @default(false)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([userId])
+  @@unique([id, userId])
 }
 
 model Post {

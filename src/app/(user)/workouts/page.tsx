@@ -6,6 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AddWorkoutButton from './components/AddWorkoutButton';
 import RecentWorkouts from './components/RecentWorkouts';
 import { getWorkouts } from '@/actions/workout.actions';
+import SyncStrava from '@/components/shared/SyncStrava';
+import { getUserProfile } from '@/actions/user.actions';
 
 const WorkoutsPage = async () => {
   const result = await getWorkouts();
@@ -16,13 +18,16 @@ const WorkoutsPage = async () => {
 
   const { workouts } = result;
   const userWorkouts = workouts || [];
-  const displayData = userWorkouts.map(workout => ({
+  const displayData = userWorkouts.map((workout) => ({
     ...workout,
     date: workout.date.toISOString(),
     duration: workout.duration ?? 0,
     distance: workout.distance ?? 0,
     calories: workout.calories ?? 0,
   }));
+
+  const { user } = await getUserProfile();
+  const userId = user?.id
 
   return (
     <div className="p-4 sm:p-6 space-y-6">
@@ -36,15 +41,7 @@ const WorkoutsPage = async () => {
           </p>
         </div>
         <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
-          <Button
-            variant="outline"
-            size="sm"
-            className="border-red-500 text-red-400 hover:bg-red-500 hover:text-white w-full sm:w-auto"
-          >
-            <RefreshCw className="w-4 h-4 mr-2" />
-
-            <span className="">Sync With Strava</span>
-          </Button>
+          <SyncStrava userId={userId} />
           <AddWorkoutButton />
         </div>
       </div>
@@ -57,7 +54,9 @@ const WorkoutsPage = async () => {
             <Activity className="h-4 w-4 text-red-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white">{userWorkouts.length}</div>
+            <div className="text-2xl font-bold text-white">
+              {userWorkouts.length}
+            </div>
           </CardContent>
         </Card>
         <Card className="backgroundDark border-0">
@@ -68,7 +67,13 @@ const WorkoutsPage = async () => {
             <Clock className="h-4 w-4 text-red-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white">{userWorkouts.reduce((total, workout) => total + (workout.duration ?? 0), 0)} min</div>
+            <div className="text-2xl font-bold text-white">
+              {userWorkouts.reduce(
+                (total, workout) => total + (workout.duration ?? 0),
+                0
+              )}{' '}
+              min
+            </div>
           </CardContent>
         </Card>
         <Card className="backgroundDark border-0">
@@ -79,7 +84,13 @@ const WorkoutsPage = async () => {
             <MapPin className="h-4 w-4 text-red-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white">{userWorkouts.reduce((total, workout) => total + (workout.distance ?? 0), 0)} km</div>
+            <div className="text-2xl font-bold text-white">
+              {userWorkouts.reduce(
+                (total, workout) => total + (workout.distance ?? 0),
+                0
+              )}{' '}
+              km
+            </div>
           </CardContent>
         </Card>
         <Card className="backgroundDark border-0">
@@ -90,7 +101,12 @@ const WorkoutsPage = async () => {
             <Zap className="h-4 w-4 text-red-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white">{userWorkouts.reduce((total, workout) => total + (workout.calories ?? 0), 0)}</div>
+            <div className="text-2xl font-bold text-white">
+              {userWorkouts.reduce(
+                (total, workout) => total + (workout.calories ?? 0),
+                0
+              )}
+            </div>
           </CardContent>
         </Card>
       </div>
