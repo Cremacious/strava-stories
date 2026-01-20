@@ -127,5 +127,5 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #b91c1c; /* red-700 */
+  background: #b91c1c; 
 }

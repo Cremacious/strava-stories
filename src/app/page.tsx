@@ -151,8 +151,8 @@ export default function Home() {
               <h3 className="text-xl font-semibold text-white mb-3">
                 Sync & Track Your Fitness
               </h3>
-              <p className="text-gray-400 mb-4">
-                Your Strava data, beautifully organized.
+              <p className="text-red-500 font-bold mb-4">
+                Your workouts, beautifully organized.
               </p>
               <ul className="space-y-2">
                 <li className="flex items-center text-gray-300">
@@ -184,8 +184,8 @@ export default function Home() {
               <h3 className="text-xl font-semibold text-white mb-3">
                 Share Your Story
               </h3>
-              <p className="text-gray-400 mb-4">
-                A social feed built for athletes, not influencers.
+              <p className="text-red-500 font-bold mb-4">
+                A social feed built for fitness
               </p>
               <ul className="space-y-2">
                 <li className="flex items-center text-gray-300">
@@ -213,7 +213,7 @@ export default function Home() {
               <h3 className="text-xl font-semibold text-white mb-3">
                 Explore & Connect
               </h3>
-              <p className="text-gray-400 mb-4">
+              <p className="text-red-500 font-bold mb-4">
                 Discover people, places, and stories that move you.
               </p>
               <ul className="space-y-2">
@@ -240,9 +240,9 @@ export default function Home() {
                 <Users className="w-6 h-6 text-white" />
               </div>
               <h3 className="text-xl font-semibold text-white mb-3">
-                Circles: Your Communities
+              Your Communities
               </h3>
-              <p className="text-gray-400 mb-4">
+              <p className="text-red-500 font-bold  mb-4">
                 Groups built for training, accountability, and adventure.
               </p>
               <ul className="space-y-2">
@@ -271,7 +271,7 @@ export default function Home() {
               <h3 className="text-xl font-semibold text-white mb-3">
                 Personal Fitness Hub
               </h3>
-              <p className="text-gray-400 mb-4">
+              <p className="text-red-500 font-bold  mb-4">
                 A profile that grows with your journey.
               </p>
               <ul className="space-y-2">
@@ -300,7 +300,9 @@ export default function Home() {
               <h3 className="text-xl font-semibold text-white mb-3">
                 Smart Posting Tools
               </h3>
-              <p className="text-gray-400 mb-4">Share moments effortlessly.</p>
+              <p className="text-red-500 font-bold mb-4">
+                Share moments effortlessly.
+              </p>
               <ul className="space-y-2">
                 <li className="flex items-center text-gray-300">
                   <CheckCircle className="w-4 h-4 text-red-500 mr-2" />
