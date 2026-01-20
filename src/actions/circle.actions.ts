@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/server';
 interface CreateCircleData {
   name: string;
   description?: string;
+  visibility?: 'PUBLIC' | 'PRIVATE';
   invitedMembers?: string[];
 }
 
@@ -18,6 +19,8 @@ interface CircleDetail {
   stats: {
     totalWorkouts: number;
   };
+  isMember: boolean;
+  visibility: 'PUBLIC' | 'PRIVATE' | 'FRIENDS' | 'CIRCLE';
 }
 
 export async function createCircle(data: CreateCircleData) {
@@ -36,6 +39,7 @@ export async function createCircle(data: CreateCircleData) {
       data: {
         name: data.name,
         description: data.description,
+        visibility: data.visibility || 'PRIVATE',
         ownerId: user.id,
         members: {
           create: [
@@ -58,8 +62,6 @@ export async function createCircle(data: CreateCircleData) {
     };
   }
 }
-
-
 
 export async function getCircleById(
   circleId: string
@@ -96,7 +98,9 @@ export async function getCircleById(
     }
 
     const isMember = circle.members.some((member) => member.userId === user.id);
-    if (!isMember) {
+
+    // Allow viewing public circles even if not a member
+    if (!isMember && circle.visibility !== 'PUBLIC') {
       return { success: false, error: 'Access denied' };
     }
 
@@ -118,6 +122,8 @@ export async function getCircleById(
       stats: {
         totalWorkouts,
       },
+      isMember,
+      visibility: circle.visibility,
     };
 
     return { success: true, circle: circleDetail };
@@ -186,7 +192,7 @@ export async function getCirclesForUser() {
   }
 }
 
-export async function getFriends() {
+export async function joinCircle(circleId: string) {
   try {
     const supabase = await createClient();
     const {
@@ -195,40 +201,78 @@ export async function getFriends() {
     } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return { success: false, error: 'User not authenticated', friends: [] };
+      return { success: false, error: 'User not authenticated' };
     }
 
-    const friendships = await prisma.friendship.findMany({
+    const existingMember = await prisma.circleMember.findUnique({
       where: {
-        OR: [
-          { userId: user.id, status: 'ACCEPTED' },
-          { friendId: user.id, status: 'ACCEPTED' },
-        ],
-      },
-      include: {
-        user: true,
-        friend: true,
+        circleId_userId: {
+          circleId,
+          userId: user.id,
+        },
       },
     });
 
-    const friends = friendships.map((f) => {
-      const friendUser = f.userId === user.id ? f.friend : f.user;
-      return {
-        id: friendUser.id,
-        name: friendUser.name,
-        email: friendUser.email,
-        avatarUrl: friendUser.avatarUrl,
-      };
+    if (existingMember) {
+      return { success: false, error: 'Already a member of this circle' };
+    }
+
+    await prisma.circleMember.create({
+      data: {
+        circleId,
+        userId: user.id,
+        role: 'MEMBER',
+      },
     });
 
-    return { success: true, friends };
+    return { success: true };
   } catch (error) {
-    console.error('Error fetching friends:', error);
+    console.error('Error joining circle:', error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to fetch friends',
-      friends: [],
+      error: error instanceof Error ? error.message : 'Failed to join circle',
     };
   }
 }
 
+export async function leaveCircle(circleId: string) {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return { success: false, error: 'User not authenticated' };
+    }
+
+    const circle = await prisma.circle.findUnique({
+      where: { id: circleId },
+      select: { ownerId: true },
+    });
+
+    if (!circle) {
+      return { success: false, error: 'Circle not found' };
+    }
+
+    if (circle.ownerId === user.id) {
+      return { success: false, error: 'Cannot leave circle as owner' };
+    }
+
+    await prisma.circleMember.deleteMany({
+      where: {
+        circleId,
+        userId: user.id,
+      },
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error leaving circle:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to leave circle',
+    };
+  }
+}

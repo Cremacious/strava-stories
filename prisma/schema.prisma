@@ -193,6 +193,7 @@ model Circle {
   name        String
   description String?
   coverImage  String?
+  visibility  Visibility     @default(PRIVATE)
   createdAt   DateTime       @default(now())
   ownerId     String         @db.Uuid
   owner       User           @relation(fields: [ownerId], references: [id], onDelete: Cascade)

@@ -4,9 +4,10 @@ import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { createCircleFormSchema } from '@/lib/validators/circle.validators';
 import { useCircleStore } from '@/stores/useCircleStore';
-import { getFriends } from '@/actions/circle.actions';
+// import { getFriends } from '@/actions/circle.actions';
 import { Friend } from '@/lib/types/friends.type';
 
 
@@ -15,6 +16,7 @@ const CreateCircleForm = () => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
+    visibility: 'PRIVATE' as 'PUBLIC' | 'PRIVATE',
   });
   const [friends, setFriends] = useState<Friend[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -22,15 +24,15 @@ const CreateCircleForm = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const { createCircle, isLoading, error, clearError } = useCircleStore();
 
-  useEffect(() => {
-    const fetchFriends = async () => {
-      const result = await getFriends();
-      if (result.success && result.friends) {
-        setFriends(result.friends);
-      }
-    };
-    fetchFriends();
-  }, []);
+  // useEffect(() => {
+  //   const fetchFriends = async () => {
+  //     const result = await getFriends();
+  //     if (result.success && result.friends) {
+  //       setFriends(result.friends);
+  //     }
+  //   };
+  //   fetchFriends();
+  // }, []);
 
   const filteredFriends = friends.filter(
     (friend) =>
@@ -53,6 +55,7 @@ const CreateCircleForm = () => {
     const result = createCircleFormSchema.safeParse({
       name: formData.name,
       description: formData.description || undefined,
+      visibility: formData.visibility,
       invitedMembers: selectedMembers.length > 0 ? selectedMembers : undefined,
     });
 
@@ -99,6 +102,24 @@ const CreateCircleForm = () => {
           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           rows={4}
         />
+      </div>
+
+      <div className="space-y-2">
+        <label htmlFor="visibility" className="block text-sm font-medium">
+          Visibility
+        </label>
+        <Select
+          value={formData.visibility}
+          onValueChange={(value: 'PUBLIC' | 'PRIVATE') => setFormData({ ...formData, visibility: value })}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select visibility" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="PRIVATE">Private</SelectItem>
+            <SelectItem value="PUBLIC">Public</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="space-y-2">

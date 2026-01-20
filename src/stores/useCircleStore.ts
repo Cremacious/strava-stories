@@ -1,5 +1,9 @@
 import { create } from 'zustand';
-import { createCircle } from '@/actions/circle.actions';
+import {
+  createCircle,
+  joinCircle,
+  leaveCircle,
+} from '@/actions/circle.actions';
 import { addWorkoutToCircle } from '@/actions/workout.actions';
 import { WorkoutData } from '@/lib/types/workouts.type';
 import { addRoutineToCircle } from '@/actions/routine.actions';
@@ -35,6 +39,7 @@ interface RoutineData {
 interface CreateCircleData {
   name: string;
   description?: string;
+  visibility?: 'PUBLIC' | 'PRIVATE';
   invitedMembers?: string[];
 }
 
@@ -52,6 +57,12 @@ interface CircleStore {
   createCircle: (
     data: CreateCircleData
   ) => Promise<{ success: boolean; circle?: Circle }>;
+  joinCircle: (
+    circleId: string
+  ) => Promise<{ success: boolean; error?: string }>;
+  leaveCircle: (
+    circleId: string
+  ) => Promise<{ success: boolean; error?: string }>;
   addWorkoutToCircle: (
     workoutData: WorkoutData,
     circleId: string
@@ -105,6 +116,46 @@ export const useCircleStore = create<CircleStore>((set) => ({
         error instanceof Error ? error.message : 'Unknown error';
       set({ error: errorMessage, isLoading: false });
       return { success: false };
+    }
+  },
+  joinCircle: async (circleId: string) => {
+    set({ isLoading: true, error: null });
+    try {
+      const result = await joinCircle(circleId);
+      if (!result.success) {
+        set({
+          error: result.error || 'Failed to join circle',
+          isLoading: false,
+        });
+        return result;
+      }
+      set({ isLoading: false });
+      return result;
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      set({ error: errorMessage, isLoading: false });
+      return { success: false, error: errorMessage };
+    }
+  },
+  leaveCircle: async (circleId: string) => {
+    set({ isLoading: true, error: null });
+    try {
+      const result = await leaveCircle(circleId);
+      if (!result.success) {
+        set({
+          error: result.error || 'Failed to leave circle',
+          isLoading: false,
+        });
+        return result;
+      }
+      set({ isLoading: false });
+      return result;
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      set({ error: errorMessage, isLoading: false });
+      return { success: false, error: errorMessage };
     }
   },
   addWorkoutToCircle: async (workoutData: WorkoutData, circleId: string) => {

@@ -1,5 +1,5 @@
 import { Users } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+// import { Button } from '@/components/ui/button';
 import FeatureSelector from './components/FeatureSelector/FeatureSelector';
 // import TopMembers from './components/TopMembers';
 import CircleTimelineFeed from './components/CircleTimelineFeed';
@@ -11,6 +11,7 @@ import { getCirclePolls } from '@/actions/poll.actions';
 import { getCircleEvents } from '@/actions/event.actions';
 import { getUserProfile } from '@/actions/user.actions';
 import { getCirclePosts } from '@/actions/post.actions';
+import JoinCircleButton from './components/JoinCircleButton';
 
 const CirclePage = async ({
   params,
@@ -76,9 +77,7 @@ const CirclePage = async ({
               </div>
             </div>
           </div>
-          <Button className="bg-white text-red-600 hover:bg-gray-100 font-semibold w-full sm:w-auto">
-            Join Circle
-          </Button>
+          <JoinCircleButton isMember={circle.isMember} circleId={circleId} />
         </div>
       </div>
 
