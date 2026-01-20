@@ -2,6 +2,7 @@ import LeftSidebar from '@/components/layout/LeftSidebar';
 import MobileNavbar from '@/components/layout/MobileNavbar';
 import RightSidebar from '@/components/layout/RightSidebar';
 import QueryProvider from './QueryProvider';
+import Navbar from '@/components/layout/Navbar';
 
 export default function UserLayout({
   children,
@@ -10,6 +11,7 @@ export default function UserLayout({
 }) {
   return (
     <QueryProvider>
+      <Navbar />
       <div className="h-screen flex">
         <div className="hidden lg:block w-64 shrink-0">
           <LeftSidebar />
