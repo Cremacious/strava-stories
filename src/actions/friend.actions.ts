@@ -173,8 +173,6 @@ export async function getPendingFriendRequests() {
       };
     }
 
-    console.log('Current user ID:', user.id, 'Email:', user.email);
-
     const friendships = await prisma.friendship.findMany({
       where: {
         OR: [
@@ -204,26 +202,14 @@ export async function getPendingFriendRequests() {
       },
     });
 
-    console.log(
-      'Raw friendships from DB:',
-      friendships.map((f) => ({
-        id: f.id,
-        userId: f.userId,
-        friendId: f.friendId,
-        status: f.status,
-        userEmail: f.user.email,
-        friendEmail: f.friend.email,
-      }))
-    );
+
 
     const friendRequests = friendships.map((friendship) => {
       const isSentByCurrentUser = friendship.userId === user.id ? true : false;
       const otherUser = isSentByCurrentUser
         ? friendship.friend
         : friendship.user;
-      console.log(
-        `Mapping for friendship ${friendship.id}: isSentByCurrentUser = ${isSentByCurrentUser}, otherUserEmail = ${otherUser.email}`
-      );
+    
       return {
         id: friendship.id,
         friendId: otherUser.id,
@@ -249,7 +235,6 @@ export async function getPendingFriendRequests() {
   }
 }
 
-// export async function removeFriend(friendId: string) {}
 
 export async function searchUsers(query: string) {
   try {

@@ -14,12 +14,14 @@ interface CircleDetail {
   id: string;
   name: string;
   description: string | null;
+  ownerId: string;
   memberCount: number;
   category: string;
   stats: {
     totalWorkouts: number;
   };
   isMember: boolean;
+  membershipStatus: 'NONE' | 'PENDING' | 'ACTIVE';
   visibility: 'PUBLIC' | 'PRIVATE' | 'FRIENDS' | 'CIRCLE';
 }
 
@@ -64,7 +66,7 @@ export async function createCircle(data: CreateCircleData) {
 }
 
 export async function getCircleById(
-  circleId: string
+  circleId: string,
 ): Promise<{ success: boolean; circle?: CircleDetail; error?: string }> {
   try {
     const supabase = await createClient();
@@ -97,11 +99,16 @@ export async function getCircleById(
       return { success: false, error: 'Circle not found' };
     }
 
-    const isMember = circle.members.some((member) => member.userId === user.id);
+    const membership = circle.members.find(
+      (member) => member.userId === user.id,
+    );
+    let membershipStatus: 'NONE' | 'PENDING' | 'ACTIVE' = membership
+      ? membership.status
+      : 'NONE';
 
-    // Allow viewing public circles even if not a member
-    if (!isMember && circle.visibility !== 'PUBLIC') {
-      return { success: false, error: 'Access denied' };
+    // Special case: if user is the owner, ensure they are considered active
+    if (circle.ownerId === user.id) {
+      membershipStatus = 'ACTIVE';
     }
 
     const totalWorkouts = await prisma.workout.count({
@@ -117,12 +124,14 @@ export async function getCircleById(
       id: circle.id,
       name: circle.name,
       description: circle.description,
+      ownerId: circle.ownerId,
       memberCount: circle._count.members,
       category: 'Fitness',
       stats: {
         totalWorkouts,
       },
-      isMember,
+      isMember: membershipStatus === 'ACTIVE',
+      membershipStatus,
       visibility: circle.visibility,
     };
 
@@ -217,11 +226,23 @@ export async function joinCircle(circleId: string) {
       return { success: false, error: 'Already a member of this circle' };
     }
 
+    const circle = await prisma.circle.findUnique({
+      where: { id: circleId },
+      select: { visibility: true },
+    });
+
+    if (!circle) {
+      return { success: false, error: 'Circle not found' };
+    }
+
+    const status = circle.visibility === 'PRIVATE' ? 'PENDING' : 'ACTIVE';
+
     await prisma.circleMember.create({
       data: {
         circleId,
         userId: user.id,
         role: 'MEMBER',
+        status,
       },
     });
 
@@ -273,6 +294,193 @@ export async function leaveCircle(circleId: string) {
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Failed to leave circle',
+    };
+  }
+}
+
+export async function getAllCircles() {
+  try {
+    const circles = await prisma.circle.findMany({
+      include: {
+        _count: {
+          select: {
+            members: true,
+          },
+        },
+        members: {
+          take: 1,
+        },
+      },
+    });
+
+    return { success: true, circles };
+  } catch (error) {
+    console.error('Error fetching all circles:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to fetch circles',
+      circles: [],
+    };
+  }
+}
+
+export async function sendCircleRequest(circleId: string) {
+  // Placeholder
+}
+
+export async function approveCircleRequest(circleId: string, userId: string) {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return { success: false, error: 'User not authenticated' };
+    }
+
+    // Check if user is owner or moderator
+    const membership = await prisma.circleMember.findUnique({
+      where: {
+        circleId_userId: {
+          circleId,
+          userId: user.id,
+        },
+      },
+    });
+
+    if (
+      !membership ||
+      (membership.role !== 'OWNER' && membership.role !== 'MODERATOR')
+    ) {
+      return { success: false, error: 'Unauthorized' };
+    }
+
+    // Update status to active
+    await prisma.circleMember.updateMany({
+      where: {
+        circleId,
+        userId,
+        status: 'PENDING',
+      },
+      data: {
+        status: 'ACTIVE',
+      },
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error approving circle request:', error);
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : 'Failed to approve request',
+    };
+  }
+}
+
+export async function rejectCircleRequest(circleId: string, userId: string) {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return { success: false, error: 'User not authenticated' };
+    }
+
+    const membership = await prisma.circleMember.findUnique({
+      where: {
+        circleId_userId: {
+          circleId,
+          userId: user.id,
+        },
+      },
+    });
+
+    if (
+      !membership ||
+      (membership.role !== 'OWNER' && membership.role !== 'MODERATOR')
+    ) {
+      return { success: false, error: 'Unauthorized' };
+    }
+
+    await prisma.circleMember.deleteMany({
+      where: {
+        circleId,
+        userId,
+      },
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error rejecting circle request:', error);
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : 'Failed to reject request',
+    };
+  }
+}
+
+export async function getPendingCircleRequests(circleId: string) {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return { success: false, error: 'User not authenticated', requests: [] };
+    }
+
+    const membership = await prisma.circleMember.findUnique({
+      where: {
+        circleId_userId: {
+          circleId,
+          userId: user.id,
+        },
+      },
+    });
+
+    if (
+      !membership ||
+      (membership.role !== 'OWNER' && membership.role !== 'MODERATOR')
+    ) {
+      return { success: false, error: 'Unauthorized', requests: [] };
+    }
+
+    const pendingRequests = await prisma.circleMember.findMany({
+      where: {
+        circleId,
+        status: 'PENDING',
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    const requests = pendingRequests.map((member) => ({
+      id: member.id,
+      user: {
+        id: member.userId,
+        name: member.user.name,
+        avatarUrl: member.user.avatarUrl,
+      },
+    }));
+
+    return { success: true, requests };
+  } catch (error) {
+    console.error('Error fetching pending circle requests:', error);
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : 'Failed to fetch requests',
+      requests: [],
     };
   }
 }

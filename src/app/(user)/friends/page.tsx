@@ -10,7 +10,7 @@ const FriendsPage = async () => {
   const pendingFriendRequests = result.friendRequests;
   const friendResult = await getAllUserFriends();
   const friends = friendResult.success ? friendResult.friends : [];
-  console.log('friends accepted', friends);
+  
 
   return (
     <div className="p-4 sm:p-6 space-y-6">

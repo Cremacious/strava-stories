@@ -12,6 +12,7 @@ import { getCircleEvents } from '@/actions/event.actions';
 import { getUserProfile } from '@/actions/user.actions';
 import { getCirclePosts } from '@/actions/post.actions';
 import JoinCircleButton from './components/JoinCircleButton';
+import PendingCircleRequests from './components/PendingCircleRequests';
 
 const CirclePage = async ({
   params,
@@ -21,7 +22,18 @@ const CirclePage = async ({
   const { circleId } = await params;
   const { user } = await getUserProfile();
   const result = await getCircleById(circleId);
-  const circle = result.success ? result.circle : null;
+
+  if (!result.success) {
+    return (
+      <div className="p-4 text-white">
+        <h1 className="text-2xl font-bold mb-4">Circle Not Found</h1>
+        <p>The circle you are looking for does not exist or is unavailable.</p>
+      </div>
+    );
+  }
+
+  const circle = result.circle!;
+  const isOwner = circle.ownerId === user?.id;
   const routinesResult = await getCircleRoutines(circleId);
   const routines = routinesResult.success ? routinesResult.routines || [] : [];
   const workoutsResult = await getCircleWorkouts(circleId);
@@ -36,17 +48,6 @@ const CirclePage = async ({
   const events = eventsResult.success ? eventsResult.events || [] : [];
   const postsResult = await getCirclePosts(circleId);
   const posts = postsResult.success ? postsResult.posts || [] : [];
-
-  // console.log(posts);
-
-  if (!circle) {
-    return (
-      <div className="p-4 text-white">
-        <h1 className="text-2xl font-bold mb-4">Circle Not Found</h1>
-        <p>The circle you are looking for does not exist or is unavailable.</p>
-      </div>
-    );
-  }
 
   return (
     <div className=" text-white min-h-full p-4">
@@ -77,28 +78,57 @@ const CirclePage = async ({
               </div>
             </div>
           </div>
-          <JoinCircleButton isMember={circle.isMember} circleId={circleId} />
+          <JoinCircleButton
+            isMember={circle.isMember}
+            membershipStatus={circle.membershipStatus}
+            circleId={circleId}
+          />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-8">
-          <FeatureSelector
-            circleId={circleId}
-            workouts={workouts}
-            routines={routines}
-            challenges={challenges}
-            polls={polls}
-            events={events}
-          />
+      <PendingCircleRequests circleId={circleId} isOwner={isOwner} />
 
-          {/* <TopMembers circle={circle} /> */}
-        </div>
-        <CircleTimelineFeed
-          initialPosts={posts}
-          userImage={user?.avatarUrl}
-          circleId={circleId}
-        />
+      <div>
+        {circle.isMember ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-8">
+              <FeatureSelector
+                circleId={circleId}
+                workouts={workouts}
+                routines={routines}
+                challenges={challenges}
+                polls={polls}
+                events={events}
+              />
+
+              {/* <TopMembers circle={circle} /> */}
+            </div>
+            <CircleTimelineFeed
+              initialPosts={posts}
+              userImage={user?.avatarUrl}
+              circleId={circleId}
+            />
+          </div>
+        ) : (
+          <div className="flex justify-center items-center min-h-96">
+            <div className="cardBackground border border-red-500/20 rounded-xl p-8 max-w-md w-full text-center">
+              <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Users className="w-8 h-8 text-red-400" />
+              </div>
+              <h2 className="text-2xl font-bold text-white mb-4">
+                Join This Circle
+              </h2>
+              <p className="text-gray-300 mb-6 leading-relaxed">
+                Become a member to access exclusive workouts, challenges, and
+                connect with fellow fitness enthusiasts in this community.
+              </p>
+              <div className="text-sm text-gray-400">
+                Click the &quot;Join Circle&quot; button above to request
+                membership
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

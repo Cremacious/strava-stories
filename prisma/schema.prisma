@@ -32,6 +32,11 @@ enum CircleRole {
   MEMBER
 }
 
+enum MembershipStatus {
+  PENDING
+  ACTIVE
+}
+
 enum FriendshipStatus {
   PENDING
   ACCEPTED
@@ -210,13 +215,14 @@ model Circle {
 }
 
 model CircleMember {
-  id       String     @id @default(cuid())
+  id       String           @id @default(cuid())
   circleId String
-  circle   Circle     @relation(fields: [circleId], references: [id], onDelete: Cascade)
-  userId   String     @db.Uuid
-  user     User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  circle   Circle           @relation(fields: [circleId], references: [id], onDelete: Cascade)
+  userId   String           @db.Uuid
+  user     User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   role     CircleRole
-  joinedAt DateTime   @default(now())
+  status   MembershipStatus @default(ACTIVE)
+  joinedAt DateTime         @default(now())
 
   @@unique([circleId, userId])
   @@index([userId])

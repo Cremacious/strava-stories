@@ -3,6 +3,9 @@ import {
   createCircle,
   joinCircle,
   leaveCircle,
+  sendCircleRequest,
+  approveCircleRequest,
+  rejectCircleRequest,
 } from '@/actions/circle.actions';
 import { addWorkoutToCircle } from '@/actions/workout.actions';
 import { WorkoutData } from '@/lib/types/workouts.type';
@@ -55,43 +58,51 @@ interface CircleStore {
   error: string | null;
   clearError: () => void;
   createCircle: (
-    data: CreateCircleData
+    data: CreateCircleData,
   ) => Promise<{ success: boolean; circle?: Circle }>;
   joinCircle: (
-    circleId: string
+    circleId: string,
   ) => Promise<{ success: boolean; error?: string }>;
   leaveCircle: (
-    circleId: string
+    circleId: string,
   ) => Promise<{ success: boolean; error?: string }>;
   addWorkoutToCircle: (
     workoutData: WorkoutData,
-    circleId: string
+    circleId: string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ) => Promise<{ success: boolean; workout?: any; error?: string }>;
 
   addRoutineToCircle: (
     routineData: RoutineData,
-    circleId: string
+    circleId: string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ) => Promise<{ success: boolean; routine?: any; error?: string }>;
   addChallengeToCircle: (
     challengeData: CreateChallengeData, // Updated to use proper type
-    circleId: string
+    circleId: string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ) => Promise<{ success: boolean; challenge?: any; error?: string }>;
 
   createCirclePoll: (
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     pollData: any,
-    circleId: string
+    circleId: string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ) => Promise<{ success: boolean; poll?: any; error?: string }>;
   createCircleEvent: (
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     eventData: any,
-    circleId: string
+    circleId: string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ) => Promise<{ success: boolean; event?: any; error?: string }>;
+  approveCircleRequest: (
+    circleId: string,
+    userId: string,
+  ) => Promise<{ success: boolean; error?: string }>;
+  rejectCircleRequest: (
+    circleId: string,
+    userId: string,
+  ) => Promise<{ success: boolean; error?: string }>;
 }
 
 export const useCircleStore = create<CircleStore>((set) => ({
@@ -200,7 +211,7 @@ export const useCircleStore = create<CircleStore>((set) => ({
   },
   addChallengeToCircle: async (
     challengeData: CreateChallengeData,
-    circleId: string
+    circleId: string,
   ) => {
     set({ isLoading: true, error: null });
     try {
@@ -260,6 +271,46 @@ export const useCircleStore = create<CircleStore>((set) => ({
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';
       set({ isLoading: false, error: errorMessage });
+      return { success: false, error: errorMessage };
+    }
+  },
+  approveCircleRequest: async (circleId: string, userId: string) => {
+    set({ isLoading: true, error: null });
+    try {
+      const result = await approveCircleRequest(circleId, userId);
+      if (!result.success) {
+        set({
+          error: result.error || 'Failed to approve request',
+          isLoading: false,
+        });
+        return result;
+      }
+      set({ isLoading: false });
+      return result;
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      set({ error: errorMessage, isLoading: false });
+      return { success: false, error: errorMessage };
+    }
+  },
+  rejectCircleRequest: async (circleId: string, userId: string) => {
+    set({ isLoading: true, error: null });
+    try {
+      const result = await rejectCircleRequest(circleId, userId);
+      if (!result.success) {
+        set({
+          error: result.error || 'Failed to reject request',
+          isLoading: false,
+        });
+        return result;
+      }
+      set({ isLoading: false });
+      return result;
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      set({ error: errorMessage, isLoading: false });
       return { success: false, error: errorMessage };
     }
   },

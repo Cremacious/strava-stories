@@ -6,24 +6,29 @@ import { useRouter } from 'next/navigation';
 
 interface JoinCircleButtonProps {
   isMember: boolean;
+  membershipStatus: 'NONE' | 'PENDING' | 'ACTIVE';
   circleId: string;
 }
 
-const JoinCircleButton = ({ isMember, circleId }: JoinCircleButtonProps) => {
+const JoinCircleButton = ({
+  isMember,
+  membershipStatus,
+  circleId,
+}: JoinCircleButtonProps) => {
   const { joinCircle, leaveCircle, isLoading, error } = useCircleStore();
   const router = useRouter();
 
   const handleJoin = async () => {
     const result = await joinCircle(circleId);
     if (result.success) {
-      router.refresh(); 
+      router.refresh();
     }
   };
 
   const handleLeave = async () => {
     const result = await leaveCircle(circleId);
     if (result.success) {
-      router.refresh(); 
+      router.refresh();
     }
   };
 
@@ -35,6 +40,17 @@ const JoinCircleButton = ({ isMember, circleId }: JoinCircleButtonProps) => {
         className="bg-red-600 text-white hover:bg-red-700 font-semibold w-full sm:w-auto"
       >
         {isLoading ? 'Leaving...' : 'Leave Circle'}
+      </Button>
+    );
+  }
+
+  if (membershipStatus === 'PENDING') {
+    return (
+      <Button
+        disabled
+        className="bg-gray-600 text-white font-semibold w-full sm:w-auto cursor-not-allowed"
+      >
+        Request Sent
       </Button>
     );
   }

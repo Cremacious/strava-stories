@@ -85,10 +85,6 @@ const PendingFriendRequests = ({
       {requests.length > 0 ? (
         <div className="space-y-3">
           {requests.map((request) => {
-            console.log(
-              `Request for ${request.email}: isSentByCurrentUser = ${request.isSentByCurrentUser}`
-            );
-
             return (
               <Card
                 key={request.id}
