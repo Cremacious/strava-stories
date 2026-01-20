@@ -325,7 +325,8 @@ const FeatureSelector = ({
                 No polls yet
               </h3>
               <p className="text-gray-400 max-w-md">
-                Create polls to gather opinions from your fitness community and make group decisions together.
+                Create polls to gather opinions from your fitness community and
+                make group decisions together.
               </p>
             </div>
           ) : (
