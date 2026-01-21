@@ -5,29 +5,63 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AddWorkoutButton from './components/AddWorkoutButton';
 import RecentWorkouts from './components/RecentWorkouts';
-import { getWorkouts } from '@/actions/workout.actions';
+import { getWorkouts, getStravaWorkouts } from '@/actions/workout.actions';
 import SyncStrava from '@/components/shared/SyncStrava';
 import { getUserProfile } from '@/actions/user.actions';
 
 const WorkoutsPage = async () => {
   const result = await getWorkouts();
+  const stravaResult = await getStravaWorkouts();
 
-  if (!result.success) {
+  if (!result.success || !stravaResult.success) {
     return <div>Error loading workouts</div>;
   }
 
   const { workouts } = result;
+  const { stravaWorkouts } = stravaResult;
+
   const userWorkouts = workouts || [];
-  const displayData = userWorkouts.map((workout) => ({
+  const userStravaWorkouts = stravaWorkouts || [];
+
+  // Combine and normalize workouts
+  const allWorkouts = [
+    ...userWorkouts.map((workout) => ({
+      ...workout,
+      isStrava: false,
+      id: workout.id,
+      date: workout.date,
+      duration: workout.duration ?? 0,
+      distance: workout.distance ?? 0,
+      calories: workout.calories ?? 0,
+      type: workout.type,
+    })),
+    ...userStravaWorkouts.map((workout) => ({
+      ...workout,
+      isStrava: true,
+      id: workout.id.toString(),
+      date: workout.startDate,
+      duration: workout.movingTime ?? 0,
+      distance: (workout.distance ?? 0) / 1000, // Convert meters to km
+      calories: 0, // Strava doesn't provide calories
+      type: workout.type,
+    })),
+  ];
+
+  // Sort by date descending
+  const sortedWorkouts = allWorkouts.sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  );
+
+  const displayData = sortedWorkouts.map((workout) => ({
     ...workout,
     date: workout.date.toISOString(),
-    duration: workout.duration ?? 0,
-    distance: workout.distance ?? 0,
-    calories: workout.calories ?? 0,
+    duration: workout.duration,
+    distance: workout.distance,
+    calories: workout.calories,
   }));
 
   const { user } = await getUserProfile();
-  const userId = user?.id
+  const userId = user?.id;
 
   return (
     <div className="p-4 sm:p-6 space-y-6">
@@ -55,7 +89,7 @@ const WorkoutsPage = async () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-white">
-              {userWorkouts.length}
+              {sortedWorkouts.length}
             </div>
           </CardContent>
         </Card>
@@ -68,7 +102,7 @@ const WorkoutsPage = async () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-white">
-              {userWorkouts.reduce(
+              {sortedWorkouts.reduce(
                 (total, workout) => total + (workout.duration ?? 0),
                 0
               )}{' '}
@@ -85,7 +119,7 @@ const WorkoutsPage = async () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-white">
-              {userWorkouts.reduce(
+              {sortedWorkouts.reduce(
                 (total, workout) => total + (workout.distance ?? 0),
                 0
               )}{' '}
@@ -102,7 +136,7 @@ const WorkoutsPage = async () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-white">
-              {userWorkouts.reduce(
+              {sortedWorkouts.reduce(
                 (total, workout) => total + (workout.calories ?? 0),
                 0
               )}

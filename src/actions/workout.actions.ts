@@ -138,17 +138,74 @@ export async function getCircleWorkouts(circleId: string) {
   }
 }
 
+export async function getStravaWorkoutById(id: string) {
+  try {
+    const stravaWorkout = await prisma.stravaWorkout.findUnique({
+      where: { id: BigInt(id) },
+    });
+    if (!stravaWorkout) {
+      return { success: false, error: 'Strava workout not found' };
+    }
+    return { success: true, stravaWorkout };
+  } catch (error) {
+    console.error('Error fetching Strava workout by ID:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}
+
 export async function getWorkoutById(workoutId: string) {
   try {
+    // Try regular workout first
     const workout = await prisma.workout.findUnique({
       where: { id: workoutId },
     });
-    if (!workout) {
-      return { success: false, error: 'Workout not found' };
+    if (workout) {
+      return { success: true, workout, isStrava: false };
     }
-    return { success: true, workout };
+
+    // Try Strava workout
+    const stravaResult = await getStravaWorkoutById(workoutId);
+    if (stravaResult.success) {
+      return {
+        success: true,
+        workout: stravaResult.stravaWorkout,
+        isStrava: true,
+      };
+    }
+
+    return { success: false, error: 'Workout not found' };
   } catch (error) {
     console.error('Error fetching workout by ID:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}
+
+export async function getStravaWorkouts() {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      throw new Error('User not authenticated');
+    }
+
+    const stravaWorkouts = await prisma.stravaWorkout.findMany({
+      where: { userId: user.id },
+      orderBy: { startDate: 'desc' },
+    });
+
+    return { success: true, stravaWorkouts };
+  } catch (error) {
+    console.error('Error fetching Strava workouts:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error',

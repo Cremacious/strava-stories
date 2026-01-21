@@ -3,6 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, Clock, MapPin, Flame, User, Circle } from 'lucide-react';
 import Link from 'next/link';
+import type {
+  WorkoutModel,
+  StravaWorkoutModel,
+} from '@/generated/prisma/models';
 
 const CircleWorkoutPage = async ({
   params,
@@ -13,6 +17,7 @@ const CircleWorkoutPage = async ({
 
   const workoutResult = await getWorkoutById(workoutId);
   const workout = workoutResult.success ? workoutResult.workout : null;
+  const isStrava = workoutResult.success ? workoutResult.isStrava : false;
 
   if (!workout) {
     return (
@@ -66,19 +71,23 @@ const CircleWorkoutPage = async ({
         <Card className="bg-gray-800 border-gray-700 shadow-lg">
           <CardHeader>
             <CardTitle className="text-2xl font-bold text-white">
-              {workout.title}
+              {isStrava
+                ? (workout as StravaWorkoutModel).name
+                : (workout as WorkoutModel).title}
             </CardTitle>
             <Badge variant="secondary" className="bg-red-600 text-white w-fit">
               {workout.type}
             </Badge>
           </CardHeader>
           <CardContent className="space-y-6">
-            {workout.description && (
+            {!isStrava && (workout as WorkoutModel).description && (
               <div>
                 <h3 className="text-lg font-semibold text-gray-300 mb-2">
                   Description
                 </h3>
-                <p className="text-gray-400">{workout.description}</p>
+                <p className="text-gray-400">
+                  {(workout as WorkoutModel).description}
+                </p>
               </div>
             )}
 
@@ -88,7 +97,11 @@ const CircleWorkoutPage = async ({
                 <div>
                   <p className="text-gray-400 text-sm">Date</p>
                   <p className="text-white font-medium">
-                    {formatDate(workout.date)}
+                    {formatDate(
+                      isStrava
+                        ? (workout as StravaWorkoutModel).startDateLocal
+                        : (workout as WorkoutModel).date,
+                    )}
                   </p>
                 </div>
               </div>
@@ -98,7 +111,11 @@ const CircleWorkoutPage = async ({
                 <div>
                   <p className="text-gray-400 text-sm">Duration</p>
                   <p className="text-white font-medium">
-                    {formatDuration(workout.duration)}
+                    {formatDuration(
+                      isStrava
+                        ? (workout as StravaWorkoutModel).movingTime
+                        : (workout as WorkoutModel).duration,
+                    )}
                   </p>
                 </div>
               </div>
@@ -115,13 +132,13 @@ const CircleWorkoutPage = async ({
                 </div>
               )}
 
-              {workout.calories && (
+              {!isStrava && (workout as WorkoutModel).calories && (
                 <div className="flex items-center space-x-3">
                   <Flame className="w-5 h-5 text-red-400" />
                   <div>
                     <p className="text-gray-400 text-sm">Calories</p>
                     <p className="text-white font-medium">
-                      {workout.calories} kcal
+                      {(workout as WorkoutModel).calories} kcal
                     </p>
                   </div>
                 </div>
@@ -135,12 +152,14 @@ const CircleWorkoutPage = async ({
                 </div>
               </div>
 
-              {workout.circleId && (
+              {!isStrava && (workout as WorkoutModel).circleId && (
                 <div className="flex items-center space-x-3">
                   <Circle className="w-5 h-5 text-red-400" />
                   <div>
                     <p className="text-gray-400 text-sm">Circle ID</p>
-                    <p className="text-white font-medium">{workout.circleId}</p>
+                    <p className="text-white font-medium">
+                      {(workout as WorkoutModel).circleId}
+                    </p>
                   </div>
                 </div>
               )}

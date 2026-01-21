@@ -15,4 +15,5 @@ export type WorkoutDisplayData = {
   distance: number;
   calories: number;
   type: string;
+  isStrava?: boolean;
 };
