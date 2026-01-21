@@ -52,6 +52,9 @@ export async function getStravaActivities(accessToken: string) {
   const res = await fetch('https://www.strava.com/api/v3/athlete/activities', {
     headers: { Authorization: `Bearer ${accessToken}` },
   });
+  if (!res.ok) {
+    throw new Error(`Strava API error: ${res.status} ${res.statusText}`);
+  }
   return res.json();
 }
 

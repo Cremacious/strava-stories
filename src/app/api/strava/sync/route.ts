@@ -6,11 +6,7 @@ import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 import { Activity, StravaActivity } from '@/lib/types/strava.type';
 
-export async function POST(request: NextRequest) {
-  const { userId } = await request.json();
-  if (!userId)
-    return NextResponse.json({ error: 'No userId' }, { status: 400 });
-
+export async function syncStravaWorkouts(userId: string) {
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: {
@@ -20,20 +16,14 @@ export async function POST(request: NextRequest) {
     },
   });
   if (!user || !user.stravaAccessToken) {
-    return NextResponse.json(
-      { error: 'No Strava tokens found' },
-      { status: 401 }
-    );
+    throw new Error('No Strava tokens found');
   }
 
   let accessToken = user.stravaAccessToken;
   if (user.stravaTokenExpiresAt && new Date() > user.stravaTokenExpiresAt) {
     const refreshData = await refreshStravaToken(user.stravaRefreshToken!);
     if (!refreshData.access_token) {
-      return NextResponse.json(
-        { error: 'Token refresh failed' },
-        { status: 401 }
-      );
+      throw new Error('Token refresh failed');
     }
     accessToken = refreshData.access_token;
     const newExpiresAt = new Date(Date.now() + refreshData.expires_in * 1000);
@@ -47,9 +37,28 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  const activitiesRaw: StravaActivity[] = await getStravaActivities(
-    accessToken
-  );
+  let activitiesRaw: StravaActivity[];
+  try {
+    activitiesRaw = await getStravaActivities(accessToken);
+  } catch (error) {
+    console.error('Failed to fetch activities from Strava:', error);
+    if (error instanceof Error && error.message.includes('401')) {
+      await prisma.user.update({
+        where: { id: userId },
+        data: {
+          stravaAccessToken: null,
+          stravaRefreshToken: null,
+          stravaTokenExpiresAt: null,
+        },
+      });
+    }
+    throw error;
+  }
+
+  if (!Array.isArray(activitiesRaw)) {
+    console.error('Strava API did not return an array:', activitiesRaw);
+    throw new Error('Invalid response from Strava API');
+  }
   const activities: Activity[] = activitiesRaw.map((act) => ({
     id: act.id?.toString() ?? '',
     userId,
@@ -125,7 +134,7 @@ export async function POST(request: NextRequest) {
     : activities;
 
   console.log(
-    `Syncing ${newActivities.length} new activities for user ${userId}`
+    `Syncing ${newActivities.length} new activities for user ${userId}`,
   );
   let synced = 0;
   for (const act of newActivities) {
@@ -210,5 +219,22 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  return NextResponse.json({ synced });
+  return synced;
+}
+
+export async function POST(request: NextRequest) {
+  const { userId } = await request.json();
+  if (!userId)
+    return NextResponse.json({ error: 'No userId' }, { status: 400 });
+
+  try {
+    const synced = await syncStravaWorkouts(userId);
+    return NextResponse.json({ synced });
+  } catch (error) {
+    console.error('Sync failed:', error);
+    return NextResponse.json(
+      { error: 'Failed to sync Strava workouts' },
+      { status: 500 },
+    );
+  }
 }
