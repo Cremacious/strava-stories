@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { User } from '@/lib/types/user.type';
 export async function getCurrentUserFriends() {}
 
-// export async function getFriendById(friendId: string) {}
+
 
 export async function sendFriendRequest(friendId: string) {
   try {

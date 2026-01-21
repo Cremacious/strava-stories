@@ -110,7 +110,7 @@ export async function getCircleById(
       ? membership.status
       : 'NONE';
 
-    // Special case: if user is the owner, ensure they are considered active
+  
     if (circle.ownerId === user.id) {
       membershipStatus = 'ACTIVE';
     }
@@ -336,9 +336,7 @@ export async function getAllCircles() {
   }
 }
 
-export async function sendCircleRequest(circleId: string) {
-  // Placeholder
-}
+
 
 export async function approveCircleRequest(circleId: string, userId: string) {
   try {
@@ -352,7 +350,7 @@ export async function approveCircleRequest(circleId: string, userId: string) {
       return { success: false, error: 'User not authenticated' };
     }
 
-    // Check if user is owner or moderator
+
     const membership = await prisma.circleMember.findUnique({
       where: {
         circleId_userId: {
@@ -369,7 +367,7 @@ export async function approveCircleRequest(circleId: string, userId: string) {
       return { success: false, error: 'Unauthorized' };
     }
 
-    // Update status to active
+
     await prisma.circleMember.updateMany({
       where: {
         circleId,

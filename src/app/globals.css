@@ -1,3 +1,4 @@
+@import 'leaflet/dist/leaflet.css';
 @import 'tailwindcss';
 
 @custom-variant dark (&:is(.dark *));
@@ -127,5 +128,5 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #b91c1c; 
+  background: #b91c1c;
 }

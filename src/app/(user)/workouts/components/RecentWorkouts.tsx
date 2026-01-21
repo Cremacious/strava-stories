@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar, Activity } from 'lucide-react';
 import { WorkoutDisplayData } from '@/lib/types/workouts.type';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 const RecentWorkouts = ({
   workoutData,
@@ -11,11 +12,14 @@ const RecentWorkouts = ({
 }) => {
   return (
     <Card className="darkBackground border-0">
-      <CardHeader>
+      <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="text-white flex items-center">
           <Calendar className="w-5 h-5 mr-2 text-red-400" />
           Recent Workouts
         </CardTitle>
+        <Button asChild>
+          <Link href="/workouts/all">View All</Link>
+        </Button>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">

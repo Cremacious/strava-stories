@@ -1,4 +1,4 @@
-// Validate environment variables
+
 function validateEnvVars() {
   if (!process.env.CLIENTID) {
     throw new Error(

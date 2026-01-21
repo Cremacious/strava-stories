@@ -158,7 +158,7 @@ export async function getStravaWorkoutById(id: string) {
 
 export async function getWorkoutById(workoutId: string) {
   try {
-    // Try regular workout first
+ 
     const workout = await prisma.workout.findUnique({
       where: { id: workoutId },
     });
@@ -166,7 +166,7 @@ export async function getWorkoutById(workoutId: string) {
       return { success: true, workout, isStrava: false };
     }
 
-    // Try Strava workout
+
     const stravaResult = await getStravaWorkoutById(workoutId);
     if (stravaResult.success) {
       return {

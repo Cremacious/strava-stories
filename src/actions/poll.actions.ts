@@ -99,7 +99,7 @@ export async function getCirclePolls(
         votes: opt.votes.length,
       }));
       const endsAt = poll.closedAt
-        ? poll.closedAt.toISOString().split('T')[0] // Format as date string, adjust if needed
+        ? poll.closedAt.toISOString().split('T')[0] 
         : 'Never';
 
       return {

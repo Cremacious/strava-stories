@@ -23,7 +23,7 @@ const WorkoutsPage = async () => {
   const userWorkouts = workouts || [];
   const userStravaWorkouts = stravaWorkouts || [];
 
-  // Combine and normalize workouts
+
   const allWorkouts = [
     ...userWorkouts.map((workout) => ({
       ...workout,
@@ -41,13 +41,13 @@ const WorkoutsPage = async () => {
       id: workout.id.toString(),
       date: workout.startDate,
       duration: workout.movingTime ?? 0,
-      distance: (workout.distance ?? 0) / 1000, // Convert meters to km
-      calories: 0, // Strava doesn't provide calories
+      distance: (workout.distance ?? 0) / 1000, 
+      calories: 0, 
       type: workout.type,
     })),
   ];
 
-  // Sort by date descending
+ 
   const sortedWorkouts = allWorkouts.sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );

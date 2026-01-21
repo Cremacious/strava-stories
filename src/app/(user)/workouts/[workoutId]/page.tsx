@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Calendar, Clock, MapPin, Flame, Activity } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import type { WorkoutModel, StravaWorkoutModel } from '@/generated/prisma/models';
+import MapPlot from './MapPlot';
 
 const WorkoutPage = async ({
   params,
@@ -200,6 +201,7 @@ const WorkoutPage = async ({
           )}
         </CardContent>
       </Card>
+      <MapPlot workout={workout} isStrava={isStrava} />
     </div>
   );
 };
