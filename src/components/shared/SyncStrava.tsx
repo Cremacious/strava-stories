@@ -12,28 +12,26 @@ export default function SyncStrava({ userId }: { userId: string | undefined }) {
   const handleSync = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/strava/check-tokens');
-      const { hasTokens } = await res.json();
-
-      if (hasTokens) {
-        await fetch('/api/strava/sync', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId: userId }),
-        });
+      const res = await fetch('/api/strava/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId }),
+      });
+      if (res.ok) {
         router.refresh();
       } else {
         window.location.href = '/api/strava/auth';
       }
     } catch (error) {
       console.error('Sync failed:', error);
+      window.location.href = '/api/strava/auth';
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Button onClick={handleSync} disabled={loading} variant="outline">
+    <Button onClick={handleSync} disabled={loading} variant={'default'}>
       <RefreshCw className={`mr-2 h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
       {loading ? 'Syncing...' : 'Sync Strava'}
     </Button>
