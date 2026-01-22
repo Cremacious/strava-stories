@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
+// import { Button } from '@/components/ui/button';
 import {
   Activity,
   Users,
@@ -16,6 +16,7 @@ import {
   Share2,
   UserPlus,
 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export default function Home() {
   return (

@@ -110,7 +110,6 @@ export async function getCircleById(
       ? membership.status
       : 'NONE';
 
-  
     if (circle.ownerId === user.id) {
       membershipStatus = 'ACTIVE';
     }
@@ -336,8 +335,6 @@ export async function getAllCircles() {
   }
 }
 
-
-
 export async function approveCircleRequest(circleId: string, userId: string) {
   try {
     const supabase = await createClient();
@@ -349,7 +346,6 @@ export async function approveCircleRequest(circleId: string, userId: string) {
     if (authError || !user) {
       return { success: false, error: 'User not authenticated' };
     }
-
 
     const membership = await prisma.circleMember.findUnique({
       where: {
@@ -366,7 +362,6 @@ export async function approveCircleRequest(circleId: string, userId: string) {
     ) {
       return { success: false, error: 'Unauthorized' };
     }
-
 
     await prisma.circleMember.updateMany({
       where: {
@@ -493,4 +488,189 @@ export async function getPendingCircleRequests(circleId: string) {
       requests: [],
     };
   }
+}
+
+export async function getRecentCirclesHighlights() {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return {
+        success: false,
+        error: 'User not authenticated',
+        highlights: [],
+      };
+    }
+
+    const userMemberships = await prisma.circleMember.findMany({
+      where: {
+        userId: user.id,
+        status: 'ACTIVE',
+      },
+      select: {
+        circleId: true,
+      },
+    });
+
+    const circleIds = userMemberships.map((membership) => membership.circleId);
+
+    if (circleIds.length === 0) {
+      return { success: true, highlights: [] };
+    }
+
+    const recentEvents = await prisma.circleEvent.findMany({
+      where: {
+        circleId: {
+          in: circleIds,
+        },
+        userId: {
+          not: user.id,
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        createdAt: true,
+        user: {
+          select: {
+            name: true,
+          },
+        },
+        circle: {
+          select: {
+            name: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      take: 10,
+    });
+
+    const recentPolls = await prisma.circlePoll.findMany({
+      where: {
+        circleId: {
+          in: circleIds,
+        },
+        userId: {
+          not: user.id,
+        },
+      },
+      select: {
+        id: true,
+        question: true,
+        createdAt: true,
+        user: {
+          select: {
+            name: true,
+          },
+        },
+        circle: {
+          select: {
+            name: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      take: 10,
+    });
+
+    const recentChallenges = await prisma.circleChallenge.findMany({
+      where: {
+        circleId: {
+          in: circleIds,
+        },
+        userId: {
+          not: user.id,
+        },
+      },
+      select: {
+        id: true,
+        title: true,
+        createdAt: true,
+        user: {
+          select: {
+            name: true,
+          },
+        },
+        circle: {
+          select: {
+            name: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      take: 10,
+    });
+
+    const allHighlights = [
+      ...recentEvents.map((event) => ({
+        id: event.id,
+        circle: event.circle.name,
+        user: event.user.name || 'Unknown User',
+        achievement: `Created event: ${event.name}`,
+        type: 'event',
+        time: event.createdAt,
+      })),
+      ...recentPolls.map((poll) => ({
+        id: poll.id,
+        circle: poll.circle.name,
+        user: poll.user.name || 'Unknown User',
+        achievement: `Created poll: ${poll.question}`,
+        type: 'poll',
+        time: poll.createdAt,
+      })),
+      ...recentChallenges.map((challenge) => ({
+        id: challenge.id,
+        circle: challenge.circle.name,
+        user: challenge.user.name || 'Unknown User',
+        achievement: `Created challenge: ${challenge.title}`,
+        type: 'challenge',
+        time: challenge.createdAt,
+      })),
+    ];
+
+    const sortedHighlights = allHighlights
+      .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
+      .slice(0, 10);
+
+    const formattedHighlights = sortedHighlights.map((highlight) => ({
+      ...highlight,
+      time: getRelativeTime(highlight.time),
+    }));
+
+    return { success: true, highlights: formattedHighlights };
+  } catch (error) {
+    console.error('Error fetching recent circles highlights:', error);
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : 'Failed to fetch highlights',
+      highlights: [],
+    };
+  }
+}
+
+function getRelativeTime(date: Date | string): string {
+  const now = new Date();
+  const past = new Date(date);
+  const diffInSeconds = Math.floor((now.getTime() - past.getTime()) / 1000);
+
+  if (diffInSeconds < 60) return 'Just now';
+  if (diffInSeconds < 3600)
+    return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+  if (diffInSeconds < 86400)
+    return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+  if (diffInSeconds < 604800)
+    return `${Math.floor(diffInSeconds / 86400)} days ago`;
+  return past.toLocaleDateString();
 }

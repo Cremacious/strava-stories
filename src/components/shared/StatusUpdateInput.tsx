@@ -132,9 +132,9 @@ const StatusUpdateInput = ({
   );
 
   return (
-    <div className="max-w-2xl mx-auto w-full">
-      <div className="p-4">
-        <div className="flex items-center mb-3">
+    <div className="max-w-2xl mx-auto w-full cardBackground rounded-2xl">
+      <div className="p-3">
+        <div className="flex items-center ">
           <Image
             src={userImage || defaultProfileImage}
             alt="Your avatar"
