@@ -9,21 +9,21 @@ export const workoutFormSchema = z.object({
     .optional()
     .refine(
       (val) => !val || (!isNaN(Number(val)) && Number(val) > 0),
-      'Duration must be a positive number'
+      'Duration must be a positive number',
     ),
   distance: z
     .string()
     .optional()
     .refine(
       (val) => !val || (!isNaN(Number(val)) && Number(val) > 0),
-      'Distance must be a positive number'
+      'Distance must be a positive number',
     ),
   calories: z
     .string()
     .optional()
     .refine(
       (val) => !val || (!isNaN(Number(val)) && Number(val) > 0),
-      'Calories must be a positive number'
+      'Calories must be a positive number',
     ),
   date: z
     .string()
@@ -31,4 +31,17 @@ export const workoutFormSchema = z.object({
     .refine((val) => !isNaN(Date.parse(val)), 'Invalid date'),
 });
 
-export const workoutSchema = z.object({});
+export const goalFormSchema = z.object({
+  title: z.string().min(1, 'Title is required'),
+  description: z.string().optional(),
+  period: z.string().min(1, 'Period is required'),
+  type: z.string().min(1, 'Goal type is required'),
+  targetValue: z
+    .string()
+    .min(1, 'Target value is required')
+    .refine(
+      (val) => !isNaN(Number(val)) && Number(val) > 0,
+      'Target value must be a positive number',
+    ),
+  specificType: z.string().optional(),
+});

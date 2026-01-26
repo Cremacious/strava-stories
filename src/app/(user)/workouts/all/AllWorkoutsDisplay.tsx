@@ -22,6 +22,7 @@ import {
   ArrowDown,
 } from 'lucide-react';
 import Link from 'next/link';
+import Pagination from '../../../../components/layout/Pagination';
 
 type SortOption = 'date-asc' | 'date-desc';
 type ViewMode = 'grid' | 'list';
@@ -34,6 +35,8 @@ const AllWorkoutsDisplay = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState<SortOption>('date-desc');
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
 
   const filteredAndSortedWorkouts = useMemo(() => {
     const filtered = workoutData.filter((workout) =>
@@ -53,6 +56,12 @@ const AllWorkoutsDisplay = ({
 
     return filtered;
   }, [workoutData, searchTerm, sortBy]);
+
+  const paginatedWorkouts = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredAndSortedWorkouts.slice(startIndex, endIndex);
+  }, [filteredAndSortedWorkouts, currentPage, itemsPerPage]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -124,7 +133,7 @@ const AllWorkoutsDisplay = ({
 
   const WorkoutListItem = ({ workout }: { workout: WorkoutDisplayData }) => (
     <Link href={`/workouts/${workout.id}`}>
-      <div className="darkBackground border border-gray-700 hover:border-red-500 transition-colors cursor-pointer p-4 rounded-lg">
+      <div className="darkBackground border border-gray-700 hover:border-red-500 transition-colors cursor-pointer p-4 rounded-lg  mb-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <div className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center shrink-0">
@@ -186,14 +195,16 @@ const AllWorkoutsDisplay = ({
         </div>
       </div>
 
-      {/* Filters and Controls */}
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
           <Input
             placeholder="Search by workout type..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setCurrentPage(1);
+            }}
             className="pl-10 darkBackground border-gray-600 text-white placeholder-gray-400"
           />
         </div>
@@ -201,7 +212,10 @@ const AllWorkoutsDisplay = ({
         <div className="flex gap-2">
           <Select
             value={sortBy}
-            onValueChange={(value: SortOption) => setSortBy(value)}
+            onValueChange={(value: SortOption) => {
+              setSortBy(value);
+              setCurrentPage(1);
+            }}
           >
             <SelectTrigger className="w-40 darkBackground border-gray-600 text-white">
               <SelectValue />
@@ -249,7 +263,7 @@ const AllWorkoutsDisplay = ({
         </div>
       </div>
 
-      {/* Workouts Display */}
+
       {filteredAndSortedWorkouts.length === 0 ? (
         <div className="text-center py-12">
           <Activity className="w-16 h-16 text-gray-600 mx-auto mb-4" />
@@ -264,17 +278,24 @@ const AllWorkoutsDisplay = ({
         </div>
       ) : viewMode === 'grid' ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {filteredAndSortedWorkouts.map((workout) => (
+          {paginatedWorkouts.map((workout) => (
             <WorkoutCard key={workout.id} workout={workout} />
           ))}
         </div>
       ) : (
-        <div className="space-y-3">
-          {filteredAndSortedWorkouts.map((workout) => (
+        <div className="space-y-">
+          {paginatedWorkouts.map((workout) => (
             <WorkoutListItem key={workout.id} workout={workout} />
           ))}
         </div>
       )}
+
+      <Pagination
+        totalItems={filteredAndSortedWorkouts.length}
+        itemsPerPage={itemsPerPage}
+        currentPage={currentPage}
+        onPageChange={setCurrentPage}
+      />
     </div>
   );
 };

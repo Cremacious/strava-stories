@@ -8,6 +8,7 @@ import RecentWorkouts from './components/RecentWorkouts';
 import { getWorkouts, getStravaWorkouts } from '@/actions/workout.actions';
 import SyncStrava from '@/components/shared/SyncStrava';
 import { getUserProfile } from '@/actions/user.actions';
+import CreateGoal from './components/CreateGoal';
 
 const WorkoutsPage = async () => {
   const result = await getWorkouts();
@@ -22,7 +23,6 @@ const WorkoutsPage = async () => {
 
   const userWorkouts = workouts || [];
   const userStravaWorkouts = stravaWorkouts || [];
-
 
   const allWorkouts = [
     ...userWorkouts.map((workout) => ({
@@ -41,15 +41,14 @@ const WorkoutsPage = async () => {
       id: workout.id.toString(),
       date: workout.startDate,
       duration: workout.movingTime ?? 0,
-      distance: (workout.distance ?? 0) / 1000, 
-      calories: 0, 
+      distance: (workout.distance ?? 0) / 1000,
+      calories: 0,
       type: workout.type,
     })),
   ];
 
- 
   const sortedWorkouts = allWorkouts.sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
   );
 
   const displayData = sortedWorkouts.map((workout) => ({
@@ -70,11 +69,9 @@ const WorkoutsPage = async () => {
           <h1 className="text-2xl sm:text-3xl font-bold text-white">
             Workouts
           </h1>
-          <p className="text-gray-400 mt-1 text-sm sm:text-base">
-            Track your fitness journey and sync with Strava
-          </p>
         </div>
         <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
+          <CreateGoal />
           <SyncStrava userId={userId} />
           <AddWorkoutButton />
         </div>
@@ -104,7 +101,7 @@ const WorkoutsPage = async () => {
             <div className="text-2xl font-bold text-white">
               {sortedWorkouts.reduce(
                 (total, workout) => total + (workout.duration ?? 0),
-                0
+                0,
               )}{' '}
               min
             </div>
@@ -121,7 +118,7 @@ const WorkoutsPage = async () => {
             <div className="text-2xl font-bold text-white">
               {sortedWorkouts.reduce(
                 (total, workout) => total + (workout.distance ?? 0),
-                0
+                0,
               )}{' '}
               km
             </div>
@@ -138,7 +135,7 @@ const WorkoutsPage = async () => {
             <div className="text-2xl font-bold text-white">
               {sortedWorkouts.reduce(
                 (total, workout) => total + (workout.calories ?? 0),
-                0
+                0,
               )}
             </div>
           </CardContent>

@@ -82,6 +82,24 @@ enum MediaType {
   EMBED
 }
 
+enum GoalPeriod {
+  THIRTY_DAYS
+  SIXTY_DAYS
+  NINETY_DAYS
+  SIX_MONTHS
+  TWELVE_MONTHS
+}
+
+enum GoalType {
+  TOTAL_WORKOUTS
+  TOTAL_DURATION
+  TOTAL_DISTANCE
+  TOTAL_CALORIES
+  SPECIFIC_TYPE_WORKOUTS
+  AVERAGE_DISTANCE
+  AVERAGE_DURATION
+  WORKOUTS_PER_WEEK
+}
 
 enum StepType {
   WARM_UP
@@ -120,6 +138,23 @@ model User {
   storyShares StoryShare[]
   pollVotes PollVote[]
   storyPollVotes StoryPollVote[]
+  goals Goal[]
+}
+
+model Goal {
+  id          String     @id @default(cuid())
+  userId      String     @db.Uuid
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  period      GoalPeriod
+  type        GoalType
+  targetValue Float
+  specificType String?   
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([userId])
 }
 
 model Workout {

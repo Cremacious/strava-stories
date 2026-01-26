@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { addWorkout } from '@/actions/workout.actions';
+import { addWorkout, createGoal } from '@/actions/workout.actions';
 import { WorkoutData } from '@/lib/types/workouts.type';
 
 export interface Workout {
@@ -16,17 +16,41 @@ export interface Workout {
   updatedAt: Date;
 }
 
+export interface Goal {
+  id: string;
+  userId: string;
+  title: string;
+  description: string | null;
+  period: string;
+  type: string;
+  targetValue: number;
+  specificType: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 interface WorkoutStore {
   workouts: Workout[];
+  goals: Goal[];
   isLoading: boolean;
   error: string | null;
   addWorkout: (data: WorkoutData) => Promise<void>;
+  createGoal: (data: {
+    title: string;
+    description?: string;
+    period: string;
+    type: string;
+    targetValue: number;
+    specificType?: string;
+  }) => Promise<void>;
   setWorkouts: (workouts: Workout[]) => void;
+  setGoals: (goals: Goal[]) => void;
   clearError: () => void;
 }
 
 export const useWorkoutStore = create<WorkoutStore>((set) => ({
   workouts: [],
+  goals: [],
   isLoading: false,
   error: null,
 
@@ -37,7 +61,6 @@ export const useWorkoutStore = create<WorkoutStore>((set) => ({
       const result = await addWorkout(data);
 
       if (result.success && result.workout) {
-     
         set((state) => ({
           workouts: [
             {
@@ -65,7 +88,33 @@ export const useWorkoutStore = create<WorkoutStore>((set) => ({
     }
   },
 
+  createGoal: async (data) => {
+    set({ isLoading: true, error: null });
+
+    try {
+      const result = await createGoal(data);
+
+      if (result.success && result.goal) {
+        set((state) => ({
+          goals: [result.goal, ...state.goals],
+          isLoading: false,
+        }));
+      } else {
+        set({
+          error: result.error || 'Failed to create goal',
+          isLoading: false,
+        });
+      }
+    } catch (error) {
+      set({
+        error: error instanceof Error ? error.message : 'Unknown error',
+        isLoading: false,
+      });
+    }
+  },
+
   setWorkouts: (workouts: Workout[]) => set({ workouts }),
+  setGoals: (goals: Goal[]) => set({ goals }),
 
   clearError: () => set({ error: null }),
 }));

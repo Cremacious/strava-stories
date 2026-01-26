@@ -17,3 +17,12 @@ export type WorkoutDisplayData = {
   type: string;
   isStrava?: boolean;
 };
+
+export type GoalData = {
+  title: string;
+  description?: string;
+  period: string;
+  type: string;
+  targetValue: number;
+  specificType?: string;
+};

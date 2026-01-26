@@ -3,6 +3,7 @@
 import { prisma } from '@/lib/prisma';
 import { createClient } from '@/lib/supabase/server';
 import { WorkoutData } from '@/lib/types/workouts.type';
+import { GoalPeriod, GoalType } from '../generated/prisma/enums';
 
 export async function addWorkout(data: WorkoutData) {
   try {
@@ -158,14 +159,12 @@ export async function getStravaWorkoutById(id: string) {
 
 export async function getWorkoutById(workoutId: string) {
   try {
- 
     const workout = await prisma.workout.findUnique({
       where: { id: workoutId },
     });
     if (workout) {
       return { success: true, workout, isStrava: false };
     }
-
 
     const stravaResult = await getStravaWorkoutById(workoutId);
     if (stravaResult.success) {
@@ -206,6 +205,47 @@ export async function getStravaWorkouts() {
     return { success: true, stravaWorkouts };
   } catch (error) {
     console.error('Error fetching Strava workouts:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}
+
+export async function createGoal(data: {
+  title: string;
+  description?: string;
+  period: string;
+  type: string;
+  targetValue: number;
+  specificType?: string;
+}) {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      throw new Error('User not authenticated');
+    }
+
+    const goal = await prisma.goal.create({
+      data: {
+        userId: user.id,
+        title: data.title,
+        description: data.description ?? null,
+        period: data.period as GoalPeriod,
+        type: data.type as GoalType,
+        targetValue: data.targetValue,
+        specificType: data.specificType ?? null,
+      },
+    });
+
+    return { success: true, goal };
+  } catch (error) {
+    console.error('Error creating goal:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error',

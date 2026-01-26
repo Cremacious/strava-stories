@@ -3,7 +3,6 @@ import {
   createCircle,
   joinCircle,
   leaveCircle,
-  sendCircleRequest,
   approveCircleRequest,
   rejectCircleRequest,
 } from '@/actions/circle.actions';
