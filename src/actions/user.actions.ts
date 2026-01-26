@@ -115,6 +115,9 @@ export async function getUserProfile(): Promise<{
         email: true,
         avatarUrl: true,
         bio: true,
+        city: true,
+        state: true,
+        country: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -132,6 +135,9 @@ export async function getUserProfile(): Promise<{
       bio: profile.bio || undefined,
       createdAt: profile.createdAt.toISOString(),
       updatedAt: profile.updatedAt.toISOString(),
+      city: profile.city || undefined,
+      state: profile.state || undefined,
+      country: profile.country || undefined,
     };
 
     return { success: true, user: userProfile };
@@ -159,6 +165,9 @@ export async function getUserProfileById(userId: string): Promise<{
         email: true,
         avatarUrl: true,
         bio: true,
+        city: true,
+        state: true,
+        country: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -174,6 +183,9 @@ export async function getUserProfileById(userId: string): Promise<{
       email: profile.email,
       avatarUrl: profile.avatarUrl || undefined,
       bio: profile.bio || undefined,
+      city: profile.city || undefined,
+      state: profile.state || undefined,
+      country: profile.country || undefined,
       createdAt: profile.createdAt.toISOString(),
       updatedAt: profile.updatedAt.toISOString(),
     };
@@ -185,6 +197,44 @@ export async function getUserProfileById(userId: string): Promise<{
       success: false,
       error:
         error instanceof Error ? error.message : 'Failed to fetch user profile',
+    };
+  }
+}
+
+export async function updateUserLocation(
+  userId: string,
+  city: string,
+  state: string,
+  country: string
+) {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user || user.id !== userId) {
+      return {
+        success: false,
+        error: 'User not authenticated or unauthorized',
+      };
+    }
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: { city, state, country },
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error updating user location:', error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Failed to update user location',
     };
   }
 }
