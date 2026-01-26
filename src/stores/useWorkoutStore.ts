@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { addWorkout, createGoal } from '@/actions/workout.actions';
+import { addWorkout, createGoal, getGoals } from '@/actions/workout.actions';
 import { WorkoutData } from '@/lib/types/workouts.type';
 
 export interface Workout {
@@ -25,6 +25,7 @@ export interface Goal {
   type: string;
   targetValue: number;
   specificType: string | null;
+  currentValue: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -43,6 +44,7 @@ interface WorkoutStore {
     targetValue: number;
     specificType?: string;
   }) => Promise<void>;
+  fetchGoals: () => Promise<void>;
   setWorkouts: (workouts: Workout[]) => void;
   setGoals: (goals: Goal[]) => void;
   clearError: () => void;
@@ -74,6 +76,8 @@ export const useWorkoutStore = create<WorkoutStore>((set) => ({
           ],
           isLoading: false,
         }));
+        // Fetch updated goals after adding workout
+        await useWorkoutStore.getState().fetchGoals();
       } else {
         set({
           error: result.error || 'Failed to add workout',
@@ -96,7 +100,7 @@ export const useWorkoutStore = create<WorkoutStore>((set) => ({
 
       if (result.success && result.goal) {
         set((state) => ({
-          goals: [result.goal, ...state.goals],
+          goals: [{ ...result.goal, currentValue: 0 }, ...state.goals],
           isLoading: false,
         }));
       } else {
@@ -110,6 +114,17 @@ export const useWorkoutStore = create<WorkoutStore>((set) => ({
         error: error instanceof Error ? error.message : 'Unknown error',
         isLoading: false,
       });
+    }
+  },
+
+  fetchGoals: async () => {
+    try {
+      const result = await getGoals();
+      if (result.success && result.goals) {
+        set({ goals: result.goals });
+      }
+    } catch (error) {
+      console.error('Error fetching goals:', error);
     }
   },
 

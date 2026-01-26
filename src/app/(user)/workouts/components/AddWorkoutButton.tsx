@@ -18,6 +18,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useWorkoutStore } from '@/stores/useWorkoutStore';
 import { WorkoutData } from '@/lib/types/workouts.type';
 import { workoutFormSchema } from '@/lib/validators/workout.validators';
@@ -48,6 +49,7 @@ const AddWorkoutButton = () => {
     date: '',
   });
 
+  const router = useRouter();
   const { addWorkout, isLoading, error, clearError } = useWorkoutStore();
 
   const handleAddWorkout = async () => {
@@ -88,6 +90,7 @@ const AddWorkoutButton = () => {
 
     if (!error) {
       setIsAddWorkoutOpen(false);
+      router.refresh();
       setNewWorkout({
         title: '',
         description: '',

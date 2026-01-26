@@ -252,3 +252,147 @@ export async function createGoal(data: {
     };
   }
 }
+
+export async function getGoals() {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+    if (authError || !user) {
+      throw new Error('User not authenticated');
+    }
+
+    const goals = await prisma.goal.findMany({
+      where: { userId: user.id },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    // Fetch workouts for progress calculation
+    const workouts = await prisma.workout.findMany({
+      where: { userId: user.id },
+      orderBy: { date: 'desc' },
+    });
+
+    const stravaWorkouts = await prisma.stravaWorkout.findMany({
+      where: { userId: user.id },
+      orderBy: { startDate: 'desc' },
+    });
+
+    // Combine workouts
+    const allWorkouts = [
+      ...workouts.map((workout) => ({
+        ...workout,
+        isStrava: false,
+        date: workout.date,
+        duration: workout.duration ?? 0,
+        distance: workout.distance ?? 0,
+        calories: workout.calories ?? 0,
+        type: workout.type,
+      })),
+      ...stravaWorkouts.map((workout) => ({
+        ...workout,
+        isStrava: true,
+        date: workout.startDate,
+        duration: workout.movingTime ?? 0,
+        distance: (workout.distance ?? 0) / 1000, // convert to km
+        calories: 0,
+        type: workout.type,
+      })),
+    ];
+
+    // Calculate current value for each goal
+    const goalsWithProgress = goals.map((goal) => {
+      let currentValue = 0;
+      const periodDays: Record<string, number> = {
+        THIRTY_DAYS: 30,
+        SIXTY_DAYS: 60,
+        NINETY_DAYS: 90,
+        SIX_MONTHS: 180,
+        TWELVE_MONTHS: 365,
+      };
+
+      let startDate: Date;
+      if (goal.type === 'WORKOUTS_PER_WEEK') {
+        // For weekly goals, use last 7 days
+        startDate = new Date();
+        startDate.setDate(startDate.getDate() - 7);
+      } else {
+        startDate = new Date();
+        startDate.setDate(
+          startDate.getDate() - (periodDays[goal.period] || 30),
+        );
+      }
+
+      const relevantWorkouts = allWorkouts.filter(
+        (w) => new Date(w.date) >= startDate,
+      );
+
+      switch (goal.type) {
+        case 'TOTAL_WORKOUTS':
+          currentValue = relevantWorkouts.length;
+          break;
+        case 'TOTAL_DURATION':
+          currentValue =
+            relevantWorkouts.reduce((sum, w) => sum + (w.duration || 0), 0) /
+            60; // convert to minutes
+          break;
+        case 'TOTAL_DISTANCE':
+          currentValue = relevantWorkouts.reduce(
+            (sum, w) => sum + (w.distance || 0),
+            0,
+          );
+          break;
+        case 'TOTAL_CALORIES':
+          currentValue = relevantWorkouts.reduce(
+            (sum, w) => sum + (w.calories || 0),
+            0,
+          );
+          break;
+        case 'SPECIFIC_TYPE_WORKOUTS':
+          currentValue = relevantWorkouts.filter(
+            (w) => w.type === goal.specificType,
+          ).length;
+          break;
+        case 'AVERAGE_DISTANCE':
+          const totalDist = relevantWorkouts.reduce(
+            (sum, w) => sum + (w.distance || 0),
+            0,
+          );
+          currentValue =
+            relevantWorkouts.length > 0
+              ? totalDist / relevantWorkouts.length
+              : 0;
+          break;
+        case 'AVERAGE_DURATION':
+          const totalDur =
+            relevantWorkouts.reduce((sum, w) => sum + (w.duration || 0), 0) /
+            60;
+          currentValue =
+            relevantWorkouts.length > 0
+              ? totalDur / relevantWorkouts.length
+              : 0;
+          break;
+        case 'WORKOUTS_PER_WEEK':
+          currentValue = relevantWorkouts.length;
+          break;
+        default:
+          currentValue = 0;
+      }
+
+      return {
+        ...goal,
+        currentValue,
+      };
+    });
+
+    return { success: true, goals: goalsWithProgress };
+  } catch (error) {
+    console.error('Error fetching goals:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}

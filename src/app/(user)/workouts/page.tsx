@@ -1,25 +1,32 @@
-import { Activity, MapPin, Clock, Zap, RefreshCw } from 'lucide-react';
+import { Activity, MapPin, Clock, Zap } from 'lucide-react';
 import WorkoutGraph from './components/WorkoutGraph';
-import { Button } from '@/components/ui/button';
+// import { Button } from '@/components/ui/button';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AddWorkoutButton from './components/AddWorkoutButton';
 import RecentWorkouts from './components/RecentWorkouts';
-import { getWorkouts, getStravaWorkouts } from '@/actions/workout.actions';
+import {
+  getWorkouts,
+  getStravaWorkouts,
+  getGoals,
+} from '@/actions/workout.actions';
 import SyncStrava from '@/components/shared/SyncStrava';
 import { getUserProfile } from '@/actions/user.actions';
 import CreateGoal from './components/CreateGoal';
+import UserGoals from './components/UserGoals';
 
 const WorkoutsPage = async () => {
   const result = await getWorkouts();
   const stravaResult = await getStravaWorkouts();
+  const goalsResult = await getGoals();
 
-  if (!result.success || !stravaResult.success) {
+  if (!result.success || !stravaResult.success || !goalsResult.success) {
     return <div>Error loading workouts</div>;
   }
 
   const { workouts } = result;
   const { stravaWorkouts } = stravaResult;
+  const { goals = [] } = goalsResult;
 
   const userWorkouts = workouts || [];
   const userStravaWorkouts = stravaWorkouts || [];
@@ -76,7 +83,7 @@ const WorkoutsPage = async () => {
           <AddWorkoutButton />
         </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      {/* <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card className="backgroundDark border-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-red-400">
@@ -140,7 +147,9 @@ const WorkoutsPage = async () => {
             </div>
           </CardContent>
         </Card>
-      </div>
+      </div> */}
+
+      <UserGoals goals={goals} />
 
       <WorkoutGraph workoutData={displayData} />
 

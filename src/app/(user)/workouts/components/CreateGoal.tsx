@@ -19,6 +19,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Target } from 'lucide-react';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useWorkoutStore } from '@/stores/useWorkoutStore';
 import { goalFormSchema } from '@/lib/validators/workout.validators';
 
@@ -34,6 +35,7 @@ const CreateGoal = () => {
     specificType: '',
   });
 
+  const router = useRouter();
   const { createGoal, isLoading, error, clearError } = useWorkoutStore();
 
   const goalPeriods = [
@@ -101,6 +103,7 @@ const CreateGoal = () => {
 
     if (!error) {
       setIsCreateGoalOpen(false);
+      router.refresh();
       setNewGoal({
         title: '',
         description: '',
