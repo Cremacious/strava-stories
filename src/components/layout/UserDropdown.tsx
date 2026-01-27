@@ -9,8 +9,10 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { LogoutButton } from '../logout-button';
 import { User } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 const UserDropdown = () => {
+  const router = useRouter();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
@@ -21,7 +23,10 @@ const UserDropdown = () => {
       <DropdownMenuContent className="bg-[#272727] border-0 text-white">
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="hover:bg-black">
+        <DropdownMenuItem
+          onClick={() => router.push('/settings')}
+          className="hover:bg-black"
+        >
           Account Settings
         </DropdownMenuItem>
         <DropdownMenuItem>
