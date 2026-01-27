@@ -20,7 +20,7 @@ const TimelineFeed = ({ posts }: { posts: Post[] }) => {
   }
 
   return (
-    <div className="space-y-8 max-w-3xl mx-auto w-full cardBackground p-4 rounded-2xl min-h-105">
+    <div className="space-y-8 max-w-3xl mx-auto w-full cardBackground p-4 rounded-2xl min-h-105 pt-12">
       {posts.map((post) => (
         <SocialPost key={post.id} post={post} />
       ))}
