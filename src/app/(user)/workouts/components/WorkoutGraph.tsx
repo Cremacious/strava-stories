@@ -12,7 +12,7 @@ import {
   Cell,
 } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { TrendingUp, Target } from 'lucide-react';
+import { TrendingUp, Target, Activity, Plus } from 'lucide-react';
 import { WorkoutDisplayData } from '@/lib/types/workouts.type';
 
 const typeColors: Record<string, string> = {
@@ -28,10 +28,40 @@ const WorkoutGraph = ({
 }: {
   workoutData: WorkoutDisplayData[];
 }) => {
-  const activityCounts = workoutData.reduce((acc, workout) => {
-    acc[workout.type] = (acc[workout.type] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+  if (workoutData.length === 0) {
+    return (
+      <Card className="darkBackground border-0">
+        <CardContent className="flex flex-col items-center justify-center py-16">
+          <Activity className="h-16 w-16 text-white mb-4" />
+          <h3 className="text-xl font-semibold text-white mb-2">
+            No Workouts Yet
+          </h3>
+          <p className="text-white text-center mb-6 max-w-md">
+            Start tracking your fitness journey! Add your first workout to see
+            beautiful charts and graphs of your progress.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex items-center gap-2 text-sm text-white">
+              <TrendingUp className="h-4 w-4 text-red-400" />
+              <span>Track duration trends</span>
+            </div>
+            <div className="flex items-center gap-2 text-sm text-white">
+              <Target className="h-4 w-4 text-red-400" />
+              <span>Analyze activity types</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const activityCounts = workoutData.reduce(
+    (acc, workout) => {
+      acc[workout.type] = (acc[workout.type] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
 
   const activityTypes = Object.entries(activityCounts).map(([name, value]) => ({
     name,

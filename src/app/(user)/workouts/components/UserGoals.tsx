@@ -84,44 +84,22 @@ const UserGoals = ({ goals }: UserGoalsProps) => {
           <div className="text-sm text-gray-400">0 goals</div>
         </div>
 
-        <div className="text-center py-12 px-6">
+        <div className="text-center py-12 px-6 cardBackground rounded-lg">
      
 
           <h3 className="text-xl font-semibold text-white mb-3">
             Ready to Set Your First Goal?
           </h3>
 
-          <p className="text-gray-400 mb-6 max-w-md mx-auto leading-relaxed">
+          <p className="text-white mb-6 max-w-md mx-auto leading-relaxed">
             Transform your fitness journey by setting achievable goals. Track
             your progress, stay motivated, and celebrate your achievements along
             the way.
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto mb-8">
-            <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
-              <Activity className="h-6 w-6 text-red-400 mx-auto mb-2" />
-              <div className="text-sm text-white font-medium">
-                Total Workouts
-              </div>
-              <div className="text-xs text-gray-400">Count your sessions</div>
-            </div>
+        
 
-            <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
-              <MapPin className="h-6 w-6 text-red-400 mx-auto mb-2" />
-              <div className="text-sm text-white font-medium">
-                Distance Goals
-              </div>
-              <div className="text-xs text-gray-400">Track your mileage</div>
-            </div>
-
-            <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
-              <Clock className="h-6 w-6 text-red-400 mx-auto mb-2" />
-              <div className="text-sm text-white font-medium">Time Targets</div>
-              <div className="text-xs text-gray-400">Build endurance</div>
-            </div>
-          </div>
-
-          <p className="text-sm text-gray-500">
+          <p className="text-sm font-bold text-white">
             Click &quot;Create Goal&quot; above to get started!
           </p>
         </div>

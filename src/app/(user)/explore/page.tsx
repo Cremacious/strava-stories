@@ -58,13 +58,13 @@ const ExplorePage = async () => {
         </div>
 
 
-        <div className="space-y-4">
+        {/* <div className="space-y-4">
           <div className="flex items-center gap-2">
             <Globe className="h-6 w-6 text-red-400" />
             <h2 className="text-xl font-semibold text-white">All Circles</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* {searchResults.map((circle) => (
+            {searchResults.map((circle) => (
               <Card
                 key={circle.id}
                 className="cardBackground border-0 hover:border-red-500 transition-colors group"
@@ -88,9 +88,9 @@ const ExplorePage = async () => {
                   </Button>
                 </CardFooter>
               </Card>
-            ))} */}
+            ))}
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
