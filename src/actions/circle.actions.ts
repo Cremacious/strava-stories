@@ -660,6 +660,179 @@ export async function getRecentCirclesHighlights() {
   }
 }
 
+export interface RecommendedCircle {
+  id: string;
+  name: string;
+  description: string | null;
+  visibility: 'PUBLIC' | 'PRIVATE' | 'FRIENDS' | 'CIRCLE';
+  memberCount: number;
+  friendsInCircle: {
+    id: string;
+    name: string | null;
+    avatarUrl: string | null;
+  }[];
+  recommendationReason: string;
+}
+
+export async function getRecommendedCircles(): Promise<{
+  success: boolean;
+  circles: RecommendedCircle[];
+  error?: string;
+}> {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return { success: false, error: 'User not authenticated', circles: [] };
+    }
+
+
+    const friendships = await prisma.friendship.findMany({
+      where: {
+        OR: [
+          { userId: user.id, status: 'ACCEPTED' },
+          { friendId: user.id, status: 'ACCEPTED' },
+        ],
+      },
+      select: {
+        userId: true,
+        friendId: true,
+        user: {
+          select: {
+            id: true,
+            name: true,
+            avatarUrl: true,
+          },
+        },
+        friend: {
+          select: {
+            id: true,
+            name: true,
+            avatarUrl: true,
+          },
+        },
+      },
+    });
+
+    const friendIds = friendships.map((f) =>
+      f.userId === user.id ? f.friendId : f.userId,
+    );
+
+    if (friendIds.length === 0) {
+      return { success: true, circles: [] };
+    }
+
+    const userMemberships = await prisma.circleMember.findMany({
+      where: { userId: user.id },
+      select: { circleId: true },
+    });
+
+    const userCircleIds = userMemberships.map((m) => m.circleId);
+
+    const friendCircleMemberships = await prisma.circleMember.findMany({
+      where: {
+        userId: { in: friendIds },
+        status: 'ACTIVE',
+        circleId: { notIn: userCircleIds },
+      },
+      include: {
+        circle: {
+          include: {
+            _count: {
+              select: {
+                members: {
+                  where: { status: 'ACTIVE' },
+                },
+              },
+            },
+          },
+        },
+        user: {
+          select: {
+            id: true,
+            name: true,
+            avatarUrl: true,
+          },
+        },
+      },
+    });
+
+
+    const circleMap = new Map<
+      string,
+      {
+        circle: (typeof friendCircleMemberships)[0]['circle'];
+        friends: {
+          id: string;
+          name: string | null;
+          avatarUrl: string | null;
+        }[];
+      }
+    >();
+
+    for (const membership of friendCircleMemberships) {
+      const circleId = membership.circleId;
+      if (!circleMap.has(circleId)) {
+        circleMap.set(circleId, {
+          circle: membership.circle,
+          friends: [],
+        });
+      }
+      circleMap.get(circleId)!.friends.push({
+        id: membership.user.id,
+        name: membership.user.name,
+        avatarUrl: membership.user.avatarUrl,
+      });
+    }
+
+ 
+    const recommendedCircles: RecommendedCircle[] = Array.from(
+      circleMap.values(),
+    )
+      .map(({ circle, friends }) => {
+        const friendCount = friends.length;
+        const friendNames = friends
+          .slice(0, 2)
+          .map((f) => f.name || 'A friend')
+          .join(', ');
+        const reason =
+          friendCount === 1
+            ? `${friendNames} is a member`
+            : friendCount === 2
+              ? `${friendNames} are members`
+              : `${friendNames} and ${friendCount - 2} more friends are members`;
+
+        return {
+          id: circle.id,
+          name: circle.name,
+          description: circle.description,
+          visibility: circle.visibility,
+          memberCount: circle._count.members,
+          friendsInCircle: friends,
+          recommendationReason: reason,
+        };
+      })
+      .sort((a, b) => b.friendsInCircle.length - a.friendsInCircle.length)
+      .slice(0, 10);
+
+    return { success: true, circles: recommendedCircles };
+  } catch (error) {
+    console.error('Error fetching recommended circles:', error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Failed to fetch recommended circles',
+      circles: [],
+    };
+  }
+}
+
 function getRelativeTime(date: Date | string): string {
   const now = new Date();
   const past = new Date(date);

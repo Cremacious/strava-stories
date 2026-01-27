@@ -113,22 +113,22 @@ const StatusUpdateInput = ({
     setSelectedFriends((prev) =>
       prev.includes(friend)
         ? prev.filter((f) => f !== friend)
-        : [...prev, friend]
+        : [...prev, friend],
     );
   };
 
   const handleCitySelect = (city: string) => {
     setSelectedCities((prev) =>
-      prev.includes(city) ? prev.filter((c) => c !== city) : [...prev, city]
+      prev.includes(city) ? prev.filter((c) => c !== city) : [...prev, city],
     );
   };
 
   const filteredFriends = friends.filter((friend) =>
-    friend.toLowerCase().includes(friendSearch.toLowerCase())
+    friend.toLowerCase().includes(friendSearch.toLowerCase()),
   );
 
   const filteredCities = cities.filter((city) =>
-    city.toLowerCase().includes(citySearch.toLowerCase())
+    city.toLowerCase().includes(citySearch.toLowerCase()),
   );
 
   return (
@@ -172,18 +172,27 @@ const StatusUpdateInput = ({
                     />
                     <div>
                       <p className="font-semibold text-white">You</p>
-                      <select
-                        {...register('feeling')}
-                        className="darkBackground2 border border-red-700 rounded px-2 py-1 text-sm text-white"
-                      >
-                        <option value="">Feeling</option>
-                        <option value="HAPPY">Happy</option>
-                        <option value="SAD">Sad</option>
-                        <option value="EXCITED">Excited</option>
-                        <option value="ANGRY">Angry</option>
-                        <option value="TIRED">Tired</option>
-                        <option value="MOTIVATED">Motivated</option>
-                      </select>
+                      <div className="flex gap-2">
+                        <select
+                          {...register('privacy')}
+                          className="darkBackground2 border border-red-700 rounded px-2 py-1 text-sm text-white"
+                        >
+                          <option value="FRIENDS">🔒 Private</option>
+                          <option value="PUBLIC">🌍 Public</option>
+                        </select>
+                        <select
+                          {...register('feeling')}
+                          className="darkBackground2 border border-red-700 rounded px-2 py-1 text-sm text-white"
+                        >
+                          <option value="">Feeling</option>
+                          <option value="HAPPY">Happy</option>
+                          <option value="SAD">Sad</option>
+                          <option value="EXCITED">Excited</option>
+                          <option value="ANGRY">Angry</option>
+                          <option value="TIRED">Tired</option>
+                          <option value="MOTIVATED">Motivated</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
 

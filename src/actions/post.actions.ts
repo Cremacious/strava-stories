@@ -378,3 +378,103 @@ export async function getPostsByUserId(userId: string) {
     };
   }
 }
+
+export async function getAreaPosts() {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return { success: false, error: 'User not authenticated', posts: [] };
+    }
+
+    const currentUser = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: { city: true, state: true, country: true },
+    });
+
+    if (!currentUser) {
+      return { success: false, error: 'User not found', posts: [] };
+    }
+
+    const locationFilters = [];
+    if (currentUser.city) {
+      locationFilters.push({ city: currentUser.city });
+    }
+    if (currentUser.state) {
+      locationFilters.push({ state: currentUser.state });
+    }
+    if (currentUser.country) {
+      locationFilters.push({ country: currentUser.country });
+    }
+
+    if (locationFilters.length === 0) {
+      return { success: true, posts: [] };
+    }
+
+
+    const usersInArea = await prisma.user.findMany({
+      where: {
+        OR: locationFilters,
+        id: { not: user.id },
+      },
+      select: { id: true },
+    });
+
+    const userIdsInArea = usersInArea.map((u) => u.id);
+
+    if (userIdsInArea.length === 0) {
+      return { success: true, posts: [] };
+    }
+
+  
+    const posts = await prisma.post.findMany({
+      where: {
+        userId: { in: userIdsInArea },
+        privacy: 'PUBLIC',
+        circleId: null, 
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            avatarUrl: true,
+            city: true,
+            state: true,
+          },
+        },
+        images: true,
+        tags: true,
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 20,
+    });
+
+    const transformedPosts: Post[] = posts.map((p) => ({
+      id: p.id,
+      userName: p.user.name || 'Unknown',
+      avatar: p.user.avatarUrl || '',
+      time: p.createdAt.toLocaleString(),
+      content: p.content ?? undefined,
+      image: p.images[0]?.url,
+      tags: {
+        friends: p.tags.filter((t) => t.type === 'USER').map((t) => t.value),
+        cities: p.tags.filter((t) => t.type === 'LOCATION').map((t) => t.value),
+      },
+      feeling: p.feeling ?? undefined,
+    }));
+
+    return { success: true, posts: transformedPosts };
+  } catch (error) {
+    console.error('Error fetching area posts:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to fetch area posts',
+      posts: [],
+    };
+  }
+}
