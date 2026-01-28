@@ -2,9 +2,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { prisma } from '@/lib/prisma';
 import { User } from '@/lib/types/user.type';
-export async function getCurrentUserFriends() {}
-
-
 
 export async function sendFriendRequest(friendId: string) {
   try {
@@ -202,14 +199,12 @@ export async function getPendingFriendRequests() {
       },
     });
 
-
-
     const friendRequests = friendships.map((friendship) => {
       const isSentByCurrentUser = friendship.userId === user.id ? true : false;
       const otherUser = isSentByCurrentUser
         ? friendship.friend
         : friendship.user;
-    
+
       return {
         id: friendship.id,
         friendId: otherUser.id,
@@ -234,7 +229,6 @@ export async function getPendingFriendRequests() {
     };
   }
 }
-
 
 export async function searchUsers(query: string) {
   try {
@@ -339,7 +333,39 @@ export async function getAllUserFriends() {
       };
     });
 
-    return { success: true, friends };
+    const friendsWithMutualCount = await Promise.all(
+      friends.map(async (friend) => {
+        const friendFriendships = await prisma.friendship.findMany({
+          where: {
+            OR: [
+              { userId: friend.id, status: 'ACCEPTED' },
+              { friendId: friend.id, status: 'ACCEPTED' },
+            ],
+          },
+          select: {
+            userId: true,
+            friendId: true,
+          },
+        });
+
+        const friendIds = friendFriendships.map((f) =>
+          f.userId === friend.id ? f.friendId : f.userId,
+        );
+
+        const currentUserFriendIds = friends.map((f) => f.id);
+        const mutualFriends = friendIds.filter((friendId) =>
+          currentUserFriendIds.includes(friendId),
+        );
+
+        return {
+          ...friend,
+          mutualFriends: mutualFriends.length,
+          lastActivity: 'Recently active',
+        };
+      }),
+    );
+
+    return { success: true, friends: friendsWithMutualCount };
   } catch (error) {
     console.error('Error fetching user friends:', error);
     return {

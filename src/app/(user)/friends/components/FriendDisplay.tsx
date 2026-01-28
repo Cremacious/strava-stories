@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { FriendWithDetails } from '@/lib/types/friends.type';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import defaultAvatar from '@/app/assets/defaults/default_avatar.jpg';
 
 const FriendDisplay = ({ friends }: { friends: FriendWithDetails[] }) => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -18,23 +19,19 @@ const FriendDisplay = ({ friends }: { friends: FriendWithDetails[] }) => {
             (friend.name &&
               friend.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
             (friend.bio &&
-              friend.bio.toLowerCase().includes(searchQuery.toLowerCase()))
+              friend.bio.toLowerCase().includes(searchQuery.toLowerCase())),
         );
 
   const filteredAndSortedFriends = filteredFriends;
 
-  console.log('Friend Display:', friends);
-
   return (
     <div>
-      {/* Search and Filters */}
-      <Card className="bg-[#202020] border-0 max-w-4xl mx-auto">
-        <CardContent className="p-4">
+      <div className=" border-0 max-w-lg mx-auto">
+        <div className="p-4">
           <div className="flex flex-col lg:flex-row gap-4">
-            {/* Search */}
             <div className="flex-1">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white w-4 h-4 " />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-red-400 w-4 h-4 " />
                 <input
                   placeholder="Search friends by name or bio..."
                   value={searchQuery}
@@ -44,10 +41,9 @@ const FriendDisplay = ({ friends }: { friends: FriendWithDetails[] }) => {
               </div>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      {/* Friends Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredAndSortedFriends.map((friend) => (
           <Card
@@ -58,7 +54,7 @@ const FriendDisplay = ({ friends }: { friends: FriendWithDetails[] }) => {
               <div className="flex items-center space-x-3">
                 <div className="relative">
                   <Image
-                    src={friend.avatarUrl || '/placeholder-avatar.jpg'}
+                    src={friend.avatarUrl || defaultAvatar}
                     alt={`${friend.name || 'Unknown'} avatar`}
                     width={48}
                     height={48}
@@ -69,9 +65,6 @@ const FriendDisplay = ({ friends }: { friends: FriendWithDetails[] }) => {
                   <CardTitle className="text-white text-lg truncate">
                     {friend.name || 'Unknown'}
                   </CardTitle>
-                  <p className="text-gray-100 text-sm">
-                    {friend.lastActivity || 'Unknown'}
-                  </p>
                 </div>
               </div>
             </CardHeader>
@@ -80,16 +73,15 @@ const FriendDisplay = ({ friends }: { friends: FriendWithDetails[] }) => {
                 {friend.bio || 'No bio available.'}
               </p>
 
-              {/* Mutual Friends */}
               <div className="flex items-center justify-between text-sm">
                 <span className="text-red-400">
-                  {friend.mutualFriends} mutual friends
+                  {friend.mutualFriends === 0
+                    ? 'No mutual friends'
+                    : friend.mutualFriends === 1
+                      ? '1 mutual friend'
+                      : '' + friend.mutualFriends + ' mutual friends'}
                 </span>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="border-red-500 text-red-400 hover:bg-red-500 hover:text-white"
-                >
+                <Button size="sm" className="">
                   View Profile
                 </Button>
               </div>
@@ -98,19 +90,18 @@ const FriendDisplay = ({ friends }: { friends: FriendWithDetails[] }) => {
         ))}
       </div>
 
-      {/* Empty State */}
       {filteredAndSortedFriends.length === 0 && (
-        <Card className="darkBackground3 border-gray-700">
-          <CardContent className="p-8 text-center">
-            <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+        <div className="">
+          <div className="p-8 text-center">
+            <Users className="w-12 h-12 text-red-400 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-white mb-2">
               No friends found
             </h3>
-            <p className="text-gray-400">
+            <p className="text-gray-300">
               Try adjusting your search or filter criteria to find friends.
             </p>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
     </div>
   );

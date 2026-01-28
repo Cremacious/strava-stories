@@ -6,6 +6,7 @@ import { User, Mail, Check, X } from 'lucide-react';
 import Image from 'next/image';
 import { useFriendStore } from '@/stores/useFriendStore';
 import { useState, useEffect } from 'react';
+import defaultAvatar from '@/app/assets/defaults/default_avatar.jpg';
 
 type FriendRequest = {
   id: string;
@@ -41,7 +42,6 @@ const PendingFriendRequests = ({
       if (result.success) {
         setRequests((prev) => prev.filter((req) => req.friendId !== friendId));
       } else {
-        // Handle error, maybe show toast
         console.error('Failed to accept:', result.error);
       }
     } catch (error) {
@@ -68,9 +68,8 @@ const PendingFriendRequests = ({
   };
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      {/* Header */}
-      <Card className="bg-[#202020] border-red-700/50">
+    <div className="max-w-2xl mx-auto space-y-6 cardBackground rounded-2xl">
+      <Card className="border-0 shadow-none">
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
             <User className="w-5 h-5 text-red-400" />
@@ -86,15 +85,12 @@ const PendingFriendRequests = ({
         <div className="space-y-3">
           {requests.map((request) => {
             return (
-              <Card
-                key={request.id}
-                className="bg-[#202020] border-red-700/30 hover:border-red-500/50 transition-colors"
-              >
+              <Card key={request.id} className="">
                 <CardContent className="p-4">
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div className="flex items-center space-x-3">
                       <Image
-                        src={request.avatarUrl || '/placeholder-avatar.jpg'}
+                        src={request.avatarUrl || defaultAvatar}
                         alt={`${request.name || 'Unknown'} avatar`}
                         width={48}
                         height={48}
@@ -159,9 +155,9 @@ const PendingFriendRequests = ({
           })}
         </div>
       ) : (
-        <Card className="bg-[#202020] border-red-700/30">
+        <Card className="border-0 shadow-none">
           <CardContent className="p-8 text-center">
-            <User className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <User className="w-12 h-12 text-red-400 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-white mb-2">
               No pending requests
             </h3>
