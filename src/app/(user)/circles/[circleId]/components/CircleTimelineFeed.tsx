@@ -33,12 +33,12 @@ const CircleTimelineFeed = ({
         <h2 className="text-2xl font-bold mb-4">Circle Feed</h2>
       </div>
       <div className='space-y-4'>
-        <StatusUpdateInput
+        {/* <StatusUpdateInput
           userImage={userImage}
           id={circleId}
           location="circle"
           onPostCreated={fetchPosts}
-        />
+        /> */}
         <TimelineFeed posts={posts} />
       </div>
     </div>
