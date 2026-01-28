@@ -10,17 +10,10 @@ import { z } from 'zod';
 import { usePostStore } from '@/stores/usePostStore';
 import { Button } from '../ui/button';
 import defaultProfileImage from '@/app/assets/defaults/default_avatar.jpg';
+import { FriendWithDetails } from '@/lib/types/friends.type';
+import defaultAvatar from '@/app/assets/defaults/default_avatar.jpg';
 
 type FormData = z.infer<typeof createPostSchema>;
-
-const friends = [
-  'Alice Johnson',
-  'Bob Smith',
-  'Charlie Brown',
-  'Diana Prince',
-  'Eve Wilson',
-  'Frank Miller',
-];
 
 const cities = [
   'New York',
@@ -40,10 +33,12 @@ const StatusUpdateInput = ({
   id,
   userImage,
   onPostCreated,
+  friends = [],
 }: {
   location: string;
   id?: string;
   userImage?: string;
+  friends: FriendWithDetails[];
   onPostCreated?: () => void;
 }) => {
   const { createPost, loading } = usePostStore();
@@ -51,7 +46,9 @@ const StatusUpdateInput = ({
   const [dialogMode, setDialogMode] = useState<
     'compose' | 'tagFriends' | 'location'
   >('compose');
-  const [selectedFriends, setSelectedFriends] = useState<string[]>([]);
+  const [selectedFriends, setSelectedFriends] = useState<FriendWithDetails[]>(
+    [],
+  );
   const [friendSearch, setFriendSearch] = useState('');
   const [selectedCities, setSelectedCities] = useState<string[]>([]);
   const [citySearch, setCitySearch] = useState('');
@@ -80,7 +77,7 @@ const StatusUpdateInput = ({
     const tags = [
       ...selectedFriends.map((friend) => ({
         type: 'USER' as const,
-        value: friend,
+        value: friend.id,
       })),
       ...selectedCities.map((city) => ({
         type: 'LOCATION' as const,
@@ -110,10 +107,10 @@ const StatusUpdateInput = ({
     }
   };
 
-  const handleFriendSelect = (friend: string) => {
+  const handleFriendSelect = (friend: FriendWithDetails) => {
     setSelectedFriends((prev) =>
-      prev.includes(friend)
-        ? prev.filter((f) => f !== friend)
+      prev.some((f) => f.id === friend.id)
+        ? prev.filter((f) => f.id !== friend.id)
         : [...prev, friend],
     );
   };
@@ -124,8 +121,11 @@ const StatusUpdateInput = ({
     );
   };
 
-  const filteredFriends = friends.filter((friend) =>
-    friend.toLowerCase().includes(friendSearch.toLowerCase()),
+  const filteredFriends = friends.filter(
+    (friend) =>
+      !friendSearch.trim() ||
+      (friend.name &&
+        friend.name.toLowerCase().includes(friendSearch.toLowerCase())),
   );
 
   const filteredCities = cities.filter((city) =>
@@ -220,7 +220,7 @@ const StatusUpdateInput = ({
 
                   {selectedFriends.length > 0 && (
                     <div className="mt-2 text-sm text-gray-300">
-                      with {selectedFriends.join(', ')}
+                      with {selectedFriends.map((f) => f.email).join(', ')}
                     </div>
                   )}
 
@@ -292,33 +292,46 @@ const StatusUpdateInput = ({
                   />
 
                   <div className="max-h-60 overflow-y-auto">
+                    {filteredFriends.length === 0 && (
+                      <p className="text-gray-400 text-center py-4">
+                        {friends.length === 0
+                          ? 'No friends to tag yet. Add some friends first!'
+                          : 'No friends match your search.'}
+                      </p>
+                    )}
                     {filteredFriends.map((friend) => (
                       <div
-                        key={friend}
-                        className={`flex items-center p-2 cursor-pointer hover:bg-gray-700 rounded ${
-                          selectedFriends.includes(friend) ? 'bg-gray-600' : ''
+                        key={friend.id}
+                        className={`flex items-center p-2 cursor-pointer cardBackground hover:bg-gray-700 rounded ${
+                          selectedFriends.some((f) => f.id === friend.id)
+                            ? 'bg-gray-600'
+                            : ''
                         }`}
                         onClick={() => handleFriendSelect(friend)}
                       >
-                        <img
-                          src="/placeholder-avatar.jpg"
-                          alt={`${friend} avatar`}
+                        <Image
+                          src={friend.avatarUrl || defaultAvatar}
+                          alt={`${friend.name} avatar`}
                           className="w-8 h-8 rounded-full mr-3"
+                          width={32}
+                          height={32}
                         />
-                        <span className="text-white">{friend}</span>
-                        {selectedFriends.includes(friend) && (
+                        <span className="text-white">{friend.email}</span>
+                        {selectedFriends.some((f) => f.id === friend.id) && (
                           <span className="ml-auto text-red-400">✓</span>
                         )}
                       </div>
                     ))}
                   </div>
 
-                  {selectedFriends.length > 0 && (
+                  {/* {selectedFriends.length > 0 && (
                     <div className="mt-4 p-2 bg-gray-700 rounded">
                       <p className="text-sm text-gray-300 mb-1">Selected:</p>
-                      <p className="text-white">{selectedFriends.join(', ')}</p>
+                      <p className="text-white">
+                        {selectedFriends.map((f) => f.name).join(', ')}
+                      </p>
                     </div>
-                  )}
+                  )} */}
                 </>
               ) : dialogMode === 'location' ? (
                 <>
