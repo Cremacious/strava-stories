@@ -366,7 +366,6 @@ model WorkoutRoutine {
   likesCount         Int              @default(0)
   exercisesCount     Int              @default(0)
   comments           RoutineComment[]
-  // New: Relation to steps
   steps              WorkoutStep[]
 
   @@index([userId])

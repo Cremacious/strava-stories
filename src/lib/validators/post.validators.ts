@@ -4,7 +4,7 @@ export const createPostSchema = z.object({
   content: z.string().optional(),
   privacy: z.enum(['PUBLIC', 'FRIENDS']),
   feeling: z
-    .enum(['HAPPY', 'SAD', 'EXCITED', 'ANGRY', 'TIRED', 'MOTIVATED'])
+    .enum(['HAPPY', 'SAD', 'EXCITED', 'ANGRY', 'TIRED', 'MOTIVATED', ''])
     .optional(),
   images: z.array(z.instanceof(File)).optional(),
   tags: z

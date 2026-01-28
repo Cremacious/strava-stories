@@ -1,9 +1,17 @@
 'use client';
+import { useEffect } from 'react';
 import { Post } from '@/lib/types/posts.type';
 import SocialPost from './SocialPost';
 import { MessageSquare } from 'lucide-react';
+import { usePostStore } from '@/stores/usePostStore';
 
-const TimelineFeed = ({ posts }: { posts: Post[] }) => {
+const TimelineFeed = ({ posts: initialPosts }: { posts: Post[] }) => {
+  const { posts, setPosts } = usePostStore();
+
+  useEffect(() => {
+    setPosts(initialPosts);
+  }, [initialPosts, setPosts]);
+
   if (posts.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">

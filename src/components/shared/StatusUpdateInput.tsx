@@ -89,6 +89,7 @@ const StatusUpdateInput = ({
     ];
     const postData = {
       ...data,
+      feeling: data.feeling === '' ? undefined : data.feeling,
       tags,
       location,
       circleId: id,
@@ -146,7 +147,7 @@ const StatusUpdateInput = ({
             className="flex-1 darkBackground border border-red-700 rounded-full px-4 py-2 cursor-pointer hover:bg-[#4d3030] transition-colors"
             onClick={() => setIsDialogOpen(true)}
           >
-            <p className="text-red-400">What&apos;s on your mind???</p>
+            <p className="text-gray-200">What&apos;s on your mind???</p>
           </div>
         </div>
       </div>
@@ -171,14 +172,13 @@ const StatusUpdateInput = ({
                       height={40}
                     />
                     <div>
-                      <p className="font-semibold text-white">You</p>
                       <div className="flex gap-2">
                         <select
                           {...register('privacy')}
                           className="darkBackground2 border border-red-700 rounded px-2 py-1 text-sm text-white"
                         >
-                          <option value="FRIENDS">🔒 Private</option>
-                          <option value="PUBLIC">🌍 Public</option>
+                          <option value="FRIENDS">Private</option>
+                          <option value="PUBLIC">Public</option>
                         </select>
                         <select
                           {...register('feeling')}
