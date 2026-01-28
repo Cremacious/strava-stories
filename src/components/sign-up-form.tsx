@@ -3,18 +3,13 @@
 import { cn } from '@/lib/utils';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { createUser } from '@/actions/user.actions';
 
 export function SignUpForm({
   className,
@@ -40,15 +35,25 @@ export function SignUpForm({
     }
 
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/protected`,
+          emailRedirectTo: `${window.location.origin}/home`,
         },
       });
       if (error) throw error;
-      router.push('/auth/sign-up-success');
+
+      // Create user record in database if user was created
+      if (data.user) {
+        const userResult = await createUser(email, data.user.id);
+        if (!userResult.success) {
+          console.error('Failed to create user record:', userResult.error);
+          // Don't block signup if user creation fails, but log the error
+        }
+      }
+
+      router.push('/auth/onboarding');
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : 'An error occurred');
     } finally {

@@ -7,6 +7,7 @@ export type User = {
   city?: string;
   state?: string;
   country?: string;
+  onboardingCompleted: boolean;
   createdAt: string;
   updatedAt: string;
 };

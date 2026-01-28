@@ -116,6 +116,7 @@ model User {
   city      String?
   state     String?
   country   String?
+  onboardingCompleted Boolean @default(false)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   stravaAccessToken  String?

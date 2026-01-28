@@ -6,6 +6,35 @@ import { deleteCloudinaryImage } from '@/lib/cloudinary-utils';
 import cloudinary from '@/lib/cloudinary';
 import { User } from '@/lib/types/user.type';
 
+export async function createUser(email: string, userId: string, name?: string) {
+  try {
+    const existingUser = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (existingUser) {
+      return { success: true, user: existingUser };
+    }
+
+    const newUser = await prisma.user.create({
+      data: {
+        id: userId,
+        email,
+        name: name || null,
+        onboardingCompleted: false,
+      },
+    });
+
+    return { success: true, user: newUser };
+  } catch (error) {
+    console.error('Error creating user:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to create user',
+    };
+  }
+}
+
 export async function getUserSession() {
   try {
     const supabase = await createClient();
@@ -118,6 +147,7 @@ export async function getUserProfile(): Promise<{
         city: true,
         state: true,
         country: true,
+        onboardingCompleted: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -138,6 +168,7 @@ export async function getUserProfile(): Promise<{
       city: profile.city || undefined,
       state: profile.state || undefined,
       country: profile.country || undefined,
+      onboardingCompleted: profile.onboardingCompleted,
     };
 
     return { success: true, user: userProfile };
@@ -168,6 +199,7 @@ export async function getUserProfileById(userId: string): Promise<{
         city: true,
         state: true,
         country: true,
+        onboardingCompleted: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -186,6 +218,7 @@ export async function getUserProfileById(userId: string): Promise<{
       city: profile.city || undefined,
       state: profile.state || undefined,
       country: profile.country || undefined,
+      onboardingCompleted: profile.onboardingCompleted,
       createdAt: profile.createdAt.toISOString(),
       updatedAt: profile.updatedAt.toISOString(),
     };
@@ -235,6 +268,70 @@ export async function updateUserLocation(
         error instanceof Error
           ? error.message
           : 'Failed to update user location',
+    };
+  }
+}
+
+export async function completeOnboarding(userId: string) {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user || user.id !== userId) {
+      return {
+        success: false,
+        error: 'User not authenticated or unauthorized',
+      };
+    }
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: { onboardingCompleted: true },
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error completing onboarding:', error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Failed to complete onboarding',
+    };
+  }
+}
+
+export async function updateUsername(userId: string, newUsername: string) {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user || user.id !== userId) {
+      return {
+        success: false,
+        error: 'User not authenticated or unauthorized',
+      };
+    }
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: { name: newUsername },
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error updating username:', error);
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : 'Failed to update username',
     };
   }
 }
