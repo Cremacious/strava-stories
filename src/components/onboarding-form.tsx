@@ -61,7 +61,7 @@ export function OnboardingForm({
             throw new Error(result.error || 'Failed to upload profile image');
           }
         }
-        setSuccess('Profile image uploaded successfully!');
+        // setSuccess('Profile image uploaded successfully!');
         setTimeout(() => setStep(2), 1000);
       } else if (step === 2) {
         if (!username.trim()) {
@@ -75,7 +75,7 @@ export function OnboardingForm({
         if (!result.success) {
           throw new Error(result.error || 'Failed to set username');
         }
-        setSuccess('Username set successfully!');
+        // setSuccess('Username set successfully!');
         setTimeout(() => setStep(3), 1000);
       } else if (step === 3) {
         if (!city.trim() || !state.trim() || !country.trim()) {
@@ -102,7 +102,7 @@ export function OnboardingForm({
           );
         }
 
-        setSuccess('Onboarding completed successfully!');
+        setSuccess('Onboarding completed successfully! Redirecting...');
         setTimeout(() => router.push('/home'), 1000);
       }
     } catch (error) {
@@ -112,21 +112,21 @@ export function OnboardingForm({
     }
   };
 
-  const handleSkip = () => {
-    if (step < 3) {
-      setStep(step + 1);
-    }
-  };
+  // const handleSkip = () => {
+  //   if (step < 3) {
+  //     setStep(step + 1);
+  //   }
+  // };
 
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
-      <Card>
+      <Card className="border-0">
         <CardContent className="pt-8">
           <div className="text-center mb-6">
-            <h1 className="text-3xl font-bold text-white mb-2">
+            <h1 className="text-3xl font-bold text-red-400 mb-2">
               Welcome to Strava Stories
             </h1>
-            <p className="text-gray-400">
+            <p className="text-gray-300">
               Let&apos;s set up your profile ({step}/3)
             </p>
           </div>
@@ -137,8 +137,8 @@ export function OnboardingForm({
                 <h2 className="text-xl font-semibold text-white mb-2">
                   Profile Picture
                 </h2>
-                <p className="text-gray-400 text-sm">
-                  Add a profile picture to personalize your account
+                <p className="text-gray-300 text-sm text-center">
+                  Click the camera icon to add a profile picture and personalize your account
                 </p>
               </div>
 
@@ -166,14 +166,14 @@ export function OnboardingForm({
                   className="hidden"
                 />
 
-                <Button
+                {/* <Button
                   type="button"
-                  variant="outline"
+            
                   onClick={() => fileInputRef.current?.click()}
                   className="w-full"
                 >
                   {selectedFile ? 'Change Picture' : 'Upload Picture'}
-                </Button>
+                </Button> */}
               </div>
             </div>
           )}
@@ -182,25 +182,22 @@ export function OnboardingForm({
             <div className="space-y-6">
               <div className="text-center">
                 <h2 className="text-xl font-semibold text-white mb-2 flex items-center justify-center gap-2">
-                  <User className="w-5 h-5" />
+
                   Username
                 </h2>
-                <p className="text-gray-400 text-sm">
-                  Choose a username that represents you
+                <p className="text-gray-300 text-sm">
+                  Choose a username that represents you. This is how other users will identify you.
                 </p>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="username" className="text-gray-300">
-                  Username
-                </Label>
                 <Input
                   id="username"
                   type="text"
                   placeholder="Enter your username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="bg-[#2e2e2e] border-gray-700 text-white placeholder:text-gray-500 focus:border-red-500 focus:ring-red-500"
+                  className="bg-[#2e2e2e] border-none text-white placeholder:text-gray-500 focus:border-red-500 focus:ring-red-500"
                   required
                 />
               </div>
@@ -211,11 +208,10 @@ export function OnboardingForm({
             <div className="space-y-6">
               <div className="text-center">
                 <h2 className="text-xl font-semibold text-white mb-2 flex items-center justify-center gap-2">
-                  <MapPin className="w-5 h-5" />
                   Location
                 </h2>
-                <p className="text-gray-400 text-sm">
-                  Tell us where you&apos;re from
+                <p className="text-gray-300 text-sm">
+                  Tell us where you&apos;re from. This is optional, but users will not be able to get location-based features without it.
                 </p>
               </div>
 
@@ -230,7 +226,7 @@ export function OnboardingForm({
                     placeholder="Enter your city"
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
-                    className="bg-[#2e2e2e] border-gray-700 text-white placeholder:text-gray-500 focus:border-red-500 focus:ring-red-500"
+                    className="bg-[#2e2e2e] border-none text-white placeholder:text-gray-500 focus:border-red-500 focus:ring-red-500"
                     required
                   />
                 </div>
@@ -245,7 +241,7 @@ export function OnboardingForm({
                     placeholder="Enter your state or province"
                     value={state}
                     onChange={(e) => setState(e.target.value)}
-                    className="bg-[#2e2e2e] border-gray-700 text-white placeholder:text-gray-500 focus:border-red-500 focus:ring-red-500"
+                    className="bg-[#2e2e2e] border-none text-white placeholder:text-gray-500 focus:border-red-500 focus:ring-red-500"
                     required
                   />
                 </div>
@@ -260,7 +256,7 @@ export function OnboardingForm({
                     placeholder="Enter your country"
                     value={country}
                     onChange={(e) => setCountry(e.target.value)}
-                    className="bg-[#2e2e2e] border-gray-700 text-white placeholder:text-gray-500 focus:border-red-500 focus:ring-red-500"
+                    className="bg-[#2e2e2e] border-none text-white placeholder:text-gray-500 focus:border-red-500 focus:ring-red-500"
                     required
                   />
                 </div>
@@ -270,7 +266,7 @@ export function OnboardingForm({
 
           {error && <p className="text-sm text-red-400 text-center">{error}</p>}
           {success && (
-            <p className="text-sm text-green-400 text-center">{success}</p>
+            <p className="text-white text-center font-bold mt-2">{success}</p>
           )}
 
           <div className="flex gap-3 mt-6">
@@ -286,7 +282,7 @@ export function OnboardingForm({
               </Button>
             )}
 
-            {step < 3 && (
+            {/* {step < 3 && (
               <Button
                 type="button"
                 variant="outline"
@@ -296,11 +292,11 @@ export function OnboardingForm({
               >
                 Skip
               </Button>
-            )}
+            )} */}
 
             <Button
               type="button"
-              className="flex-1 bg-red-600 hover:bg-red-700 text-white"
+              className="flex-1 "
               onClick={handleNext}
               disabled={isLoading}
             >
