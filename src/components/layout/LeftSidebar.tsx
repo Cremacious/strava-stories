@@ -13,7 +13,7 @@ const LeftSidebar = () => {
   }, [fetchUserId]);
 
   return (
-    <div className="hidden md:block border-red-900/40  border-r-2 p-4 h-screen w-full">
+    <div className="hidden md:block border-red-900/40 border-r-2 p-4 h-full w-full">
       <nav className="space-y-2 text-right">
         {menuItems.map((item) => {
           const isActive = pathname === item.href;

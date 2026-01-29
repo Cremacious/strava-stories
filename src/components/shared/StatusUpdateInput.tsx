@@ -147,7 +147,7 @@ const StatusUpdateInput = ({
             className="flex-1 darkBackground border border-red-700 rounded-full px-4 py-2 cursor-pointer hover:bg-[#4d3030] transition-colors"
             onClick={() => setIsDialogOpen(true)}
           >
-            <p className="text-gray-200">What&apos;s on your mind???</p>
+            <p className="text-gray-400">What&apos;s on your mind?</p>
           </div>
         </div>
       </div>
@@ -247,7 +247,10 @@ const StatusUpdateInput = ({
                             }}
                           />
                           <span>
-                            <Camera className="text-red-500" size={25} />
+                            <Camera
+                              className="text-red-500 hover:text-white "
+                              size={25}
+                            />
                           </span>
                         </label>
                         <button
@@ -255,14 +258,20 @@ const StatusUpdateInput = ({
                           className="text-gray-300 hover:text-red-400"
                           onClick={() => setDialogMode('tagFriends')}
                         >
-                          <Users className="text-red-500" size={25} />
+                          <Users
+                            className="text-red-500 hover:text-white "
+                            size={25}
+                          />
                         </button>
                         <button
                           type="button"
                           className="text-gray-300 hover:text-red-400"
                           onClick={() => setDialogMode('location')}
                         >
-                          <Building className="text-red-500" size={25} />
+                          <Building
+                            className="text-red-500 hover:text-white "
+                            size={25}
+                          />
                         </button>
                       </div>
                     </div>
@@ -386,7 +395,7 @@ const StatusUpdateInput = ({
               <div className="p-4 border-t border-gray-700 flex justify-end">
                 <Button
                   type="button"
-                  variant={'secondary'}
+                  variant={'outline'}
                   onClick={() => setIsDialogOpen(false)}
                   className="mr-2"
                 >

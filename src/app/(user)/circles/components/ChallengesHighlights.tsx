@@ -11,15 +11,15 @@ const ChallengesHighlights = ({
     <Card className="border-0">
       <CardHeader>
         <CardTitle className="text-white flex items-center">
-          <Target className="w-5 h-5 mr-2 text-red-400" />
+         
           Active Challenges
         </CardTitle>
       </CardHeader>
       <CardContent>
         {featuredChallenges.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8 px-4">
-            <div className="w-12 h-12 bg-gray-800 rounded-full flex items-center justify-center mb-3">
-              <Target className="w-6 h-6 text-gray-600" />
+            <div className="w-12 h-12 bg-red-500/80  rounded-full flex items-center justify-center mb-3">
+              <Target className="w-6 h-6 text-gray-200" />
             </div>
             <h4 className="text-lg font-semibold text-white mb-2">
               No Active Challenges

@@ -15,8 +15,8 @@ const TimelineFeed = ({ posts: initialPosts }: { posts: Post[] }) => {
   if (posts.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
-        <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mb-4">
-          <MessageSquare className="w-8 h-8 text-red-400" />
+        <div className="w-16 h-16 bg-red-500/80 rounded-full flex items-center justify-center mb-4">
+          <MessageSquare className="w-8 h-8 text-gray-200" />
         </div>
         <h3 className="text-xl font-semibold text-white mb-2">No posts yet</h3>
         <p className="text-gray-400 max-w-md">
@@ -28,7 +28,7 @@ const TimelineFeed = ({ posts: initialPosts }: { posts: Post[] }) => {
   }
 
   return (
-    <div className="space-y-8 max-w-3xl mx-auto w-full cardBackground p-4 rounded-2xl min-h-105 pt-12">
+    <div className="space-y-8 max-w-3xl mx-auto w-full min-h-105 pt-12 ">
       {posts.map((post) => (
         <SocialPost key={post.id} post={post} />
       ))}

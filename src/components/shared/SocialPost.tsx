@@ -6,7 +6,7 @@ const SocialPost = ({ post }: { post: Post }) => {
   return (
     <div
       key={post.id}
-      className="darkBackground2 rounded-lg overflow-hidden max-w-lg mx-auto"
+      className="cardBackground rounded-lg overflow-hidden max-w-xl mx-auto"
     >
       <div className="p-4 flex items-center relative">
         <Image

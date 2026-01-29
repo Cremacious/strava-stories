@@ -20,7 +20,6 @@ export default async function UserLayout({
     redirect('/auth/login');
   }
 
-  // Check if user exists in database, create if not
   try {
     let userProfile = await prisma.user.findUnique({
       where: { id: data.claims.sub },
@@ -28,16 +27,14 @@ export default async function UserLayout({
     });
 
     if (!userProfile) {
-      // Create user record if it doesn't exist
       const createResult = await createUser(
         data.claims.email!,
-        data.claims.sub
+        data.claims.sub,
       );
       if (createResult.success) {
         userProfile = { onboardingCompleted: false };
       } else {
         console.error('Failed to create user record:', createResult.error);
-        // Continue with onboarding check assuming user needs onboarding
         userProfile = { onboardingCompleted: false };
       }
     }
@@ -47,29 +44,25 @@ export default async function UserLayout({
     }
   } catch (error) {
     console.error('Error checking/creating user:', error);
-    // If there's an error, assume user needs onboarding
     redirect('/auth/onboarding');
   }
 
   return (
     <QueryProvider>
-      <Navbar />
-      <div className="h-screen flex">
-        <div className="hidden lg:block w-64 shrink-0">
-          <LeftSidebar />
+      <div className="h-screen flex flex-col overflow-hidden">
+        <Navbar />
+        <div className="flex flex-1 overflow-hidden">
+          <div className="hidden lg:block flex-2 min-w-64">
+            <LeftSidebar />
+          </div>
+          <div className="flex-4 overflow-y-auto pb-20 lg:pb-0 custom-scrollbar darkBackground2">
+            {children}
+          </div>
+          <div className="hidden lg:block flex-2 min-w-64">
+            <RightSidebar />
+          </div>
+          <MobileNavbar />
         </div>
-        <div
-          className="flex-1 lg:flex-none lg:w-[calc(100%-32rem)] overflow-y-auto pb-20 lg:pb-0 custom-scrollbar darkBackground2 "
-          style={{ flexGrow: 1 }}
-        >
-          {children}
-        </div>
-
-        <div className="hidden lg:block w-64 shrink-0">
-          <RightSidebar />
-        </div>
-
-        <MobileNavbar />
       </div>
     </QueryProvider>
   );
