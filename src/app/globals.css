@@ -1,6 +1,9 @@
 @import 'leaflet/dist/leaflet.css';
 @import 'tailwindcss';
 
+@import '@fontsource-variable/comfortaa';
+/* @import '@fontsource/fredoka-one'; */
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -90,6 +93,10 @@
   }
 }
 
+body {
+  font-family: 'Comfortaa Variable', system-ui;
+}
+
 @layer components {
   .darkBackground {
     @apply bg-[#2e2e2e];
@@ -106,6 +113,9 @@
   .redHighlight {
     @apply bg-[#4d3030];
   }
+  /* .strideFont {
+    font-family: 'Fredoka One', cursive;
+  } */
 }
 
 .custom-scrollbar {

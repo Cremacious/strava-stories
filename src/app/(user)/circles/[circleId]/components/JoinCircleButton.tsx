@@ -38,7 +38,8 @@ const JoinCircleButton = ({
       <Button
         onClick={handleLeave}
         disabled={isLeaving}
-        className="bg-red-600 text-white hover:bg-red-700 font-semibold w-full sm:w-auto"
+        variant={'outline'}
+        className=" w-full sm:w-auto"
       >
         {isLeaving ? 'Leaving...' : 'Leave Circle'}
       </Button>

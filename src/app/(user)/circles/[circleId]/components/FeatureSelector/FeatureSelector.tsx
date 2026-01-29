@@ -2,7 +2,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { circleDetailSample } from '@/lib/sample/circle-detail.sample';
-import { Heart, MapPin, MessageSquare, Plus } from 'lucide-react';
+import { Calendar, Heart, MapPin, MessageSquare, Plus, Trophy, Vote } from 'lucide-react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import AddWorkoutToCircleButton from '../AddWorkoutToCircleButton';
@@ -35,32 +35,30 @@ const FeatureSelector = ({
   const [activeTab, setActiveTab] = useState<
     'feed' | 'routines' | 'stories' | 'challenges' | 'events' | 'polls'
   >('feed');
-  const circle = circleDetailSample;
+
   const router = useRouter();
 
   const tabs = [
-    { id: 'feed', label: 'Workout Feed', icon: '📊' },
-    { id: 'routines', label: 'Routines', icon: '📋' },
-    { id: 'stories', label: 'Adventures', icon: '🗻' },
-    { id: 'challenges', label: 'Challenges', icon: '🏆' },
-    { id: 'events', label: 'Events', icon: '📅' },
-    { id: 'polls', label: 'Polls', icon: '🗳️' },
+    { id: 'feed', label: 'Workouts' },
+    { id: 'routines', label: 'Routines' },
+    { id: 'challenges', label: 'Challenges' },
+    { id: 'events', label: 'Events' },
+    { id: 'polls', label: 'Polls' },
   ];
 
   return (
-    <div className="cardBackground md:p-4 rounded-2xl">
+    <div className="cardBackground md:p-2 rounded-2xl">
       <div className="flex flex-wrap gap-2 mb-6 darkBackground p-3 rounded-lg border border-gray-700">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as typeof activeTab)}
-            className={`px-4 py-2 rounded-lg transition-colors text-sm font-medium ${
+            className={`px-4 py-2 rounded-lg transition-colors text-sm font-medium hover:cursor-pointer ${
               activeTab === tab.id
-                ? 'bg-red-500 text-white'
+                ? 'bg-red-600 text-white'
                 : 'darkBackground2 border-red-500 text-gray-300 hover:bg-gray-600'
             }`}
           >
-            <span className="mr-1">{tab.icon}</span>
             {tab.label}
           </button>
         ))}
@@ -79,13 +77,13 @@ const FeatureSelector = ({
           </div>
           {workouts.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center">
-              <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mb-4">
-                <Heart className="w-8 h-8 text-red-400" />
+              <div className="w-16 h-16 bg-red-500/80 rounded-full flex items-center justify-center mb-4">
+                <Heart className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-xl font-semibold text-white mb-2">
                 No workouts yet
               </h3>
-              <p className="text-gray-400 max-w-md">
+              <p className="text-gray-300 max-w-md">
                 Start logging your workouts to track your progress and inspire
                 others in the community.
               </p>
@@ -109,7 +107,7 @@ const FeatureSelector = ({
               Workout Routines Library
             </h2>
             <Button
-              className="bg-red-500 hover:bg-red-600"
+   
               onClick={() =>
                 router.push(`/circles/${circleId}/create?type=routine`)
               }
@@ -118,7 +116,7 @@ const FeatureSelector = ({
               Upload Routine
             </Button>
             <Button
-              className="bg-red-500 hover:bg-red-600"
+
               onClick={() => router.push(`/circles/${circleId}/routines`)}
             >
               View All
@@ -127,13 +125,13 @@ const FeatureSelector = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {routines.length === 0 ? (
               <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
-                <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mb-4">
-                  <Plus className="w-8 h-8 text-red-400" />
+                <div className="w-16 h-16 bg-red-500/80 rounded-full flex items-center justify-center mb-4">
+                  <Plus className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="text-xl font-semibold text-white mb-2">
                   No routines yet
                 </h3>
-                <p className="text-gray-400 max-w-md">
+                <p className="text-gray-300 max-w-md">
                   Share your favorite workout routines with the community to
                   help others achieve their fitness goals.
                 </p>
@@ -151,7 +149,7 @@ const FeatureSelector = ({
         </div>
       )}
 
-      {activeTab === 'stories' && (
+      {/* {activeTab === 'stories' && (
         <div className="space-y-4">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold text-white">Adventure Stories</h2>
@@ -218,7 +216,7 @@ const FeatureSelector = ({
             ))
           )}
         </div>
-      )}
+      )} */}
 
       {activeTab === 'challenges' && (
         <div className="space-y-4">
@@ -238,13 +236,13 @@ const FeatureSelector = ({
           </Button>
           {challenges.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center">
-              <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mb-4">
-                <span className="text-2xl">🏆</span>
+              <div className="w-16 h-16 bg-red-500/80 rounded-full flex items-center justify-center mb-4">
+                <Trophy className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-xl font-semibold text-white mb-2">
                 No challenges yet
               </h3>
-              <p className="text-gray-400 max-w-md">
+              <p className="text-gray-300 max-w-md">
                 Create fitness challenges to motivate members and track
                 collective progress toward shared goals.
               </p>
@@ -266,7 +264,7 @@ const FeatureSelector = ({
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold text-white">Upcoming Events</h2>
             <Button
-              className="bg-red-500 hover:bg-red-600"
+
               onClick={() =>
                 router.push(`/circles/${circleId}/create?type=event`)
               }
@@ -275,7 +273,7 @@ const FeatureSelector = ({
               Create Event
             </Button>
             <Button
-              className="bg-red-500 hover:bg-red-600"
+    
               onClick={() => router.push(`/circles/${circleId}/events`)}
             >
               View All
@@ -283,13 +281,13 @@ const FeatureSelector = ({
           </div>
           {events.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center">
-              <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mb-4">
-                <span className="text-2xl">📅</span>
+              <div className="w-16 h-16 bg-red-500/80 rounded-full flex items-center justify-center mb-4">
+              <Calendar className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-xl font-semibold text-white mb-2">
                 No events yet
               </h3>
-              <p className="text-gray-400 max-w-md">
+              <p className="text-gray-300 max-w-md">
                 Organize group workouts, races, or social gatherings to bring
                 your fitness community together.
               </p>
@@ -307,7 +305,7 @@ const FeatureSelector = ({
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold text-white">Circle Polls</h2>
             <Button
-              className="bg-red-500 hover:bg-red-600"
+     
               onClick={() =>
                 router.push(`/circles/${circleId}/create?type=poll`)
               }
@@ -318,13 +316,13 @@ const FeatureSelector = ({
           </div>
           {polls.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center">
-              <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mb-4">
-                <span className="text-2xl">🗳️</span>
+              <div className="w-16 h-16 bg-red-500/80 rounded-full flex items-center justify-center mb-4">
+              <Vote className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-xl font-semibold text-white mb-2">
                 No polls yet
               </h3>
-              <p className="text-gray-400 max-w-md">
+              <p className="text-gray-300 max-w-md">
                 Create polls to gather opinions from your fitness community and
                 make group decisions together.
               </p>

@@ -13,6 +13,8 @@
     "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@fontsource-variable/comfortaa": "^5.2.8",
+    "@fontsource/fredoka-one": "^5.2.5",
     "@hookform/resolvers": "^5.2.2",
     "@mapbox/polyline": "^1.2.1",
     "@prisma/adapter-pg": "^7.2.0",

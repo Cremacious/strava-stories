@@ -1,5 +1,4 @@
 import Link from 'next/link';
-// import { Button } from '@/components/ui/button';
 import {
   Activity,
   Users,
@@ -17,25 +16,28 @@ import {
   UserPlus,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import logo from '@/app/assets/logo-full.png';
+import Image from 'next/image';
 
 export default function Home() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#2e2e2e' }}>
       <section
-        className="pt-32 pb-24 px-4 sm:px-6 lg:px-8"
+        className="pt-10 pb-24 px-4 sm:px-6 lg:px-8"
         style={{ backgroundColor: '#2e2e2e' }}
       >
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-center">
+            <Image src={logo} alt="Strava Stories" className="w-full h-auto" />
             <div className="space-y-8">
               <div>
                 <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
-                  Your Fitness.
+                  Your Fitness
                   <br />
-                  <span className="text-red-500">Your Story.</span>
+                  <span className="text-red-600">Your Journey</span>
                   <br />
                 </h1>
-                <p className="text-xl text-gray-400 leading-relaxed">
+                <p className="text-xl text-gray-300 leading-relaxed">
                   Strava Stories brings your training to life with social posts,
                   progress tracking, and community circles built for athletes of
                   every level. Log your workouts, share your journey, and
@@ -46,11 +48,7 @@ export default function Home() {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button
-                  size="lg"
-                  className="bg-red-600 hover:bg-red-700 text-white px-8 py-6 text-lg"
-                  asChild
-                >
+                <Button size="lg" className=" text-lg" asChild>
                   <Link href="/auth/sign-up">
                     Get Started
                     <ArrowRight className="ml-2 w-5 h-5" />
@@ -60,70 +58,13 @@ export default function Home() {
                   size="lg"
                   variant="outline"
                   asChild
-                  className="border-red-500 text-red-400 hover:bg-red-600 hover:text-white hover:border-red-600 px-8 py-6 text-lg"
+                  className=" px-8 py-6 text-lg"
                 >
                   <Link href="/auth/login">Sign In</Link>
                 </Button>
               </div>
-              {/* 
-              <div className="grid grid-cols-3 gap-6 pt-4 border-t border-gray-700">
-                <div>
-                  <div className="text-3xl font-bold text-red-500">10K+</div>
-                  <div className="text-sm text-gray-400">Active Athletes</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-red-500">500+</div>
-                  <div className="text-sm text-gray-400">Fitness Circles</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-red-500">50K+</div>
-                  <div className="text-sm text-gray-400">Stories Shared</div>
-                </div>
-              </div> */}
             </div>
-
-            <div className="hidden lg:block">
-              <div className="relative">
-                <div className="space-y-4">
-                  <div
-                    className="rounded-lg p-6"
-                    style={{ backgroundColor: '#3a3a3a' }}
-                  >
-                    <div className="flex items-center space-x-3 mb-4">
-                      <div className="w-10 h-10 bg-red-600 rounded-full"></div>
-                      <div className="flex-1">
-                        <div className="h-3 bg-gray-600 rounded w-32"></div>
-                        <div className="h-2 bg-gray-700 rounded w-24 mt-1"></div>
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="h-3 bg-gray-600 rounded w-full"></div>
-                      <div className="h-3 bg-gray-600 rounded w-4/5"></div>
-                      <div className="h-20 bg-gray-700 rounded mt-3"></div>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div
-                      className="rounded-lg p-4"
-                      style={{ backgroundColor: '#3a3a3a' }}
-                    >
-                      <BarChart3 className="w-6 h-6 text-red-500 mb-2" />
-                      <div className="h-2 bg-gray-600 rounded w-full mb-2"></div>
-                      <div className="h-2 bg-gray-600 rounded w-3/4"></div>
-                    </div>
-                    <div
-                      className="rounded-lg p-4 "
-                      style={{ backgroundColor: '#3a3a3a' }}
-                    >
-                      <Users className="w-6 h-6 text-red-500 mb-2" />
-                      <div className="h-2 bg-gray-600 rounded w-full mb-2"></div>
-                      <div className="h-2 bg-gray-600 rounded w-3/4"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            {/* <Image src={logo} alt="Strava Stories" className="w-full h-auto" /> */}
           </div>
         </div>
       </section>
@@ -241,7 +182,7 @@ export default function Home() {
                 <Users className="w-6 h-6 text-white" />
               </div>
               <h3 className="text-xl font-semibold text-white mb-3">
-              Your Communities
+                Your Communities
               </h3>
               <p className="text-red-500 font-bold  mb-4">
                 Groups built for training, accountability, and adventure.

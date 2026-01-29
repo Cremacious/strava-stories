@@ -69,15 +69,15 @@ const CirclesPage = async () => {
       {/* <div className="border-t-2 border-red-900/40 max-w-3xl mx-auto"></div> */}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start ">
-        <div className="space-y-6 ">
+
           <ChallengesHighlights featuredChallenges={activeChallenges} />
 
           <RecentCirclesHighlights recentHighlights={recentHighlights} />
-        </div>
+        
 
         {/* <TimelineFeed /> */}
-        <TimelineFeed posts={circlePosts} />
       </div>
+        <TimelineFeed posts={circlePosts} />
     </div>
   );
 };

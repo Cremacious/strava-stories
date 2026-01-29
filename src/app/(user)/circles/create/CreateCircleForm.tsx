@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { createCircleFormSchema } from '@/lib/validators/circle.validators';
 import { useCircleStore } from '@/stores/useCircleStore';
 // import { getFriends } from '@/actions/circle.actions';
@@ -84,7 +84,7 @@ const CreateCircleForm = () => {
   };
 
   return (
-    <Card className="max-w-2xl mx-auto darkBackground">
+    <Card className=" darkBackground border-0 m-2">
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
@@ -101,7 +101,7 @@ const CreateCircleForm = () => {
               onChange={(e) =>
                 setFormData({ ...formData, name: e.target.value })
               }
-              className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+              className="bg-[#2e2e2e] border-none text-white placeholder-gray-400"
             />
             {errors.name && (
               <p className="text-sm text-red-500">{errors.name}</p>
@@ -123,7 +123,7 @@ const CreateCircleForm = () => {
                 setFormData({ ...formData, description: e.target.value })
               }
               rows={4}
-              className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+              className="bg-[#2e2e2e] border-none text-white placeholder-gray-400"
             />
           </div>
 
@@ -140,10 +140,10 @@ const CreateCircleForm = () => {
                 setFormData({ ...formData, visibility: value })
               }
             >
-              <SelectTrigger className="bg-gray-800 border-gray-600 text-white">
+              <SelectTrigger className="bg-[#2e2e2e] border-none text-white">
                 <SelectValue placeholder="Select visibility" />
               </SelectTrigger>
-              <SelectContent className="bg-gray-800 border-gray-600">
+              <SelectContent className="bg-[#2e2e2e] border-none">
                 <SelectItem
                   value="PRIVATE"
                   className="text-white hover:bg-gray-700"
@@ -168,7 +168,7 @@ const CreateCircleForm = () => {
               placeholder="Search friends by name or email"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+              className="bg-[#2e2e2e] border-none text-white placeholder-gray-400"
             />
             <div className="mt-3 max-h-48 overflow-y-auto border border-gray-600 rounded-md bg-gray-800">
               {filteredFriends.length === 0 ? (
@@ -231,14 +231,14 @@ const CreateCircleForm = () => {
           </div>
 
           {error && <p className="text-sm text-red-500">{error}</p>}
-
-          <Button
-            type="submit"
-            className="w-full bg-red-500 hover:bg-red-600 text-white"
-            disabled={isLoading}
-          >
-            {isLoading ? 'Creating...' : 'Create Circle'}
-          </Button>
+          <div className='flex flex-row gap-4 justify-end'>
+            <Button className='w-1/4' variant={'outline'}>
+              Cancel
+            </Button>
+            <Button type="submit" className="w-1/2 " disabled={isLoading}>
+              {isLoading ? 'Creating...' : 'Create Circle'}
+            </Button>
+          </div>
         </form>
       </CardContent>
     </Card>

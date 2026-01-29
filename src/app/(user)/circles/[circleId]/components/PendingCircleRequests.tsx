@@ -67,14 +67,7 @@ const PendingCircleRequests = ({
 
   return (
     <div className="mb-6">
-      <h2 className="text-xl font-bold text-white mb-4">
-        Pending Join Requests
-      </h2>
-      {requests.length === 0 ? (
-        <div className="text-center text-gray-400 py-8">
-          No pending requests
-        </div>
-      ) : (
+      {requests.length === 0 ? null : (
         <div className="space-y-4">
           {requests.map((request) => (
             <Card key={request.id} className="cardBackground border-0">

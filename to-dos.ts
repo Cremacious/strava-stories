@@ -7,7 +7,7 @@
 // TODO: Style profile page
 // TODO: Can request friendships from profile page
 // TODO: Fix placeholder text for timeline feed to be more universal
-// TODO: 
+// TODO: Ensure only the creator or moderator can approve/reject circle join requests
 // TODO: Show suggested friends on friends page
 // TODO: Style workouts page
 // TODO: Create notification system

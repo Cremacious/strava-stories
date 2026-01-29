@@ -66,16 +66,16 @@ const CirclePage = async ({
                 <p className="text-sm text-red-100">Members</p>
                 <p className="text-xl font-bold">{circle.memberCount}</p>
               </div>
-              <div>
+              {/* <div>
                 <p className="text-sm text-red-100">Total Workouts</p>
                 <p className="text-xl font-bold">
                   {circle.stats.totalWorkouts}
                 </p>
-              </div>
-              <div>
+              </div> */}
+              {/* <div>
                 <p className="text-sm text-red-100">Category</p>
                 <p className="text-xl font-bold">{circle.category}</p>
-              </div>
+              </div> */}
             </div>
           </div>
           <JoinCircleButton
@@ -88,48 +88,43 @@ const CirclePage = async ({
 
       <PendingCircleRequests circleId={circleId} isOwner={isOwner} />
 
-      <div>
-        {circle.isMember ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-8">
-              <FeatureSelector
-                circleId={circleId}
-                workouts={workouts}
-                routines={routines}
-                challenges={challenges}
-                polls={polls}
-                events={events}
-              />
+      {circle.isMember ? (
+        <div className="space-y-8">
+          <FeatureSelector
+            circleId={circleId}
+            workouts={workouts}
+            routines={routines}
+            challenges={challenges}
+            polls={polls}
+            events={events}
+          />
 
-              {/* <TopMembers circle={circle} /> */}
+          <CircleTimelineFeed
+            initialPosts={posts}
+            userImage={user?.avatarUrl}
+            circleId={circleId}
+          />
+        </div>
+      ) : (
+        <div className="flex justify-center items-center min-h-96">
+          <div className="cardBackground border border-red-500/20 rounded-xl p-8 max-w-md w-full text-center">
+            <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Users className="w-8 h-8 text-red-400" />
             </div>
-            <CircleTimelineFeed
-              initialPosts={posts}
-              userImage={user?.avatarUrl}
-              circleId={circleId}
-            />
-          </div>
-        ) : (
-          <div className="flex justify-center items-center min-h-96">
-            <div className="cardBackground border border-red-500/20 rounded-xl p-8 max-w-md w-full text-center">
-              <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Users className="w-8 h-8 text-red-400" />
-              </div>
-              <h2 className="text-2xl font-bold text-white mb-4">
-                Join This Circle
-              </h2>
-              <p className="text-gray-300 mb-6 leading-relaxed">
-                Become a member to access exclusive workouts, challenges, and
-                connect with fellow fitness enthusiasts in this community.
-              </p>
-              <div className="text-sm text-gray-400">
-                Click the &quot;Join Circle&quot; button above to request
-                membership
-              </div>
+            <h2 className="text-2xl font-bold text-white mb-4">
+              Join This Circle
+            </h2>
+            <p className="text-gray-300 mb-6 leading-relaxed">
+              Become a member to access exclusive workouts, challenges, and
+              connect with fellow fitness enthusiasts in this community.
+            </p>
+            <div className="text-sm text-gray-400">
+              Click the &quot;Join Circle&quot; button above to request
+              membership
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

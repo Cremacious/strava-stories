@@ -6,7 +6,9 @@ const CreateCirclePage = () => {
       <h1 className="text-2xl font-bold mb-6 text-center">
         Create a New Circle
       </h1>
-      <CreateCircleForm />
+      <div className="max-w-xl mx-auto">
+        <CreateCircleForm />
+      </div>
     </div>
   );
 };
