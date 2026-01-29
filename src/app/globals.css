@@ -2,7 +2,6 @@
 @import 'tailwindcss';
 
 @import '@fontsource-variable/comfortaa';
-/* @import '@fontsource/fredoka-one'; */
 
 @custom-variant dark (&:is(.dark *));
 
@@ -113,9 +112,9 @@ body {
   .redHighlight {
     @apply bg-[#4d3030];
   }
-  /* .strideFont {
-    font-family: 'Fredoka One', cursive;
-  } */
+  .strideFont {
+    font-family: var(--font-fredoka), 'Fredoka', cursive;
+  }
 }
 
 .custom-scrollbar {

@@ -1,12 +1,21 @@
-import { Bell, User } from 'lucide-react';
+import { Bell } from 'lucide-react';
 import UserDropdown from './UserDropdown';
+import logo from '@/app/assets/logo-only.png';
+import Image from 'next/image';
 
 const Navbar = () => {
   return (
     <nav className="sticky top-0 z-50 darkBackground3 border-b-2 border-red-900/40 px-4 py-3">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <div className="flex items-center">
-          <h1 className="text-xl font-bold text-red-400">Strava Stories</h1>
+          <Image
+            src={logo}
+            alt="Strava Stories Logo"
+            width={32}
+            height={32}
+            className="mr-2"
+          />
+          <span className="text-white font-bold text-lg">Social Strides</span>
         </div>
 
         {/* <div className="hidden md:block flex-1 max-w-md mx-8">
