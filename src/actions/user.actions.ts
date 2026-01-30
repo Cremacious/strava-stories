@@ -84,7 +84,7 @@ export async function updateUserProfileImage(formData: FormData) {
           } else {
             resolve(result);
           }
-        }
+        },
       );
       uploadStream.end(buffer);
     });
@@ -238,7 +238,7 @@ export async function updateUserLocation(
   userId: string,
   city: string,
   state: string,
-  country: string
+  country: string,
 ) {
   try {
     const supabase = await createClient();
@@ -332,6 +332,36 @@ export async function updateUsername(userId: string, newUsername: string) {
       success: false,
       error:
         error instanceof Error ? error.message : 'Failed to update username',
+    };
+  }
+}
+
+export async function getCurrentUserAvatar() {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+    if (authError || !user) {
+      return { success: false, error: 'User not authenticated' };
+    }
+    const existingUser = await prisma.user.findUnique({
+      where: { id: user.id },
+      
+    });
+    if (!existingUser) {
+      return { success: false, error: 'User not found' };
+    }
+    return { success: true, avatarUrl: existingUser.avatarUrl || null };
+  } catch (error) {
+    console.error('Error fetching current user avatar:', error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Failed to fetch current user avatar',
     };
   }
 }

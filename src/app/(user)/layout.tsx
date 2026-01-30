@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import { createUser } from '@/actions/user.actions';
+import UserStoreInitializer from './UserStoreInitializer';
 
 export default async function UserLayout({
   children,
@@ -49,6 +50,7 @@ export default async function UserLayout({
 
   return (
     <QueryProvider>
+      <UserStoreInitializer />
       <div className="h-screen flex flex-col overflow-hidden">
         <Navbar />
         <div className="flex flex-1 overflow-hidden">

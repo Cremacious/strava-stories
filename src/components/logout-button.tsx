@@ -13,5 +13,5 @@ export function LogoutButton() {
     router.push('/auth/login')
   }
 
-  return <Button className='bg-black w-full' onClick={logout}>Logout</Button>
+  return <Button className=' w-full' onClick={logout}>Logout</Button>
 }

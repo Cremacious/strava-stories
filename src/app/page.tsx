@@ -46,7 +46,7 @@ export default function Home() {
                 </p>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-4 md:mt-4">
                 <Button size="lg" className=" text-lg" asChild>
                   <Link href="/auth/sign-up">
                     Get Started

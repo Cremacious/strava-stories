@@ -4,6 +4,7 @@ import {
   updateUserProfileImage,
   updateUserLocation,
   getUserProfile,
+  getCurrentUserAvatar,
 } from '@/actions/user.actions';
 
 interface User {
@@ -26,12 +27,13 @@ interface UserStore {
   fetchUserId: () => Promise<void>;
   fetchUser: () => Promise<void>;
   updateUserProfileImage: (
-    formData: FormData
+    formData: FormData,
   ) => Promise<{ success: boolean; imageUrl?: string; error?: string }>;
   updateUserLocation: (
     userId: string,
-    location: { city: string; state: string; country: string }
+    location: { city: string; state: string; country: string },
   ) => Promise<{ success: boolean; error?: string }>;
+  getUserAvatar: () => Promise<string | null>;
 }
 
 export const useUserStore = create<UserStore>((set, get) => ({
@@ -66,13 +68,13 @@ export const useUserStore = create<UserStore>((set, get) => ({
   },
   updateUserLocation: async (
     userId: string,
-    location: { city: string; state: string; country: string }
+    location: { city: string; state: string; country: string },
   ) => {
     const result = await updateUserLocation(
       userId,
       location.city,
       location.state,
-      location.country
+      location.country,
     );
     if (result.success) {
       const currentUser = get().user;
@@ -81,5 +83,12 @@ export const useUserStore = create<UserStore>((set, get) => ({
       }
     }
     return result;
+  },
+  getUserAvatar: async () => {
+    const result = await getCurrentUserAvatar();
+    if (result.success) {
+      return result.avatarUrl ?? null;
+    }
+    return null;
   },
 }));

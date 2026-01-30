@@ -6,15 +6,14 @@ import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import Image from 'next/image';
+import logo from '@/app/assets/logo-only.png'
 
 export function LoginForm({
   className,
@@ -49,12 +48,13 @@ export function LoginForm({
 
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
-      <Card>
+      <Card className='border-0'>
         <CardContent className="pt-8">
           <div className="text-center mb-6">
-            <h1 className="text-3xl font-bold text-white mb-2">Welcome Back</h1>
-            <p className="text-gray-400">
-              Sign in to your account to continue your fitness journey
+            <Image src={logo} alt="Strava Stories Logo" width={80} height={80} className="mx-auto mb-4" />
+            <h1 className="text-3xl font-bold text-red-500 mb-2">Welcome Back</h1>
+            <p className="text-gray-300">
+              Sign in to your account to continue
             </p>
           </div>
           <form onSubmit={handleLogin}>
@@ -70,7 +70,7 @@ export function LoginForm({
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="bg-[#2e2e2e] border-gray-700 text-white placeholder:text-gray-500 focus:border-red-500 focus:ring-red-500"
+                  className="bg-[#2e2e2e] border-0 text-white placeholder:text-gray-500 focus:border-red-500 focus:ring-red-500"
                 />
               </div>
               <div className="grid gap-2">
@@ -78,12 +78,6 @@ export function LoginForm({
                   <Label htmlFor="password" className="text-gray-300">
                     Password
                   </Label>
-                  <Link
-                    href="/auth/forgot-password"
-                    className="ml-auto inline-block text-sm text-red-400 hover:text-red-300 underline-offset-4 hover:underline"
-                  >
-                    Forgot your password?
-                  </Link>
                 </div>
                 <Input
                   id="password"
@@ -91,8 +85,14 @@ export function LoginForm({
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="bg-[#2e2e2e] border-gray-700 text-white placeholder:text-gray-500 focus:border-red-500 focus:ring-red-500"
+                  className="bg-[#2e2e2e] border-0 text-white placeholder:text-gray-500 focus:border-red-500 focus:ring-red-500"
                 />
+                  <Link
+                    href="/auth/forgot-password"
+                    className="ml-auto inline-block text-sm text-red-500 hover:text-red-300 underline-offset-4 hover:underline"
+                  >
+                    Forgot your password?
+                  </Link>
               </div>
               {error && <p className="text-sm text-red-400">{error}</p>}
               <Button
@@ -104,7 +104,7 @@ export function LoginForm({
               </Button>
             </div>
             <div className="mt-4 text-center text-sm">
-              <span className="text-gray-400">
+              <span className="text-gray-300">
                 Don&apos;t have an account?{' '}
               </span>
               <Link
