@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useRouter } from 'next/navigation';
 import { useState, useRef } from 'react';
-import { Camera, User, MapPin } from 'lucide-react';
+import { Camera } from 'lucide-react';
 import {
   updateUserProfileImage,
   updateUsername,

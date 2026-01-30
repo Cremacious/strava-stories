@@ -114,24 +114,22 @@ const AddWorkoutToCircleButton = ({ circleId }: { circleId: string }) => {
     <>
       <Dialog open={isAddWorkoutOpen} onOpenChange={handleOpenChange}>
         <DialogTrigger asChild>
-          <Button
-            className=" sm:w-auto"
-         
-          >
+          <Button className=" sm:w-auto">
             <Plus className="w-4 h-4 mr-2" />
-            Add Workout
+            Add Workout To Circle
           </Button>
         </DialogTrigger>
-        <DialogContent className="darkBackground2 border-0 text-white max-w-md w-[95vw] max-h-[90vh] overflow-y-auto">
+        <DialogContent className="bg-[#3F3F3F] border-0 text-white max-w-md w-[95vw] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Add New Workout</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-1 text-red-500">
+              <label className="block text-sm font-medium mb-1 text-white">
                 Title *
               </label>
               <Input
+                className="bg-[#2e2e2e] border-none placeholder:text-gray-400"
                 placeholder="Morning Run"
                 value={newWorkout.title}
                 onChange={(e) =>
@@ -143,7 +141,7 @@ const AddWorkoutToCircleButton = ({ circleId }: { circleId: string }) => {
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1 text-red-500">
+              <label className="block text-sm font-medium mb-1 text-white">
                 Workout Type *
               </label>
               <Select
@@ -152,10 +150,10 @@ const AddWorkoutToCircleButton = ({ circleId }: { circleId: string }) => {
                   setNewWorkout({ ...newWorkout, type: value })
                 }
               >
-                <SelectTrigger>
+                <SelectTrigger className="bg-[#2e2e2e] border-none placeholder:text-gray-300">
                   <SelectValue placeholder="Select workout type" />
                 </SelectTrigger>
-                <SelectContent className="bg-[#272727] border-0 text-white">
+                <SelectContent className="bg-[#2e2e2e] border-none text-white">
                   {workoutTypes.map((type) => (
                     <SelectItem key={type} value={type}>
                       {type}
@@ -169,10 +167,11 @@ const AddWorkoutToCircleButton = ({ circleId }: { circleId: string }) => {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm font-medium mb-1 text-red-500">
+                <label className="block text-sm font-medium mb-1 text-white">
                   Duration (min)
                 </label>
                 <Input
+                  className="bg-[#2e2e2e] border-none placeholder:text-gray-400"
                   type="number"
                   placeholder="45"
                   value={newWorkout.duration}
@@ -188,10 +187,11 @@ const AddWorkoutToCircleButton = ({ circleId }: { circleId: string }) => {
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1 text-red-500">
+                <label className="block text-sm font-medium mb-1 text-white">
                   Distance (miles)
                 </label>
                 <Input
+                  className="bg-[#2e2e2e] border-none placeholder:text-gray-400"
                   type="number"
                   step="0.1"
                   placeholder="8.5"
@@ -210,10 +210,11 @@ const AddWorkoutToCircleButton = ({ circleId }: { circleId: string }) => {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm font-medium mb-1 text-red-500">
+                <label className="block text-sm font-medium mb-1 text-white">
                   Calories
                 </label>
                 <Input
+                  className="bg-[#2e2e2e] border-none placeholder:text-gray-400"
                   type="number"
                   placeholder="320"
                   value={newWorkout.calories}
@@ -229,10 +230,11 @@ const AddWorkoutToCircleButton = ({ circleId }: { circleId: string }) => {
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1 text-red-500">
+                <label className="block text-sm font-medium mb-1 text-white">
                   Date *
                 </label>
                 <Input
+                  className="bg-[#2e2e2e] border-none placeholder:text-gray-400"
                   type="date"
                   value={newWorkout.date}
                   onChange={(e) =>
@@ -245,10 +247,11 @@ const AddWorkoutToCircleButton = ({ circleId }: { circleId: string }) => {
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1 text-red-500">
+              <label className="block text-sm font-medium mb-1 text-white">
                 Description (optional)
               </label>
               <Textarea
+                className="bg-[#2e2e2e] border-none placeholder:text-gray-400"
                 placeholder="How did the workout feel?"
                 value={newWorkout.description}
                 onChange={(e) =>
@@ -260,7 +263,7 @@ const AddWorkoutToCircleButton = ({ circleId }: { circleId: string }) => {
             {error && <p className="text-sm text-red-500">{error}</p>}
             <div className="flex flex-row space-x-2 mt-4 justify-center">
               <Button
-                variant="secondary"
+                variant="outline"
                 onClick={() => setIsAddWorkoutOpen(false)}
               >
                 Cancel

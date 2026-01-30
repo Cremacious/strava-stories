@@ -70,7 +70,7 @@ export default function CircleRoutineForm({
   const updateWarmUp = (
     index: number,
     field: string,
-    value: string | number
+    value: string | number,
   ) => {
     const updated = [...warmUps];
     updated[index] = { ...updated[index], [field]: value };
@@ -87,7 +87,7 @@ export default function CircleRoutineForm({
   const updateExercise = (
     index: number,
     field: string,
-    value: string | number
+    value: string | number,
   ) => {
     const updated = [...exercises];
     updated[index] = { ...updated[index], [field]: value };
@@ -131,7 +131,7 @@ export default function CircleRoutineForm({
       onSuccess?.();
     } catch (error) {
       setSubmitError(
-        error instanceof Error ? error.message : 'An error occurred'
+        error instanceof Error ? error.message : 'An error occurred',
       );
     } finally {
       setIsLoading(false);
@@ -139,7 +139,7 @@ export default function CircleRoutineForm({
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-gray-900 rounded-lg">
+    <div className="max-w-2xl mx-auto p-6 bg-[#3F3F3F] border-0 rounded-lg mt-4">
       <h1 className="text-2xl font-bold text-white mb-6">
         Create Workout Routine
       </h1>
@@ -152,13 +152,11 @@ export default function CircleRoutineForm({
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
-          <label className="block text-gray-300 mb-2 font-semibold">
-            Title *
-          </label>
+          <label className="block text-white mb-2 font-semibold">Title *</label>
           <Input
             {...register('title')}
             placeholder="Routine Title"
-            className="bg-gray-700 border-gray-600 text-white"
+            className="bg-[#2e2e2e] border-none placeholder:text-gray-400 text-white"
           />
           {errors.title && (
             <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>
@@ -172,7 +170,7 @@ export default function CircleRoutineForm({
           <Textarea
             {...register('description')}
             placeholder="Describe your routine"
-            className="bg-gray-700 border-gray-600 text-white"
+            className="bg-[#2e2e2e] border-none placeholder:text-gray-400"
             rows={3}
           />
         </div>
@@ -199,7 +197,7 @@ export default function CircleRoutineForm({
             {...register('estimatedDuration')}
             type="number"
             placeholder="e.g., 30"
-            className="bg-gray-700 border-gray-600 text-white"
+            className="bg-[#2e2e2e] border-none placeholder:text-gray-400 text-white"
             min="0"
           />
         </div>
@@ -211,7 +209,7 @@ export default function CircleRoutineForm({
           <Input
             {...register('requiredEquipment')}
             placeholder="e.g., Dumbbells, Mat"
-            className="bg-gray-700 border-gray-600 text-white"
+            className="bg-[#2e2e2e] border-none placeholder:text-gray-400 text-white"
           />
         </div>
 
@@ -222,7 +220,7 @@ export default function CircleRoutineForm({
           <Input
             {...register('category')}
             placeholder="e.g., Strength, Cardio"
-            className="bg-gray-700 border-gray-600 text-white"
+            className="bg-[#2e2e2e] border-none placeholder:text-gray-400 text-white"
           />
         </div>
 
