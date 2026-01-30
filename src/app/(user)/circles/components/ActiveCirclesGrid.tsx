@@ -21,7 +21,7 @@ const ActiveCirclesGrid = ({ myCircles }: { myCircles: Circle[] }) => {
                 <CardTitle className="text-white text-lg truncate">
                   {circle.name}
                 </CardTitle>
-                <p className="text-gray-400 text-sm">{circle.category}</p>
+              
               </div>
             </div>
           </CardHeader>

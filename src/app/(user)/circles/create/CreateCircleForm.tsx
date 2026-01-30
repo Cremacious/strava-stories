@@ -12,10 +12,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { createCircleFormSchema } from '@/lib/validators/circle.validators';
 import { useCircleStore } from '@/stores/useCircleStore';
-// import { getFriends } from '@/actions/circle.actions';
 import { Friend } from '@/lib/types/friends.type';
 
 const CreateCircleForm = () => {
@@ -31,15 +30,6 @@ const CreateCircleForm = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const { createCircle, isLoading, error, clearError } = useCircleStore();
 
-  // useEffect(() => {
-  //   const fetchFriends = async () => {
-  //     const result = await getFriends();
-  //     if (result.success && result.friends) {
-  //       setFriends(result.friends);
-  //     }
-  //   };
-  //   fetchFriends();
-  // }, []);
 
   const filteredFriends = friends.filter(
     (friend) =>
@@ -85,6 +75,7 @@ const CreateCircleForm = () => {
 
   return (
     <Card className=" darkBackground border-0 m-2">
+      <CardTitle className="text-white text-center pt-6 text-2xl font-bold">Create a New Circle</CardTitle>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">

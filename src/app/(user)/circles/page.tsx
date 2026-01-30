@@ -35,8 +35,8 @@ const CirclesPage = async () => {
   return (
     <div className="p-4 sm:p-6 space-y-6 w-full">
       <div className="space-y-4 max-w-5xl mx-auto p-4 rounded-lg">
-        <div className="flex justify-between items-center">
-          <h2 className="text-xl font-semibold text-white">My Circles</h2>
+        <div className="flex justify-end items-center">
+       
           {myCircles.length > 4 && (
             <Button
               variant="outline"
@@ -63,21 +63,26 @@ const CirclesPage = async () => {
             </Button>
           </div>
         ) : (
-          <ActiveCirclesGrid myCircles={myCircles} />
+          <>
+            <div className="flex justify-end">
+              <Button asChild>
+                <Link href="/circles/create">Create Circle</Link>
+              </Button>
+            </div>
+            <ActiveCirclesGrid myCircles={myCircles} />
+          </>
         )}
       </div>
       {/* <div className="border-t-2 border-red-900/40 max-w-3xl mx-auto"></div> */}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start ">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start border-t-2 border-red-900/40 pt-6 max-w-5xl mx-auto">
+        <ChallengesHighlights featuredChallenges={activeChallenges} />
 
-          <ChallengesHighlights featuredChallenges={activeChallenges} />
-
-          <RecentCirclesHighlights recentHighlights={recentHighlights} />
-        
+        <RecentCirclesHighlights recentHighlights={recentHighlights} />
 
         {/* <TimelineFeed /> */}
       </div>
-        <TimelineFeed posts={circlePosts} />
+      <TimelineFeed posts={circlePosts} />
     </div>
   );
 };

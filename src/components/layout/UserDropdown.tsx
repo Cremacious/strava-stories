@@ -72,8 +72,8 @@ const UserDropdown = () => {
           )}
         </div>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-80 bg-[#1e1e1e] border border-gray-700 text-white p-0 mr-2">
-        <div className="p-4 border-b border-gray-700">
+      <DropdownMenuContent className="w-80 bg-[#1e1e1e] border-0 text-white p-0 mr-2">
+        <div className="p-4 border-b border-red-700">
           <div className="flex items-center gap-3">
             <Image
               src={user?.avatarUrl || defaultAvatar.src}
@@ -91,7 +91,7 @@ const UserDropdown = () => {
           </div>
         </div>
 
-        <div className="p-2 border-b border-gray-700">
+        <div className="p-2 border-b border-red-700">
           <DropdownMenuItem
             onClick={() => router.push(`/profile/${user?.id}`)}
             className="flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer hover:bg-gray-800 focus:bg-gray-800"
@@ -108,7 +108,7 @@ const UserDropdown = () => {
           </DropdownMenuItem>
         </div>
 
-        <div className="border-b border-gray-700">
+        <div className="border-b border-red-700">
           <div className="flex items-center justify-between px-4 py-3">
             <div className="flex items-center gap-2">
               <Bell className="w-4 h-4 text-red-400" />
@@ -129,9 +129,7 @@ const UserDropdown = () => {
               notifications.map((notification) => (
                 <div
                   key={notification.id}
-                  className={`px-4 py-3 hover:bg-gray-900 cursor-pointer transition-colors ${
-                    !notification.read ? 'bg-red-800/60' : ''
-                  }`}
+                  className={`px-4 py-3 hover:bg-red-900 cursor-pointer transition-colors `}
                 >
                   <div className="flex items-start gap-3">
                     <div
@@ -174,7 +172,7 @@ const UserDropdown = () => {
           </div>
 
           {notifications.length > 0 && (
-            <div className="px-4 py-2 border-t border-gray-700">
+            <div className="px-4 py-2 ">
               <button
                 onClick={() => router.push('/notifications')}
                 className="w-full text-center text-sm text-red-400 hover:text-red-300 py-1 transition-colors"

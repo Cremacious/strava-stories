@@ -2,7 +2,15 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { circleDetailSample } from '@/lib/sample/circle-detail.sample';
-import { Calendar, Heart, MapPin, MessageSquare, Plus, Trophy, Vote } from 'lucide-react';
+import {
+  Calendar,
+  Heart,
+  MapPin,
+  MessageSquare,
+  Plus,
+  Trophy,
+  Vote,
+} from 'lucide-react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import AddWorkoutToCircleButton from '../AddWorkoutToCircleButton';
@@ -48,7 +56,7 @@ const FeatureSelector = ({
 
   return (
     <div className="cardBackground md:p-2 rounded-2xl">
-      <div className="flex flex-wrap gap-2 mb-6 darkBackground p-3 rounded-lg border border-gray-700">
+      <div className="flex flex-wrap gap-2 mb-6 darkBackground p-3 rounded-xl">
         {tabs.map((tab) => (
           <button
             key={tab.id}
@@ -66,14 +74,13 @@ const FeatureSelector = ({
 
       {activeTab === 'feed' && (
         <div className="space-y-4">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold text-white">
-              Recent Workout Logs
-            </h2>
+          <div className="flex flex-row gap-4 justify-end items-center mx-2">
             <AddWorkoutToCircleButton circleId={circleId} />
-            <Button asChild>
-              <Link href={`/circles/${circleId}/workouts`}>View All</Link>
-            </Button>
+            {workouts.length > 0 && (
+              <Button asChild>
+                <Link href={`/circles/${circleId}/workouts`}>View All</Link>
+              </Button>
+            )}
           </div>
           {workouts.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center">
@@ -102,12 +109,8 @@ const FeatureSelector = ({
 
       {activeTab === 'routines' && (
         <div className="space-y-4">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold text-white">
-              Workout Routines Library
-            </h2>
+          <div className="flex flex-row gap-4 justify-end items-center mx-2">
             <Button
-   
               onClick={() =>
                 router.push(`/circles/${circleId}/create?type=routine`)
               }
@@ -115,12 +118,13 @@ const FeatureSelector = ({
               <Plus className="w-4 h-4 mr-2" />
               Upload Routine
             </Button>
-            <Button
-
-              onClick={() => router.push(`/circles/${circleId}/routines`)}
-            >
-              View All
-            </Button>
+            {routines.length > 0 && (
+              <Button
+                onClick={() => router.push(`/circles/${circleId}/routines`)}
+              >
+                View All
+              </Button>
+            )}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {routines.length === 0 ? (
@@ -149,91 +153,25 @@ const FeatureSelector = ({
         </div>
       )}
 
-      {/* {activeTab === 'stories' && (
+      {activeTab === 'challenges' && (
         <div className="space-y-4">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold text-white">Adventure Stories</h2>
+          <div className="flex flex-row gap-4 justify-end mx-2">
             <Button
-              className="bg-red-500 hover:bg-red-600"
               onClick={() =>
-                router.push(`/circles/${circleId}/create?type=story`)
+                router.push(`/circles/${circleId}/create?type=challenge`)
               }
             >
               <Plus className="w-4 h-4 mr-2" />
-              Share Story
+              Create Challenge
             </Button>
-          </div>
-          {circle.stories.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 text-center">
-              <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mb-4">
-                <MapPin className="w-8 h-8 text-red-400" />
-              </div>
-              <h3 className="text-xl font-semibold text-white mb-2">
-                No adventure stories yet
-              </h3>
-              <p className="text-gray-400 max-w-md">
-                Share your outdoor adventures, running routes, and fitness
-                journeys to inspire fellow athletes.
-              </p>
-            </div>
-          ) : (
-            circle.stories.map((story) => (
-              <Card
-                key={story.id}
-                className="bg-[#292929] border-0 overflow-hidden"
+            {challenges.length > 0 && (
+              <Button
+                onClick={() => router.push(`/circles/${circleId}/challenges`)}
               >
-                <div className="bg-gray-700 h-48 flex items-center justify-center">
-                  <span className="text-gray-500 text-sm">Story Image</span>
-                </div>
-                <CardHeader>
-                  <CardTitle className="text-white">{story.title}</CardTitle>
-                  <div className="flex items-center justify-between text-sm text-gray-400 mt-2">
-                    <div className="flex items-center space-x-2">
-                      <MapPin className="w-4 h-4" />
-                      <span>{story.location}</span>
-                    </div>
-                    {story.distance && <span>{story.distance}km</span>}
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <p className="text-gray-300">{story.description}</p>
-                  <div className="flex items-center justify-between text-sm text-gray-400">
-                    <span>by {story.memberName}</span>
-                    <span>{story.timestamp}</span>
-                  </div>
-                  <div className="flex gap-4 pt-2">
-                    <button className="flex items-center space-x-1 text-gray-400 hover:text-red-400">
-                      <Heart className="w-4 h-4" />
-                      <span>{story.likes}</span>
-                    </button>
-                    <button className="flex items-center space-x-1 text-gray-400 hover:text-red-400">
-                      <MessageSquare className="w-4 h-4" />
-                      <span>{story.comments}</span>
-                    </button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))
-          )}
-        </div>
-      )} */}
-
-      {activeTab === 'challenges' && (
-        <div className="space-y-4">
-          <h2 className="text-2xl font-bold text-white">Challenges</h2>
-          <Button
-            onClick={() =>
-              router.push(`/circles/${circleId}/create?type=challenge`)
-            }
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Create Challenge
-          </Button>
-          <Button
-            onClick={() => router.push(`/circles/${circleId}/challenges`)}
-          >
-            View All
-          </Button>
+                View All
+              </Button>
+            )}
+          </div>
           {challenges.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center">
               <div className="w-16 h-16 bg-red-500/80 rounded-full flex items-center justify-center mb-4">
@@ -261,10 +199,8 @@ const FeatureSelector = ({
 
       {activeTab === 'events' && (
         <div className="space-y-4">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold text-white">Upcoming Events</h2>
+          <div className="flex flex-row gap-4 justify-end items-center mx-2">
             <Button
-
               onClick={() =>
                 router.push(`/circles/${circleId}/create?type=event`)
               }
@@ -272,17 +208,18 @@ const FeatureSelector = ({
               <Plus className="w-4 h-4 mr-2" />
               Create Event
             </Button>
-            <Button
-    
-              onClick={() => router.push(`/circles/${circleId}/events`)}
-            >
-              View All
-            </Button>
+            {events.length > 0 && (
+              <Button
+                onClick={() => router.push(`/circles/${circleId}/events`)}
+              >
+                View All
+              </Button>
+            )}
           </div>
           {events.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center">
               <div className="w-16 h-16 bg-red-500/80 rounded-full flex items-center justify-center mb-4">
-              <Calendar className="w-8 h-8 text-white" />
+                <Calendar className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-xl font-semibold text-white mb-2">
                 No events yet
@@ -302,10 +239,8 @@ const FeatureSelector = ({
 
       {activeTab === 'polls' && (
         <div className="space-y-4">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold text-white">Circle Polls</h2>
+          <div className="flex flex-row gap-4 justify-end items-center mx-2">
             <Button
-     
               onClick={() =>
                 router.push(`/circles/${circleId}/create?type=poll`)
               }
@@ -317,7 +252,7 @@ const FeatureSelector = ({
           {polls.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center">
               <div className="w-16 h-16 bg-red-500/80 rounded-full flex items-center justify-center mb-4">
-              <Vote className="w-8 h-8 text-white" />
+                <Vote className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-xl font-semibold text-white mb-2">
                 No polls yet

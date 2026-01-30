@@ -62,7 +62,7 @@ const PendingCircleRequests = ({
   }
 
   if (loading) {
-    return <div className="text-center text-gray-400">Loading requests...</div>;
+    return <div className="text-center text-gray-400"></div>;
   }
 
   return (

@@ -115,8 +115,8 @@ const AddWorkoutToCircleButton = ({ circleId }: { circleId: string }) => {
       <Dialog open={isAddWorkoutOpen} onOpenChange={handleOpenChange}>
         <DialogTrigger asChild>
           <Button
-            className=" w-full sm:w-auto"
-            size="sm"
+            className=" sm:w-auto"
+         
           >
             <Plus className="w-4 h-4 mr-2" />
             Add Workout
