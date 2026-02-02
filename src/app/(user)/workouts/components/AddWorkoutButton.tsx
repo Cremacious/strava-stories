@@ -116,24 +116,22 @@ const AddWorkoutButton = () => {
     <>
       <Dialog open={isAddWorkoutOpen} onOpenChange={handleOpenChange}>
         <DialogTrigger asChild>
-          <Button
-            className="bg-red-500 hover:bg-red-600 text-white w-full sm:w-auto"
-            size="sm"
-          >
+          <Button className=" w-full sm:w-auto" size="sm">
             <Plus className="w-4 h-4 mr-2" />
             Add Workout
           </Button>
         </DialogTrigger>
-        <DialogContent className="darkBackground2 border-0 text-white max-w-md w-[95vw] max-h-[90vh] overflow-y-auto">
+        <DialogContent className="bg-[#3F3F3F] border-0 text-white max-w-md w-[95vw] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Add New Workout</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-1 text-red-500">
+              <label className="block text-sm font-medium mb-1 text-white">
                 Title *
               </label>
               <Input
+                className="bg-[#2e2e2e] border-none placeholder:text-gray-400"
                 placeholder="Morning Run"
                 value={newWorkout.title}
                 onChange={(e) =>
@@ -145,7 +143,7 @@ const AddWorkoutButton = () => {
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1 text-red-500">
+              <label className="block text-sm font-medium mb-1 text-white">
                 Workout Type *
               </label>
               <Select
@@ -154,7 +152,7 @@ const AddWorkoutButton = () => {
                   setNewWorkout({ ...newWorkout, type: value })
                 }
               >
-                <SelectTrigger>
+                <SelectTrigger className="bg-[#2e2e2e] border-none placeholder:text-gray-300">
                   <SelectValue placeholder="Select workout type" />
                 </SelectTrigger>
                 <SelectContent className="bg-[#272727] border-0 text-white">
@@ -171,10 +169,11 @@ const AddWorkoutButton = () => {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm font-medium mb-1 text-red-500">
+                <label className="block text-sm font-medium mb-1 text-white">
                   Duration (min)
                 </label>
                 <Input
+                  className="bg-[#2e2e2e] border-none placeholder:text-gray-400"
                   type="number"
                   placeholder="45"
                   value={newWorkout.duration}
@@ -190,10 +189,11 @@ const AddWorkoutButton = () => {
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1 text-red-500">
+                <label className="block text-sm font-medium mb-1 text-white">
                   Distance (km)
                 </label>
                 <Input
+                  className="bg-[#2e2e2e] border-none placeholder:text-gray-400"
                   type="number"
                   step="0.1"
                   placeholder="8.5"
@@ -212,10 +212,11 @@ const AddWorkoutButton = () => {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm font-medium mb-1 text-red-500">
+                <label className="block text-sm font-medium mb-1 text-white">
                   Calories
                 </label>
                 <Input
+                  className="bg-[#2e2e2e] border-none placeholder:text-gray-400"
                   type="number"
                   placeholder="320"
                   value={newWorkout.calories}
@@ -231,10 +232,11 @@ const AddWorkoutButton = () => {
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1 text-red-500">
+                <label className="block text-sm font-medium mb-1 text-white">
                   Date *
                 </label>
                 <Input
+                  className="bg-[#2e2e2e] border-none placeholder:text-gray-400"
                   type="date"
                   value={newWorkout.date}
                   onChange={(e) =>
@@ -247,10 +249,11 @@ const AddWorkoutButton = () => {
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1 text-red-500">
+              <label className="block text-sm font-medium mb-1 text-white">
                 Description (optional)
               </label>
               <Textarea
+                className="bg-[#2e2e2e] border-none placeholder:text-gray-400"
                 placeholder="How did the workout feel?"
                 value={newWorkout.description}
                 onChange={(e) =>
@@ -262,7 +265,7 @@ const AddWorkoutButton = () => {
             {error && <p className="text-sm text-red-500">{error}</p>}
             <div className="flex flex-row space-x-2 mt-4 justify-center">
               <Button
-                variant="secondary"
+                variant="outline"
                 onClick={() => setIsAddWorkoutOpen(false)}
               >
                 Cancel

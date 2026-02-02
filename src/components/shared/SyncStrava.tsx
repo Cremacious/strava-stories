@@ -31,7 +31,7 @@ export default function SyncStrava({ userId }: { userId: string | undefined }) {
   };
 
   return (
-    <Button onClick={handleSync} disabled={loading} variant={'default'}>
+    <Button onClick={handleSync} disabled={loading} size={'sm'} variant={'default'}>
       <RefreshCw className={`mr-2 h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
       {loading ? 'Syncing...' : 'Sync Strava'}
     </Button>

@@ -8,22 +8,22 @@ export const workoutFormSchema = z.object({
     .string()
     .optional()
     .refine(
-      (val) => !val || (!isNaN(Number(val)) && Number(val) > 0),
-      'Duration must be a positive number',
+      (val) => !val || (!isNaN(Number(val)) && Number(val) >= 0),
+      'Duration must be a non-negative number',
     ),
   distance: z
     .string()
     .optional()
     .refine(
-      (val) => !val || (!isNaN(Number(val)) && Number(val) > 0),
-      'Distance must be a positive number',
+      (val) => !val || (!isNaN(Number(val)) && Number(val) >= 0),
+      'Distance must be a non-negative number',
     ),
   calories: z
     .string()
     .optional()
     .refine(
-      (val) => !val || (!isNaN(Number(val)) && Number(val) > 0),
-      'Calories must be a positive number',
+      (val) => !val || (!isNaN(Number(val)) && Number(val) >= 0),
+      'Calories must be a non-negative number',
     ),
   date: z
     .string()

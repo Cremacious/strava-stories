@@ -129,7 +129,7 @@ const CreateGoal = () => {
       <Dialog open={isCreateGoalOpen} onOpenChange={handleOpenChange}>
         <DialogTrigger asChild>
           <Button
-            className="bg-red-500 hover:bg-red-600 text-white w-full sm:w-auto"
+            className=" w-full sm:w-auto"
             size="sm"
           >
             <Target className="w-4 h-4 mr-2" />

@@ -6,7 +6,6 @@ import {
   Clock,
   MapPin,
   Zap,
-  Activity,
 } from 'lucide-react';
 
 interface Goal {
@@ -81,7 +80,7 @@ const UserGoals = ({ goals }: UserGoalsProps) => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-bold text-white">Your Goals</h2>
-          <div className="text-sm text-gray-400">0 goals</div>
+          <div className="text-sm text-gray-200">0 goals</div>
         </div>
 
         <div className="text-center py-12 px-6 cardBackground rounded-lg">
@@ -108,7 +107,7 @@ const UserGoals = ({ goals }: UserGoalsProps) => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-bold text-white">Your Goals</h2>
         <div className="text-sm text-gray-400">

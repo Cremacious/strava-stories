@@ -11,9 +11,10 @@ import {
   Pie,
   Cell,
 } from 'recharts';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { TrendingUp, Target, Activity, Plus } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { TrendingUp, Target, Activity } from 'lucide-react';
 import { WorkoutDisplayData } from '@/lib/types/workouts.type';
+import { formatDate, formatDuration } from '@/lib/utils';
 
 const typeColors: Record<string, string> = {
   Running: '#ef4444',
@@ -71,25 +72,34 @@ const WorkoutGraph = ({
 
   return (
     <div className="flex flex-col gap-6">
+      <div>
+        <h2 className="text-xl font-bold text-white">Workouts Graph</h2>
+      </div>
       <Card className="darkBackground border-0">
-        <CardHeader>
-          <CardTitle className="text-white flex items-center">
-            <TrendingUp className="w-5 h-5 mr-2 text-red-400" />
-            Workout Duration Trend
-          </CardTitle>
-        </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={workoutData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-              <XAxis dataKey="date" stroke="#ffffff" tick={{ fontSize: 12 }} />
+              <XAxis
+                dataKey="date"
+                stroke="#ffffff"
+                tick={{ fontSize: 12 }}
+                tickFormatter={(value) => formatDate(value)}
+              />
               <YAxis stroke="#ffffff" tick={{ fontSize: 12 }} />
               <Tooltip
-                contentStyle={{
-                  backgroundColor: '#272727',
-                  border: '1px solid #374151',
-                  borderRadius: '6px',
-                  color: '#fff',
+                content={({ active, payload, label }) => {
+                  if (active && payload && payload.length && label) {
+                    return (
+                      <div className="bg-[#272727] border border-[#374151] rounded p-2 text-white">
+                        <p>{formatDate(label as string | Date)}</p>
+                        <p>
+                          Duration: {formatDuration(payload[0].value as number)}
+                        </p>
+                      </div>
+                    );
+                  }
+                  return null;
                 }}
               />
               <Line
@@ -105,12 +115,6 @@ const WorkoutGraph = ({
       </Card>
 
       <Card className="darkBackground border-0">
-        <CardHeader>
-          <CardTitle className="text-white flex items-center">
-            <Target className="w-5 h-5 mr-2 text-red-400" />
-            Activity Types
-          </CardTitle>
-        </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
