@@ -16,7 +16,6 @@ import type {
   StravaWorkoutModel,
 } from '@/generated/prisma/models';
 
-
 import L from 'leaflet';
 delete (L.Icon.Default.prototype as L.Icon.Default & { _getIconUrl?: unknown })
   ._getIconUrl;
@@ -36,14 +35,13 @@ interface MapPlotProps {
 
 const MapPlot = ({ workout, isStrava }: MapPlotProps) => {
   const [routeCoordinates, setRouteCoordinates] = useState<LatLngTuple[]>([]);
-  const [mapCenter, setMapCenter] = useState<LatLngTuple>([51.505, -0.09]); 
+  const [mapCenter, setMapCenter] = useState<LatLngTuple>([51.505, -0.09]);
   const [mapZoom, setMapZoom] = useState(13);
 
   useEffect(() => {
     if (isStrava) {
       const stravaWorkout = workout as StravaWorkoutModel;
 
-  
       if (stravaWorkout.summaryPolyline) {
         try {
           const decoded = polyline.decode(stravaWorkout.summaryPolyline);
@@ -53,7 +51,6 @@ const MapPlot = ({ workout, isStrava }: MapPlotProps) => {
           ]);
           setRouteCoordinates(coordinates);
 
-      
           if (coordinates.length > 0) {
             const lats = coordinates.map((coord) => coord[0]);
             const lngs = coordinates.map((coord) => coord[1]);
@@ -61,7 +58,6 @@ const MapPlot = ({ workout, isStrava }: MapPlotProps) => {
             const centerLng = (Math.min(...lngs) + Math.max(...lngs)) / 2;
             setMapCenter([centerLat, centerLng]);
 
-  
             const latRange = Math.max(...lats) - Math.min(...lats);
             const lngRange = Math.max(...lngs) - Math.min(...lngs);
             const maxRange = Math.max(latRange, lngRange);
@@ -73,7 +69,6 @@ const MapPlot = ({ workout, isStrava }: MapPlotProps) => {
           console.error('Error decoding polyline:', error);
         }
       } else if (stravaWorkout.startLat && stravaWorkout.startLng) {
-  
         setMapCenter([stravaWorkout.startLat, stravaWorkout.startLng]);
       }
     }
@@ -81,11 +76,11 @@ const MapPlot = ({ workout, isStrava }: MapPlotProps) => {
 
   if (!isStrava || routeCoordinates.length === 0) {
     return (
-      <div className="bg-[#202020] border border-red-700/30 rounded-lg p-6">
+      <div className="bg-[#3f3f3f] border-0  rounded-lg p-6">
         <div className="text-center">
-          <div className="w-16 h-16 mx-auto mb-4 bg-gray-700 rounded-full flex items-center justify-center">
+          <div className="w-16 h-16 mx-auto mb-4 bg-red-500/70 rounded-full flex items-center justify-center">
             <svg
-              className="w-8 h-8 text-gray-400"
+              className="w-8 h-8 text-white"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -101,7 +96,7 @@ const MapPlot = ({ workout, isStrava }: MapPlotProps) => {
           <h3 className="text-lg font-semibold text-white mb-2">
             {isStrava ? 'No Route Data Available' : 'Map Not Available'}
           </h3>
-          <p className="text-gray-400">
+          <p className="text-gray-200">
             {isStrava
               ? "This workout doesn't have GPS route data."
               : 'Maps are only available for Strava workouts.'}
@@ -112,22 +107,9 @@ const MapPlot = ({ workout, isStrava }: MapPlotProps) => {
   }
 
   return (
-    <div className="bg-[#202020] border border-red-700/30 rounded-lg overflow-hidden">
+    <div className="bg-[#3f3f3f] border-0 rounded-lg overflow-hidden">
       <div className="p-4 border-b border-gray-700">
         <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-          <svg
-            className="w-5 h-5 text-red-400"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
-            />
-          </svg>
           Workout Route
         </h3>
       </div>
@@ -164,7 +146,7 @@ const MapPlot = ({ workout, isStrava }: MapPlotProps) => {
               </Popup>
             </Marker>
           )}
-      
+
           {routeCoordinates.length > 1 && (
             <Marker position={routeCoordinates[routeCoordinates.length - 1]}>
               <Popup>

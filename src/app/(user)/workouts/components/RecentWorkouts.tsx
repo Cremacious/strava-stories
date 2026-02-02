@@ -4,7 +4,7 @@ import { Calendar, Activity } from 'lucide-react';
 import { WorkoutDisplayData } from '@/lib/types/workouts.type';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { formatDate } from '@/lib/utils';
+import { formatDate, formatDuration } from '@/lib/utils';
 
 const RecentWorkouts = ({
   workoutData,
@@ -17,7 +17,7 @@ const RecentWorkouts = ({
       <Card className="darkBackground border-0">
         <CardHeader className="flex flex-row items-center justify-end">
           {workoutData.length > 5 && (
-            <Button asChild>
+            <Button size='sm' asChild>
               <Link href="/workouts/all">View All</Link>
             </Button>
           )}
@@ -47,34 +47,40 @@ const RecentWorkouts = ({
           ) : (
             <div className="space-y-4">
               {workoutData.slice(-5).map((workout, index) => (
-                <Link key={index} href={`/workouts/${workout.id}`}>
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 p-4 darkBackground3 hover:bg-red-800 rounded-lg gap-3">
-                    <div className="flex items-center space-x-4">
-                      <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center shrink-0">
-                        <Activity className="w-5 h-5 text-white" />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="font-semibold text-white truncate">
-                          {workout.type}
-                        </p>
-                        <p className="text-sm text-gray-100">
-                          {formatDate(workout.date)}
-                        </p>
-                      </div>
+                <div
+                  key={index}
+                  className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 p-4 bg-[#2e2e2e] rounded-lg gap-3"
+                >
+                  <Link
+                    href={`/workouts/${workout.id}`}
+                    className="flex items-center space-x-4 flex-1"
+                  >
+                    <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center shrink-0">
+                      <Activity className="w-5 h-5 text-white" />
                     </div>
-                    <div className="flex sm:flex-col sm:items-end gap-2 sm:gap-0">
-                      <p className="text-white font-medium">
-                        {workout.duration} min
+                    <div className="min-w-0 flex-1">
+                      <p className="font-semibold text-white truncate">
+                        {workout.type}
                       </p>
                       <p className="text-sm text-gray-100">
-                        {workout.distance > 0
-                          ? `${workout.distance} km • `
-                          : ''}
-                        {workout.calories} cal
+                        {formatDate(workout.date)}
                       </p>
                     </div>
+                  </Link>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                    <div className="text-white text-sm">
+                      {formatDuration(workout.duration)}
+                    </div>
+                    {workout.distance > 0 && (
+                      <div className="text-sm text-gray-100">
+                        {workout.distance} km
+                      </div>
+                    )}
+                    <Button asChild size="sm">
+                      <Link href={`/workouts/${workout.id}`}>View</Link>
+                    </Button>
                   </div>
-                </Link>
+                </div>
               ))}
             </div>
           )}
