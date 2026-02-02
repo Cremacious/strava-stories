@@ -14,7 +14,15 @@ import {
 import { Card, CardContent } from '@/components/ui/card';
 import { TrendingUp, Target, Activity } from 'lucide-react';
 import { WorkoutDisplayData } from '@/lib/types/workouts.type';
-import { formatDate, formatDuration } from '@/lib/utils';
+import { formatDate } from '@/lib/utils';
+import { useState } from 'react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 const typeColors: Record<string, string> = {
   Running: '#ef4444',
@@ -29,6 +37,14 @@ const WorkoutGraph = ({
 }: {
   workoutData: WorkoutDisplayData[];
 }) => {
+  const currentYear = new Date().getFullYear();
+  const [selectedYear, setSelectedYear] = useState(currentYear);
+
+ 
+  const availableYears = Array.from(
+    new Set(workoutData.map((workout) => new Date(workout.date).getFullYear())),
+  ).sort((a, b) => b - a); 
+
   if (workoutData.length === 0) {
     return (
       <Card className="darkBackground border-0">
@@ -70,6 +86,24 @@ const WorkoutGraph = ({
     color: typeColors[name] || '#8884d8',
   }));
 
+
+  const workoutsByDate = workoutData.reduce(
+    (acc, workout) => {
+      const dateKey = new Date(workout.date).toDateString();
+      acc[dateKey] = (acc[dateKey] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+
+  const chartData = Object.entries(workoutsByDate)
+    .map(([dateStr, count]) => ({
+      date: new Date(dateStr),
+      count,
+    }))
+    .sort((a, b) => a.date.getTime() - b.date.getTime())
+    .filter((item) => item.date.getFullYear() === selectedYear);
+
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -77,8 +111,25 @@ const WorkoutGraph = ({
       </div>
       <Card className="darkBackground border-0">
         <CardContent>
+          <div className="flex justify-end mb-4">
+            <Select
+              value={selectedYear.toString()}
+              onValueChange={(value) => setSelectedYear(parseInt(value))}
+            >
+              <SelectTrigger className="w-32 bg-[#2e2e2e] text-white border-none">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-[#272727] border-0 text-white">
+                {availableYears.map((year) => (
+                  <SelectItem key={year} value={year.toString()}>
+                    {year}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={workoutData}>
+            <LineChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
               <XAxis
                 dataKey="date"
@@ -93,9 +144,7 @@ const WorkoutGraph = ({
                     return (
                       <div className="bg-[#272727] border border-[#374151] rounded p-2 text-white">
                         <p>{formatDate(label as string | Date)}</p>
-                        <p>
-                          Duration: {formatDuration(payload[0].value as number)}
-                        </p>
+                        <p>Workouts: {payload[0].value}</p>
                       </div>
                     );
                   }
@@ -104,7 +153,7 @@ const WorkoutGraph = ({
               />
               <Line
                 type="monotone"
-                dataKey="duration"
+                dataKey="count"
                 stroke="#ef4444"
                 strokeWidth={2}
                 dot={{ fill: '#ef4444', strokeWidth: 2, r: 4 }}

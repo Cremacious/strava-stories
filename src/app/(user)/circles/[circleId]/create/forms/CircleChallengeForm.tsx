@@ -29,6 +29,7 @@ import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useCircleStore } from '@/stores/useCircleStore';
 import { CreateChallengeData } from '@/lib/types/challenge.type';
+import { useRouter } from 'next/navigation';
 
 type Difficulty = 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
 
@@ -41,6 +42,8 @@ const CircleChallengeForm = ({
   circleId,
   onSuccess,
 }: CircleChallengeFormProps) => {
+
+  const router = useRouter()
   const { isLoading, error, addChallengeToCircle, clearError } =
     useCircleStore();
 
@@ -92,7 +95,7 @@ const CircleChallengeForm = ({
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto bg-gray-800 border-gray-700">
+    <Card className="w-full max-w-2xl mx-auto bg-[#3F3F3F] border-0 rounded-lg mt-4">
       <CardHeader>
         <CardTitle className="text-white">Create Challenge</CardTitle>
       </CardHeader>
@@ -106,7 +109,7 @@ const CircleChallengeForm = ({
               id="title"
               {...register('title')}
               placeholder="Enter challenge title"
-              className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+              className="bg-[#2e2e2e] border-none placeholder:text-gray-400 text-white"
             />
             {errors.title && (
               <p className="text-red-500 text-sm">{errors.title.message}</p>
@@ -122,7 +125,7 @@ const CircleChallengeForm = ({
               {...register('description')}
               placeholder="Describe the challenge"
               rows={3}
-              className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+              className="bg-[#2e2e2e] border-none placeholder:text-gray-400 text-white"
             />
             {errors.description && (
               <p className="text-red-500 text-sm">
@@ -139,7 +142,7 @@ const CircleChallengeForm = ({
               id="goal"
               {...register('goal')}
               placeholder="e.g., Run 100 miles in 30 days"
-              className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+              className="bg-[#2e2e2e] border-none placeholder:text-gray-400 text-white"
             />
             {errors.goal && (
               <p className="text-red-500 text-sm">{errors.goal.message}</p>
@@ -155,7 +158,7 @@ const CircleChallengeForm = ({
               {...register('rules')}
               placeholder="Define the rules and guidelines for this challenge"
               rows={4}
-              className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+              className="bg-[#2e2e2e] border-none placeholder:text-gray-400 text-white"
             />
             {errors.rules && (
               <p className="text-red-500 text-sm">{errors.rules.message}</p>
@@ -170,8 +173,8 @@ const CircleChallengeForm = ({
                   <Button
                     variant="outline"
                     className={cn(
-                      'w-full justify-start text-left font-normal bg-gray-700 border-gray-600 text-white hover:bg-gray-600',
-                      !startDate && 'text-gray-400'
+                      'w-full justify-start text-left font-normal bg-[#2e2e2e] border-none text-white hover:bg-gray-600',
+                      !startDate && 'text-gray-400',
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
@@ -202,8 +205,8 @@ const CircleChallengeForm = ({
                   <Button
                     variant="outline"
                     className={cn(
-                      'w-full justify-start text-left font-normal bg-gray-700 border-gray-600 text-white hover:bg-gray-600',
-                      !endDate && 'text-gray-400'
+                      'w-full justify-start text-left font-normal bg-[#2e2e2e] border-none text-white hover:bg-gray-600',
+                      !endDate && 'text-gray-400',
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
@@ -235,7 +238,7 @@ const CircleChallengeForm = ({
                   setValue('difficulty', value as Difficulty)
                 }
               >
-                <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
+                <SelectTrigger className="bg-[#2e2e2e] border-none text-white">
                   <SelectValue placeholder="Select difficulty" />
                 </SelectTrigger>
                 <SelectContent className="bg-gray-800 border-gray-600">
@@ -274,7 +277,7 @@ const CircleChallengeForm = ({
                 id="category"
                 {...register('category')}
                 placeholder="e.g., Running, Strength, Cardio"
-                className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                className="bg-[#2e2e2e] border-none placeholder:text-gray-400 text-white"
               />
               {errors.category && (
                 <p className="text-red-500 text-sm">
@@ -292,7 +295,7 @@ const CircleChallengeForm = ({
               id="tags"
               {...register('tags')}
               placeholder="Enter tags separated by commas (e.g., fitness, endurance, team)"
-              className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+              className="bg-[#2e2e2e] border-none placeholder:text-gray-400 text-white"
             />
             <p className="text-gray-400 text-xs">
               Separate multiple tags with commas
@@ -312,10 +315,10 @@ const CircleChallengeForm = ({
             <Button
               type="button"
               variant="outline"
-              onClick={() => reset()}
-              className="border-gray-600 text-gray-300 hover:bg-gray-700"
+              onClick={() => router.push(`/circles/${circleId}`)}
+              className=""
             >
-              Reset
+              Cancel
             </Button>
             <Button
               type="submit"

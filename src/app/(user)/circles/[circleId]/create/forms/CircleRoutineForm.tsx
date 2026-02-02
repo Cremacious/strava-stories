@@ -181,7 +181,7 @@ export default function CircleRoutineForm({
           </label>
           <select
             {...register('difficulty')}
-            className="w-full bg-gray-700 border-gray-600 text-white rounded p-2"
+            className="w-full bg-[#2e2e2e] border-gray-600 text-white rounded p-2"
           >
             <option value="BEGINNER">Beginner</option>
             <option value="INTERMEDIATE">Intermediate</option>
@@ -231,7 +231,7 @@ export default function CircleRoutineForm({
           <Input
             {...register('fitnessGoals')}
             placeholder="e.g., Build muscle, Lose weight"
-            className="bg-gray-700 border-gray-600 text-white"
+            className="bg-[#2e2e2e] border-gray-600 text-white"
           />
         </div>
 
@@ -242,7 +242,7 @@ export default function CircleRoutineForm({
           <Input
             {...register('tags')}
             placeholder="e.g., HIIT, Core, Upper Body"
-            className="bg-gray-700 border-gray-600 text-white"
+            className="bg-[#2e2e2e] border-gray-600 text-white"
           />
         </div>
 
@@ -251,127 +251,150 @@ export default function CircleRoutineForm({
             Warm-Up Steps (Optional)
           </label>
           {warmUps.map((warmUp, index) => (
-            <div
-              key={index}
-              className="border border-gray-700 p-4 mb-2 rounded bg-gray-800"
-            >
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                <Input
-                  placeholder="Activity (e.g., Jumping Jacks)"
-                  value={warmUp.activity}
-                  onChange={(e) =>
-                    updateWarmUp(index, 'activity', e.target.value)
-                  }
-                  className="bg-gray-700 border-gray-600 text-white"
-                />
-                <Input
-                  type="number"
-                  placeholder="Duration (minutes)"
-                  value={warmUp.duration}
-                  onChange={(e) =>
-                    updateWarmUp(index, 'duration', Number(e.target.value))
-                  }
-                  className="bg-gray-700 border-gray-600 text-white"
-                  min="0"
-                />
-                <Textarea
-                  placeholder="Instructions"
-                  value={warmUp.instructions}
-                  onChange={(e) =>
-                    updateWarmUp(index, 'instructions', e.target.value)
-                  }
-                  className="bg-gray-700 border-gray-600 text-white"
-                  rows={2}
-                />
+            <div key={index} className=" mb-2 rounded-md">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-gray-300 mb-1">Activity</label>
+                  <Input
+                    placeholder="Activity (e.g., Jumping Jacks)"
+                    value={warmUp.activity}
+                    onChange={(e) =>
+                      updateWarmUp(index, 'activity', e.target.value)
+                    }
+                    className="bg-[#2e2e2e] text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-300 mb-1">
+                    Duration (minutes)
+                  </label>
+                  <Input
+                    type="number"
+                    placeholder="Duration (minutes)"
+                    value={warmUp.duration}
+                    onChange={(e) =>
+                      updateWarmUp(index, 'duration', Number(e.target.value))
+                    }
+                    className="bg-[#2e2e2e] text-white placeholder:text-gray-400"
+                    min="0"
+                  />
+                </div>
+                <div className="col-span-2">
+                  <label className="block text-gray-300 mb-1">
+                    Instructions
+                  </label>
+                  <Textarea
+                    placeholder="Instructions"
+                    value={warmUp.instructions}
+                    onChange={(e) =>
+                      updateWarmUp(index, 'instructions', e.target.value)
+                    }
+                    className="bg-[#2e2e2e] border-0 text-white"
+                    rows={2}
+                  />
+                </div>
               </div>
               <Button
                 type="button"
+                variant={'outline'}
                 onClick={() => removeWarmUp(index)}
-                className="mt-2 bg-red-500 hover:bg-red-600 text-white"
+                className="mt-2 "
               >
                 Remove Warm-Up
               </Button>
             </div>
           ))}
-          <Button
-            type="button"
-            onClick={addWarmUp}
-            className="mt-2 bg-blue-500 hover:bg-blue-600 text-white"
-          >
+          <Button type="button" onClick={addWarmUp} className="mt-2 ">
             Add Warm-Up Step
           </Button>
         </div>
 
-        <div>
+        <div className="mt-4">
           <label className="block text-gray-300 mb-2 font-semibold">
             Main Exercises (Optional)
           </label>
           {exercises.map((exercise, index) => (
-            <div
-              key={index}
-              className="border border-gray-700 p-4 mb-2 rounded bg-gray-800"
-            >
+            <div key={index} className=" mb-2 rounded ">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                <Input
-                  placeholder="Exercise Name (e.g., Push-ups)"
-                  value={exercise.name}
-                  onChange={(e) =>
-                    updateExercise(index, 'name', e.target.value)
-                  }
-                  className="bg-gray-700 border-gray-600 text-white"
-                />
-                <Input
-                  type="number"
-                  placeholder="Sets"
-                  value={exercise.sets}
-                  onChange={(e) =>
-                    updateExercise(index, 'sets', Number(e.target.value))
-                  }
-                  className="bg-gray-700 border-gray-600 text-white"
-                  min="0"
-                />
-                <Input
-                  type="number"
-                  placeholder="Reps per Set"
-                  value={exercise.reps}
-                  onChange={(e) =>
-                    updateExercise(index, 'reps', Number(e.target.value))
-                  }
-                  className="bg-gray-700 border-gray-600 text-white"
-                  min="0"
-                />
-                <Input
-                  type="number"
-                  placeholder="Rest (seconds)"
-                  value={exercise.rest}
-                  onChange={(e) =>
-                    updateExercise(index, 'rest', Number(e.target.value))
-                  }
-                  className="bg-gray-700 border-gray-600 text-white"
-                  min="0"
-                />
-                <Textarea
-                  placeholder="Instructions"
-                  value={exercise.instructions}
-                  onChange={(e) =>
-                    updateExercise(index, 'instructions', e.target.value)
-                  }
-                  className="bg-gray-700 border-gray-600 text-white"
-                  rows={2}
-                />
-                <Input
-                  placeholder="Equipment (e.g., Dumbbells)"
-                  value={exercise.equipment}
-                  onChange={(e) =>
-                    updateExercise(index, 'equipment', e.target.value)
-                  }
-                  className="bg-gray-700 border-gray-600 text-white"
-                />
+                <div>
+                  <label className="block text-gray-300 mb-1">Exercise Name</label>
+                  <Input
+                    placeholder="Exercise Name (e.g., Push-ups)"
+                    value={exercise.name}
+                    onChange={(e) =>
+                      updateExercise(index, 'name', e.target.value)
+                    }
+                    className="bg-[#2e2e2e] border-0 text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-300 mb-1">Sets</label>
+                  <Input
+                    type="number"
+                    placeholder="Sets"
+                    value={exercise.sets}
+                    onChange={(e) =>
+                      updateExercise(index, 'sets', Number(e.target.value))
+                    }
+                    className="bg-[#2e2e2e] border-0 text-white"
+                    min="0"
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-300 mb-1">Reps per Set</label>
+                  <Input
+                    type="number"
+                    placeholder="Reps per Set"
+                    value={exercise.reps}
+                    onChange={(e) =>
+                      updateExercise(index, 'reps', Number(e.target.value))
+                    }
+                    className="bg-[#2e2e2e] border-0 text-white"
+                    min="0"
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-300 mb-1">Rest (seconds)</label>
+                  <Input
+                    type="number"
+                    placeholder="Rest (seconds)"
+                    value={exercise.rest}
+                    onChange={(e) =>
+                      updateExercise(index, 'rest', Number(e.target.value))
+                    }
+                    className="bg-[#2e2e2e] border-0 text-white"
+                    min="0"
+                  />
+                </div>
+                <div className="col-span-2">
+                  <label className="block text-gray-300 mb-1">Instructions</label>
+                  <Textarea
+                    placeholder="Instructions"
+                    value={exercise.instructions}
+                    onChange={(e) =>
+                      updateExercise(index, 'instructions', e.target.value)
+                    }
+                    className="bg-[#2e2e2e] border-0 text-white"
+                    rows={2}
+                  />
+                </div>
+                <div className="col-span-2">
+                  <label className="block text-gray-300 mb-1">Equipment</label>
+                  <Input
+                    placeholder="Equipment (e.g., Dumbbells)"
+                    value={exercise.equipment}
+                    onChange={(e) =>
+                      updateExercise(index, 'equipment', e.target.value)
+                    }
+                    className="bg-[#2e2e2e] border-0 text-white"
+                  />
+                </div>
               </div>
               <Button
                 type="button"
+                variant={'outline'}
                 onClick={() => removeExercise(index)}
-                className="mt-2 bg-red-500 hover:bg-red-600 text-white"
+                className="mt-2 "
               >
                 Remove Exercise
               </Button>
@@ -380,7 +403,7 @@ export default function CircleRoutineForm({
           <Button
             type="button"
             onClick={addExercise}
-            className="mt-2 bg-green-500 hover:bg-green-600 text-white"
+            className="mt-2 "
           >
             Add Exercise
           </Button>
@@ -389,7 +412,7 @@ export default function CircleRoutineForm({
         <Button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-red-500 hover:bg-red-600 disabled:bg-red-900 disabled:cursor-not-allowed"
+          className="w-full  disabled:cursor-not-allowed"
         >
           {isLoading ? 'Creating Routine...' : 'Create Routine'}
         </Button>

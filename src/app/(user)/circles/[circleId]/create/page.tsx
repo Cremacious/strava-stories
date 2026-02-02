@@ -8,5 +8,9 @@ export default async function CircleFeatureCreatePage({
   params: Promise<{ circleId: string }>;
 }) {
   const { circleId } = await params;
-  return <CreateForm type={searchParams.type} circleId={circleId} />;
+  return (
+    <div className='px-2 md:px-4'>
+      <CreateForm type={searchParams.type} circleId={circleId} />
+    </div>
+  );
 }

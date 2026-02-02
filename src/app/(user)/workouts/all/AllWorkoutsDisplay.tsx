@@ -23,7 +23,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import Pagination from '../../../../components/layout/Pagination';
-import { formatDuration } from '@/lib/utils';
+import { formatDuration, formatDate } from '@/lib/utils';
 
 type SortOption = 'date-asc' | 'date-desc';
 type ViewMode = 'grid' | 'list';
@@ -64,13 +64,7 @@ const AllWorkoutsDisplay = ({
     return filteredAndSortedWorkouts.slice(startIndex, endIndex);
   }, [filteredAndSortedWorkouts, currentPage, itemsPerPage]);
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
-  };
+
 
   const WorkoutCard = ({ workout }: { workout: WorkoutDisplayData }) => (
     <Card className="bg-[#2e2e2e] border-none hover:border-red-500  h-full">
