@@ -36,7 +36,7 @@ const CircleEventsPage = async ({
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-4">
+    <div className="min-h-screen my-4 px-2 md:px-4 text-white">
       <div className="max-w-4xl mx-auto">
         <div className="mb-6">
           <Link

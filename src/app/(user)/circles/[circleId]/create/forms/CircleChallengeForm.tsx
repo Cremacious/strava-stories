@@ -30,6 +30,7 @@ import { cn } from '@/lib/utils';
 import { useCircleStore } from '@/stores/useCircleStore';
 import { CreateChallengeData } from '@/lib/types/challenge.type';
 import { useRouter } from 'next/navigation';
+import BackButton from '@/components/shared/BackButton';
 
 type Difficulty = 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
 
@@ -42,8 +43,7 @@ const CircleChallengeForm = ({
   circleId,
   onSuccess,
 }: CircleChallengeFormProps) => {
-
-  const router = useRouter()
+  const router = useRouter();
   const { isLoading, error, addChallengeToCircle, clearError } =
     useCircleStore();
 
@@ -87,6 +87,7 @@ const CircleChallengeForm = ({
       const result = await addChallengeToCircle(transformedData, circleId);
       if (result.success) {
         reset();
+        router.push(`/circles/${circleId}`);
         onSuccess?.();
       }
     } catch (error) {
@@ -95,242 +96,249 @@ const CircleChallengeForm = ({
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto bg-[#3F3F3F] border-0 rounded-lg mt-4">
-      <CardHeader>
-        <CardTitle className="text-white">Create Challenge</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="title" className="text-white">
-              Challenge Title *
-            </Label>
-            <Input
-              id="title"
-              {...register('title')}
-              placeholder="Enter challenge title"
-              className="bg-[#2e2e2e] border-none placeholder:text-gray-400 text-white"
-            />
-            {errors.title && (
-              <p className="text-red-500 text-sm">{errors.title.message}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="description" className="text-white">
-              Description *
-            </Label>
-            <Textarea
-              id="description"
-              {...register('description')}
-              placeholder="Describe the challenge"
-              rows={3}
-              className="bg-[#2e2e2e] border-none placeholder:text-gray-400 text-white"
-            />
-            {errors.description && (
-              <p className="text-red-500 text-sm">
-                {errors.description.message}
-              </p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="goal" className="text-white">
-              Challenge Goal *
-            </Label>
-            <Input
-              id="goal"
-              {...register('goal')}
-              placeholder="e.g., Run 100 miles in 30 days"
-              className="bg-[#2e2e2e] border-none placeholder:text-gray-400 text-white"
-            />
-            {errors.goal && (
-              <p className="text-red-500 text-sm">{errors.goal.message}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="rules" className="text-white">
-              Rules & Guidelines *
-            </Label>
-            <Textarea
-              id="rules"
-              {...register('rules')}
-              placeholder="Define the rules and guidelines for this challenge"
-              rows={4}
-              className="bg-[#2e2e2e] border-none placeholder:text-gray-400 text-white"
-            />
-            {errors.rules && (
-              <p className="text-red-500 text-sm">{errors.rules.message}</p>
-            )}
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <>
+      <BackButton href={`/circles/${circleId}`} text="Back to Circle" />
+      <Card className="w-full max-w-2xl mx-auto bg-[#3F3F3F] border-0 rounded-lg mt-4">
+        <CardHeader>
+          <CardTitle className="text-white">Create Challenge</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-2">
-              <Label className="text-white">Start Date (Optional)</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      'w-full justify-start text-left font-normal bg-[#2e2e2e] border-none text-white hover:bg-gray-600',
-                      !startDate && 'text-gray-400',
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {startDate ? format(startDate, 'PPP') : 'Pick a start date'}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 bg-gray-800 border-gray-600">
-                  <Calendar
-                    mode="single"
-                    selected={startDate}
-                    onSelect={(date) => setValue('startDate', date)}
-                    initialFocus
-                    className="text-white"
-                  />
-                </PopoverContent>
-              </Popover>
-              {errors.startDate && (
-                <p className="text-red-500 text-sm">
-                  {errors.startDate.message}
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label className="text-white">End Date *</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      'w-full justify-start text-left font-normal bg-[#2e2e2e] border-none text-white hover:bg-gray-600',
-                      !endDate && 'text-gray-400',
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {endDate ? format(endDate, 'PPP') : 'Pick an end date'}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 bg-gray-800 border-gray-600">
-                  <Calendar
-                    mode="single"
-                    selected={endDate}
-                    onSelect={(date) => setValue('endDate', date)}
-                    initialFocus
-                    className="text-white"
-                  />
-                </PopoverContent>
-              </Popover>
-              {errors.endDate && (
-                <p className="text-red-500 text-sm">{errors.endDate.message}</p>
-              )}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label className="text-white">Difficulty *</Label>
-              <Select
-                value={watch('difficulty')}
-                onValueChange={(value) =>
-                  setValue('difficulty', value as Difficulty)
-                }
-              >
-                <SelectTrigger className="bg-[#2e2e2e] border-none text-white">
-                  <SelectValue placeholder="Select difficulty" />
-                </SelectTrigger>
-                <SelectContent className="bg-gray-800 border-gray-600">
-                  <SelectItem
-                    value="BEGINNER"
-                    className="text-white hover:bg-gray-700"
-                  >
-                    Beginner
-                  </SelectItem>
-                  <SelectItem
-                    value="INTERMEDIATE"
-                    className="text-white hover:bg-gray-700"
-                  >
-                    Intermediate
-                  </SelectItem>
-                  <SelectItem
-                    value="ADVANCED"
-                    className="text-white hover:bg-gray-700"
-                  >
-                    Advanced
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-              {errors.difficulty && (
-                <p className="text-red-500 text-sm">
-                  {errors.difficulty.message}
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="category" className="text-white">
-                Category (Optional)
+              <Label htmlFor="title" className="text-white">
+                Challenge Title *
               </Label>
               <Input
-                id="category"
-                {...register('category')}
-                placeholder="e.g., Running, Strength, Cardio"
+                id="title"
+                {...register('title')}
+                placeholder="Enter challenge title"
                 className="bg-[#2e2e2e] border-none placeholder:text-gray-400 text-white"
               />
-              {errors.category && (
+              {errors.title && (
+                <p className="text-red-500 text-sm">{errors.title.message}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="description" className="text-white">
+                Description *
+              </Label>
+              <Textarea
+                id="description"
+                {...register('description')}
+                placeholder="Describe the challenge"
+                rows={3}
+                className="bg-[#2e2e2e] border-none placeholder:text-gray-400 text-white"
+              />
+              {errors.description && (
                 <p className="text-red-500 text-sm">
-                  {errors.category.message}
+                  {errors.description.message}
                 </p>
               )}
             </div>
-          </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="tags" className="text-white">
-              Tags (Optional)
-            </Label>
-            <Input
-              id="tags"
-              {...register('tags')}
-              placeholder="Enter tags separated by commas (e.g., fitness, endurance, team)"
-              className="bg-[#2e2e2e] border-none placeholder:text-gray-400 text-white"
-            />
-            <p className="text-gray-400 text-xs">
-              Separate multiple tags with commas
-            </p>
-            {errors.tags && (
-              <p className="text-red-500 text-sm">{errors.tags.message}</p>
-            )}
-          </div>
-
-          {error && (
-            <div className="bg-red-500/10 border border-red-500 text-red-500 px-4 py-2 rounded">
-              {error}
+            <div className="space-y-2">
+              <Label htmlFor="goal" className="text-white">
+                Challenge Goal *
+              </Label>
+              <Input
+                id="goal"
+                {...register('goal')}
+                placeholder="e.g., Run 100 miles in 30 days"
+                className="bg-[#2e2e2e] border-none placeholder:text-gray-400 text-white"
+              />
+              {errors.goal && (
+                <p className="text-red-500 text-sm">{errors.goal.message}</p>
+              )}
             </div>
-          )}
 
-          <div className="flex justify-end space-x-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => router.push(`/circles/${circleId}`)}
-              className=""
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              disabled={isLoading}
-              className="bg-red-600 hover:bg-red-700 text-white"
-            >
-              {isLoading ? 'Creating...' : 'Create Challenge'}
-            </Button>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+            <div className="space-y-2">
+              <Label htmlFor="rules" className="text-white">
+                Rules & Guidelines *
+              </Label>
+              <Textarea
+                id="rules"
+                {...register('rules')}
+                placeholder="Define the rules and guidelines for this challenge"
+                rows={4}
+                className="bg-[#2e2e2e] border-none placeholder:text-gray-400 text-white"
+              />
+              {errors.rules && (
+                <p className="text-red-500 text-sm">{errors.rules.message}</p>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label className="text-white">Start Date (Optional)</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        'w-full justify-start text-left font-normal bg-[#2e2e2e] border-none text-white hover:bg-gray-600',
+                        !startDate && 'text-gray-400',
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {startDate
+                        ? format(startDate, 'PPP')
+                        : 'Pick a start date'}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0 bg-gray-800 border-gray-600">
+                    <Calendar
+                      mode="single"
+                      selected={startDate}
+                      onSelect={(date) => setValue('startDate', date)}
+                      initialFocus
+                      className="text-white"
+                    />
+                  </PopoverContent>
+                </Popover>
+                {errors.startDate && (
+                  <p className="text-red-500 text-sm">
+                    {errors.startDate.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-white">End Date *</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        'w-full justify-start text-left font-normal bg-[#2e2e2e] border-none text-white hover:bg-gray-600',
+                        !endDate && 'text-gray-400',
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {endDate ? format(endDate, 'PPP') : 'Pick an end date'}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0 bg-gray-800 border-gray-600">
+                    <Calendar
+                      mode="single"
+                      selected={endDate}
+                      onSelect={(date) => setValue('endDate', date)}
+                      initialFocus
+                      className="text-white"
+                    />
+                  </PopoverContent>
+                </Popover>
+                {errors.endDate && (
+                  <p className="text-red-500 text-sm">
+                    {errors.endDate.message}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label className="text-white">Difficulty *</Label>
+                <Select
+                  value={watch('difficulty')}
+                  onValueChange={(value) =>
+                    setValue('difficulty', value as Difficulty)
+                  }
+                >
+                  <SelectTrigger className="bg-[#2e2e2e] border-none text-white">
+                    <SelectValue placeholder="Select difficulty" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-gray-800 border-gray-600">
+                    <SelectItem
+                      value="BEGINNER"
+                      className="text-white hover:bg-gray-700"
+                    >
+                      Beginner
+                    </SelectItem>
+                    <SelectItem
+                      value="INTERMEDIATE"
+                      className="text-white hover:bg-gray-700"
+                    >
+                      Intermediate
+                    </SelectItem>
+                    <SelectItem
+                      value="ADVANCED"
+                      className="text-white hover:bg-gray-700"
+                    >
+                      Advanced
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+                {errors.difficulty && (
+                  <p className="text-red-500 text-sm">
+                    {errors.difficulty.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="category" className="text-white">
+                  Category (Optional)
+                </Label>
+                <Input
+                  id="category"
+                  {...register('category')}
+                  placeholder="e.g., Running, Strength, Cardio"
+                  className="bg-[#2e2e2e] border-none placeholder:text-gray-400 text-white"
+                />
+                {errors.category && (
+                  <p className="text-red-500 text-sm">
+                    {errors.category.message}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="tags" className="text-white">
+                Tags (Optional)
+              </Label>
+              <Input
+                id="tags"
+                {...register('tags')}
+                placeholder="Enter tags separated by commas (e.g., fitness, endurance, team)"
+                className="bg-[#2e2e2e] border-none placeholder:text-gray-400 text-white"
+              />
+              <p className="text-gray-400 text-xs">
+                Separate multiple tags with commas
+              </p>
+              {errors.tags && (
+                <p className="text-red-500 text-sm">{errors.tags.message}</p>
+              )}
+            </div>
+
+            {error && (
+              <div className="bg-red-500/10 border border-red-500 text-red-500 px-4 py-2 rounded">
+                {error}
+              </div>
+            )}
+
+            <div className="flex justify-end space-x-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => router.push(`/circles/${circleId}`)}
+                className=""
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="bg-red-600 hover:bg-red-700 text-white"
+              >
+                {isLoading ? 'Creating...' : 'Create Challenge'}
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>{' '}
+    </>
   );
 };
 
