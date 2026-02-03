@@ -53,6 +53,13 @@ export type CircleWorkout = {
   xpEarned?: number | null;
 };
 
+export type CircleMember = {
+  id: string;
+  name: string;
+  avatar: string | null;
+  role: 'admin' | 'member' | 'pending';
+};
+
 export type Circles = Circle[];
 export type FeaturedChallenges = FeaturedChallenge[];
 export type RecentHighlights = RecentHighlight[];

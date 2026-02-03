@@ -1,7 +1,7 @@
 import cloudinary from '@/lib/cloudinary';
 
 export async function deleteCloudinaryImage(
-  imageUrl: string | null | undefined
+  imageUrl: string | null | undefined,
 ): Promise<void> {
   if (!imageUrl || !imageUrl.includes('cloudinary.com')) {
     return;

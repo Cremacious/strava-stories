@@ -690,7 +690,6 @@ export async function getRecommendedCircles(): Promise<{
       return { success: false, error: 'User not authenticated', circles: [] };
     }
 
-
     const friendships = await prisma.friendship.findMany({
       where: {
         OR: [
@@ -761,7 +760,6 @@ export async function getRecommendedCircles(): Promise<{
       },
     });
 
-
     const circleMap = new Map<
       string,
       {
@@ -789,7 +787,6 @@ export async function getRecommendedCircles(): Promise<{
       });
     }
 
- 
     const recommendedCircles: RecommendedCircle[] = Array.from(
       circleMap.values(),
     )
@@ -829,6 +826,216 @@ export async function getRecommendedCircles(): Promise<{
           ? error.message
           : 'Failed to fetch recommended circles',
       circles: [],
+    };
+  }
+}
+
+export interface UpdateCircleData {
+  name?: string;
+  description?: string;
+  coverImage?: string;
+}
+
+export async function updateCircleDetails(
+  circleId: string,
+  data: UpdateCircleData,
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return { success: false, error: 'User not authenticated' };
+    }
+
+    const circle = await prisma.circle.findUnique({
+      where: { id: circleId },
+      select: { ownerId: true },
+    });
+
+    if (!circle) {
+      return { success: false, error: 'Circle not found' };
+    }
+
+    if (circle.ownerId !== user.id) {
+      return {
+        success: false,
+        error: 'Only the owner can update circle details',
+      };
+    }
+
+    await prisma.circle.update({
+      where: { id: circleId },
+      data: {
+        ...(data.name && { name: data.name }),
+        ...(data.description !== undefined && {
+          description: data.description,
+        }),
+        ...(data.coverImage !== undefined && { coverImage: data.coverImage }),
+      },
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error updating circle details:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to update circle',
+    };
+  }
+}
+
+export async function getCircleMembers(circleId: string) {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return { success: false, error: 'User not authenticated', members: [] };
+    }
+
+    const membership = await prisma.circleMember.findUnique({
+      where: {
+        circleId_userId: {
+          circleId,
+          userId: user.id,
+        },
+      },
+    });
+
+    if (!membership || membership.status !== 'ACTIVE') {
+      return {
+        success: false,
+        error: 'Unauthorized to view members',
+        members: [],
+      };
+    }
+
+    const members = await prisma.circleMember.findMany({
+      where: {
+        circleId,
+        status: 'ACTIVE',
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            avatarUrl: true,
+            bio: true,
+          },
+        },
+      },
+      orderBy: {
+        joinedAt: 'asc',
+      },
+    });
+
+    const formattedMembers = members.map((member) => ({
+      id: member.id,
+      name: member.user.name || 'Unknown User',
+      avatar: member.user.avatarUrl,
+      role:
+        member.role === 'OWNER' || member.role === 'MODERATOR'
+          ? 'admin'
+          : ('member' as 'admin' | 'member' | 'pending'),
+    }));
+
+    return { success: true, members: formattedMembers };
+  } catch (error) {
+    console.error('Error fetching circle members:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to fetch members',
+      members: [],
+    };
+  }
+}
+
+export async function updateCircleMember(
+  circleId: string,
+  memberId: string,
+  updates: { role?: string; action?: string },
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return { success: false, error: 'User not authenticated' };
+    }
+
+  
+    const circle = await prisma.circle.findUnique({
+      where: { id: circleId },
+      select: { ownerId: true },
+    });
+
+    if (!circle) {
+      return { success: false, error: 'Circle not found' };
+    }
+
+    if (circle.ownerId !== user.id) {
+      return { success: false, error: 'Only the owner can manage members' };
+    }
+
+    
+    const member = await prisma.circleMember.findUnique({
+      where: { id: memberId },
+    });
+
+    if (!member) {
+      return { success: false, error: 'Member not found' };
+    }
+
+    if (member.circleId !== circleId) {
+      return { success: false, error: 'Member does not belong to this circle' };
+    }
+
+  
+    if (member.role === 'OWNER') {
+      return { success: false, error: 'Cannot modify the circle owner' };
+    }
+
+    if (updates.action === 'remove') {
+    
+      await prisma.circleMember.delete({
+        where: { id: memberId },
+      });
+      return { success: true };
+    } else if (updates.role) {
+     
+      let dbRole: 'MEMBER' | 'MODERATOR';
+      if (updates.role === 'admin') {
+        dbRole = 'MODERATOR';
+      } else if (updates.role === 'member') {
+        dbRole = 'MEMBER';
+      } else {
+        return { success: false, error: 'Invalid role' };
+      }
+
+      await prisma.circleMember.update({
+        where: { id: memberId },
+        data: { role: dbRole },
+      });
+      return { success: true };
+    }
+
+    return { success: false, error: 'No valid update specified' };
+  } catch (error) {
+    console.error('Error updating circle member:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to update member',
     };
   }
 }

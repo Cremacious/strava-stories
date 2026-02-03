@@ -13,6 +13,8 @@ import { getUserProfile } from '@/actions/user.actions';
 import { getCirclePosts } from '@/actions/post.actions';
 import JoinCircleButton from './components/JoinCircleButton';
 import PendingCircleRequests from './components/PendingCircleRequests';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 const CirclePage = async ({
   params,
@@ -78,11 +80,18 @@ const CirclePage = async ({
               </div> */}
             </div>
           </div>
-          <JoinCircleButton
-            isMember={circle.isMember}
-            membershipStatus={circle.membershipStatus}
-            circleId={circleId}
-          />
+
+          {isOwner ? (
+            <Link href={`/circles/${circleId}/settings`}>
+            <Button variant={'outline'}>Settings</Button>
+          </Link>
+          ) : (
+            <JoinCircleButton
+              isMember={circle.isMember}
+              membershipStatus={circle.membershipStatus}
+              circleId={circleId}
+            />
+          )}
         </div>
       </div>
 

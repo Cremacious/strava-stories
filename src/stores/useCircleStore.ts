@@ -5,6 +5,9 @@ import {
   leaveCircle,
   approveCircleRequest,
   rejectCircleRequest,
+  updateCircleDetails,
+  updateCircleMember,
+  UpdateCircleData,
 } from '@/actions/circle.actions';
 import { addWorkoutToCircle } from '@/actions/workout.actions';
 import { WorkoutData } from '@/lib/types/workouts.type';
@@ -105,6 +108,15 @@ interface CircleStore {
   rejectCircleRequest: (
     circleId: string,
     userId: string,
+  ) => Promise<{ success: boolean; error?: string }>;
+  updateCircleDetails: (
+    circleId: string,
+    data: UpdateCircleData,
+  ) => Promise<{ success: boolean; error?: string }>;
+  updateCircleMember: (
+    circleId: string,
+    memberId: string,
+    updates: { role?: string; action?: string },
   ) => Promise<{ success: boolean; error?: string }>;
 }
 
@@ -318,6 +330,50 @@ export const useCircleStore = create<CircleStore>((set) => ({
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';
       set({ error: errorMessage, isRejecting: false });
+      return { success: false, error: errorMessage };
+    }
+  },
+  updateCircleDetails: async (circleId: string, data: UpdateCircleData) => {
+    set({ isLoading: true, error: null });
+    try {
+      const result = await updateCircleDetails(circleId, data);
+      if (!result.success) {
+        set({
+          error: result.error || 'Failed to update circle details',
+          isLoading: false,
+        });
+        return result;
+      }
+      set({ isLoading: false });
+      return result;
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      set({ error: errorMessage, isLoading: false });
+      return { success: false, error: errorMessage };
+    }
+  },
+  updateCircleMember: async (
+    circleId: string,
+    memberId: string,
+    updates: { role?: string; action?: string },
+  ) => {
+    set({ isLoading: true, error: null });
+    try {
+      const result = await updateCircleMember(circleId, memberId, updates);
+      if (!result.success) {
+        set({
+          error: result.error || 'Failed to update member',
+          isLoading: false,
+        });
+        return result;
+      }
+      set({ isLoading: false });
+      return result;
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      set({ error: errorMessage, isLoading: false });
       return { success: false, error: errorMessage };
     }
   },
