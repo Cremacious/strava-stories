@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { User } from '@/lib/types/user.type';
 import {
   getUserSession,
   updateUserProfileImage,
@@ -7,31 +8,19 @@ import {
   getCurrentUserAvatar,
 } from '@/actions/user.actions';
 
-interface User {
-  id: string;
-  username: string;
-  email: string;
-  avatarUrl?: string;
-  bio?: string;
-  city?: string;
-  state?: string;
-  country?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
 interface UserStore {
   userId: string | null;
   user: User | null;
   setUserId: (id: string | null) => void;
+  setUser: (user: User | null) => void;
   fetchUserId: () => Promise<void>;
   fetchUser: () => Promise<void>;
   updateUserProfileImage: (
-    formData: FormData,
+    formData: FormData
   ) => Promise<{ success: boolean; imageUrl?: string; error?: string }>;
   updateUserLocation: (
     userId: string,
-    location: { city: string; state: string; country: string },
+    location: { city: string; state: string; country: string }
   ) => Promise<{ success: boolean; error?: string }>;
   getUserAvatar: () => Promise<string | null>;
 }
@@ -40,6 +29,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
   userId: null,
   user: null,
   setUserId: (id: string | null) => set({ userId: id }),
+  setUser: (user: User | null) => set({ user }),
   fetchUserId: async () => {
     const sessionResult = await getUserSession();
     if (sessionResult.success && sessionResult.user) {
@@ -68,13 +58,13 @@ export const useUserStore = create<UserStore>((set, get) => ({
   },
   updateUserLocation: async (
     userId: string,
-    location: { city: string; state: string; country: string },
+    location: { city: string; state: string; country: string }
   ) => {
     const result = await updateUserLocation(
       userId,
       location.city,
       location.state,
-      location.country,
+      location.country
     );
     if (result.success) {
       const currentUser = get().user;

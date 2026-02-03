@@ -60,7 +60,15 @@ export default function Home() {
                   className=" text-lg"
                 >
                   <Link href="/auth/login">Sign In</Link>
-                </Button>
+                </Button>{' '}
+                <Button
+                  size="lg"
+                  variant="secondary"
+                  asChild
+                  className=" text-lg bg-gray-700 hover:bg-gray-600 text-white border-gray-600"
+                >
+                  <Link href="/demo">View Demo</Link>
+                </Button>{' '}
               </div>
             </div>
           </div>
@@ -268,7 +276,6 @@ export default function Home() {
                 Your workouts, beautifully organized.
               </p>
               <ul className="space-y-2">
-              
                 <li className="flex items-center text-gray-300">
                   <CheckCircle className="w-4 h-4 text-red-500 mr-2" />
                   Progress visualization

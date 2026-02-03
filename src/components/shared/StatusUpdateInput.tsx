@@ -34,12 +34,14 @@ const StatusUpdateInput = ({
   userImage,
   onPostCreated,
   friends = [],
+  isDemo = false,
 }: {
   location: string;
   id?: string;
   userImage?: string;
   friends: FriendWithDetails[];
   onPostCreated?: () => void;
+  isDemo?: boolean;
 }) => {
   const { createPost, loading } = usePostStore();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -47,7 +49,7 @@ const StatusUpdateInput = ({
     'compose' | 'tagFriends' | 'location'
   >('compose');
   const [selectedFriends, setSelectedFriends] = useState<FriendWithDetails[]>(
-    [],
+    []
   );
   const [friendSearch, setFriendSearch] = useState('');
   const [selectedCities, setSelectedCities] = useState<string[]>([]);
@@ -74,6 +76,20 @@ const StatusUpdateInput = ({
   const watchedImages = useWatch({ control, name: 'images' });
 
   const handleCreatePost = async (data: FormData) => {
+    if (isDemo) {
+      alert(
+        'Demo Mode: Posting is disabled. This is a preview of the app functionality.'
+      );
+      reset();
+      setIsDialogOpen(false);
+      setDialogMode('compose');
+      setSelectedFriends([]);
+      setFriendSearch('');
+      setSelectedCities([]);
+      setCitySearch('');
+      return;
+    }
+
     const tags = [
       ...selectedFriends.map((friend) => ({
         type: 'USER' as const,
@@ -111,13 +127,13 @@ const StatusUpdateInput = ({
     setSelectedFriends((prev) =>
       prev.some((f) => f.id === friend.id)
         ? prev.filter((f) => f.id !== friend.id)
-        : [...prev, friend],
+        : [...prev, friend]
     );
   };
 
   const handleCitySelect = (city: string) => {
     setSelectedCities((prev) =>
-      prev.includes(city) ? prev.filter((c) => c !== city) : [...prev, city],
+      prev.includes(city) ? prev.filter((c) => c !== city) : [...prev, city]
     );
   };
 
@@ -125,11 +141,11 @@ const StatusUpdateInput = ({
     (friend) =>
       !friendSearch.trim() ||
       (friend.name &&
-        friend.name.toLowerCase().includes(friendSearch.toLowerCase())),
+        friend.name.toLowerCase().includes(friendSearch.toLowerCase()))
   );
 
   const filteredCities = cities.filter((city) =>
-    city.toLowerCase().includes(citySearch.toLowerCase()),
+    city.toLowerCase().includes(citySearch.toLowerCase())
   );
 
   return (
