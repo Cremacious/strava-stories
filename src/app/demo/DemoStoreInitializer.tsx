@@ -7,7 +7,6 @@ export default function DemoStoreInitializer() {
   const { setUser } = useUserStore();
 
   useEffect(() => {
-    // Set mock user data for demo
     setUser({
       id: 'demo-user-123',
       username: 'DemoUser',

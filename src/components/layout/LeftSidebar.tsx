@@ -12,15 +12,20 @@ const LeftSidebar = () => {
     fetchUserId();
   }, [fetchUserId]);
 
+  const isDemo = pathname.startsWith('/demo');
+  const basePath = isDemo ? '/demo' : '';
+
   return (
     <div className="hidden md:block border-red-900/40 border-r-2 p-4 h-full w-full">
       <nav className="space-y-2 text-right">
         {menuItems.map((item) => {
-          const isActive = pathname === item.href;
+          const href =
+            item.href === '/home' ? `${basePath}/` : `${basePath}${item.href}`;
+          const isActive = pathname === href;
           return (
             <a
               key={item.name}
-              href={item.href}
+              href={href}
               className={`block px-4 py-3 rounded-lg transition-colors duration-200 font-medium text-right ${
                 isActive ? 'text-red-400 ' : 'text-gray-300 '
               }`}
@@ -29,14 +34,16 @@ const LeftSidebar = () => {
             </a>
           );
         })}
-        <a
-          href={`/profile/${userId}`}
+        {/* <a
+          href={`${basePath}/profile/${userId}`}
           className={`block px-4 py-3 rounded-lg transition-colors duration-200 font-medium text-right ${
-            pathname === '/profile' ? 'text-red-400 ' : 'text-gray-300 '
+            pathname === `${basePath}/profile`
+              ? 'text-red-400 '
+              : 'text-gray-300 '
           }`}
         >
           Profile
-        </a>
+        </a> */}
       </nav>
     </div>
   );

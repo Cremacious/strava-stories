@@ -30,7 +30,7 @@ const ChallengesHighlights = ({
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4">
             {featuredChallenges.map((challenge) => (
               <div key={challenge.id} className="darkBackground rounded-lg p-4">
                 <div className="flex justify-between items-start mb-2">
